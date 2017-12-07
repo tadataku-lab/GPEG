@@ -1,30 +1,29 @@
 import scala.util.parsing.combinator._
+import scala.util.parsing.input.CharSequenceReader
 import Ast._
 
-case class WordFreq(word: String, count: Int) {
-    override def toString = "Word <" + word + "> " +
-                            "occurs with frequency " + count
-}
+case class MyData( val d: Char, val a: Char ) {}
 
-class SimpleParser extends RegexParsers {
-    def word: Parser[String]   = """[a-z]+""".r       ^^ { _.toString }
-    def number: Parser[Int]    = """(0|[1-9]\d*)""".r ^^ { _.toInt }
-    def freq: Parser[WordFreq] = word ~ number        ^^ { case wd ~ fr => WordFreq(wd,fr) }
-}
+object OpegParser{
+    object ParserCore extends Parsers {
+        type Elem = Char;
+        val isDigit = elem( "DIGIT", { case c => '0' <= c && c <= '9' } );
+        val isAlpha = elem( "ALPHA", { case c => 'a' <= c && c <= 'z' } );
+        val parser: Parser[ MyData ] = isDigit ~ isAlpha ^^ { case d ~ a => MyData( d, a ) };
+    }
 
-object TestSimpleParser extends SimpleParser {
     def main(args: Array[String]) = {
-        val g = parse("johnny 121")
+        val g = parse("5a")
         println(g)
     }
     
-    def parse(doc: String): WordFreq = {
-        parse(freq, doc) match {
-            case Success(matched,_) => matched
-            case Failure(msg, _) => 
-                throw new Exception(msg)
-            case Error(msg, _) =>
-                throw new Exception(msg)
+    def parse(doc: String):MyData  = {
+        ParserCore.parser(new CharSequenceReader( doc )) match {
+            case ParserCore.Success(node, _) => node
+            case ParserCore.Failure(msg, _) => 
+                throw new Exception
+            case ParserCore.Error(msg, _) =>
+                throw new Exception     
         }
     }
 }
