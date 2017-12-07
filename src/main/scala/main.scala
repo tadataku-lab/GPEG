@@ -1,4 +1,5 @@
 import scala.util.parsing.combinator._
+import Ast._
 
 case class WordFreq(word: String, count: Int) {
     override def toString = "Word <" + word + "> " +
