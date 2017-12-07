@@ -1,7 +1,7 @@
 object Ast {
   trait HasPosition { def pos: Pos }
   case class Pos(line: Int, column: Int)
-  case class Grammar(pos: Pos, start: Exp, rules: List[Rule]) extends HasPosition // G
+  case class Grammar(pos: Pos, start: Symbol, rules: List[Rule]) extends HasPosition // G
   case class Rule(pos: Pos, name: Symbol, body: Exp) extends HasPosition // R
   sealed trait Exp extends HasPosition
   case class AnyChar(pos: Pos, ch: Char) extends Exp // 'a,b,c...'

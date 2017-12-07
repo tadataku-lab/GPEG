@@ -1,4 +1,4 @@
-[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/test/scala/test.scala:6:45: not found: value Pos[0m
-[0m[[0m[31merror[0m] [0m[0m    assert(OpegParser.parse("5a") == MyData(Pos(1,1),'5','a'))[0m
-[0m[[0m[31merror[0m] [0m[0m                                            ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/test/scala/test.scala:9:3: ')' expected but '}' found.[0m
+[0m[[0m[31merror[0m] [0m[0m  }[0m
+[0m[[0m[31merror[0m] [0m[0m  ^[0m
 [0m[[0m[31merror[0m] [0m[0mone error found[0m

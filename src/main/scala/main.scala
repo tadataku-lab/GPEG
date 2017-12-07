@@ -9,21 +9,36 @@ object OpegParser{
 
     object ParserCore extends Parsers {
         type Elem = Char;
+        private val any: Parser[Char] = elem(".", c => c != CharSequenceReader.EofCh)
+        private def chr(c: Char): Parser[Char] = c
+        private def crange(f: Char, t: Char): Parser[Char] = elem("[]", c => f <= c && c <= t)
+        lazy val GRAMMER: Parser[Grammar] = (loc <~ Spacing) ~ Definition.+  ^^ {
+            case pos ~ rules => Grammar(Pos(pos.line, pos.column), rules.head.name, rules)
+        }
+        lazy val Definition: Parser[Rule] = (Nonterminal <~ (LEFTARROW | EQ)) ~ Nonterminal^^ {
+            case n ~ b => Rule(n.pos, n.name, b)
+        }
+        lazy val Nonterminal: Parser[AnyNonterminal] = loc ~ NonterminalStart ~ NonterminalCont.* <~ Spacing ^^ {
+            case pos ~ s ~ c => AnyNonterminal(Pos(pos.line, pos.column), Symbol("" + s + c.foldLeft("")(_ + _)))
+        }
+        lazy val NonterminalStart: Parser[Char] = crange('a','z') | crange('A','Z') | '_'
+        lazy val NonterminalCont: Parser[Char] = NonterminalStart | crange('0','9')
         lazy val loc: Parser[Position] = Parser{reader => Success(reader.pos, reader)} 
-        val isDigit = elem( "DIGIT", { case c => '0' <= c && c <= '9' } );
-        val isAlpha = elem( "ALPHA", { case c => 'a' <= c && c <= 'z' } );
-        val parser: Parser[ MyData ] = (loc) ~ isDigit ~ isAlpha ^^ { case pos ~ d ~ a => MyData(Pos(pos.line, pos.column), d, a ) };
+        lazy val LEFTARROW = chr('<') ~ '-' <~ Spacing
+        lazy val EQ = chr('=') <~ Spacing
+        lazy val Spacing = (Space | Comment).*
+        lazy val Comment = chr('#') ~ (not(EndOfLine) ~ any).* ~ EndOfLine
+        lazy val Space = chr(' ') | chr('\t') | EndOfLine
+        lazy val EndOfLine = chr('\r') ~ chr('\n') | chr('\n') | chr('\r')
     }
 
     def main(args: Array[String]) = {
-        val g = parse("5a")
+        val g = parse("A = B")
         println(g)
-        val e = parse("5A")
-        println(e)
     }
     
-    def parse(doc: String):MyData  = {
-        ParserCore.parser(new CharSequenceReader( doc )) match {
+    def parse(doc: String):Grammar  = {
+        ParserCore.GRAMMER(new CharSequenceReader( doc )) match {
             case ParserCore.Success(node, _) => node
             case ParserCore.Failure(msg, rest) => 
                 val pos = rest.pos

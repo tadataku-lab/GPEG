@@ -3,8 +3,9 @@ import Ast._
 
 class TestParse extends FunSuite {
 
-  test("5a") {
-    assert(OpegParser.parse("5a") == MyData(Pos(1,1),'5','a'))
+  test("A = B") {
+    assert(OpegParser.parse("A = B") == Grammar(Pos(1,1),Symbol("A"),List(Rule(Pos(1,1),Symbol("A"),AnyNonterminal(Pos(1,5),Symbol("B"))))))
+    assert(OpegParser.parse("A = B").toString == "Grammar(Pos(1,1),'A,List(Rule(Pos(1,1),'A,AnyNonterminal(Pos(1,5),'B))))")
   }
 
 }
