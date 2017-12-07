@@ -4,8 +4,8 @@ object Ast {
   case class Grammar(pos: Pos, start: Exp, rules: List[Rule]) extends HasPosition // G
   case class Rule(pos: Pos, name: Symbol, body: Exp) extends HasPosition // R
   sealed trait Exp extends HasPosition
-  case class Char(pos: Pos, ch: Char) extends Exp // 'a,b,c...'
-  case class AnyChar(pos: Pos) extends Exp // '.' only gpeg ?
+  case class AnyChar(pos: Pos, ch: Char) extends Exp // 'a,b,c...'
+  case class Wildcard(pos: Pos) extends Exp // '.' only gpeg ?
   case class AnyNonterminal(pos: Pos, name: Symbol) extends Exp // 'A,B,C...'
   case class Seq(pos: Pos, lhs: Exp, rhs: Exp) extends Exp // 'e e'
   case class Choice(pos: Pos, lhs: Exp, rhs: Exp) extends Exp // 'e/e'
