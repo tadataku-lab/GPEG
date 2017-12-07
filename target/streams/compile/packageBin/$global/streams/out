@@ -2,6 +2,8 @@
 [0m[[0m[0mdebug[0m] [0m[0mInput file mappings:[0m
 [0m[[0m[0mdebug[0m] [0m[0m	Ast$LeftFolding$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Ast$LeftFolding$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	Ast$Str$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Ast$Str$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	Ast$Alt.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Ast$Alt.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	Ast$AnyNonterminal$.class[0m
@@ -44,6 +46,8 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Ast$Not$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	Ast$Choice$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Ast$Choice$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	Ast$Empty.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Ast$Empty.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	Ast$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Ast$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	Ast$Wildcard$.class[0m
@@ -68,8 +72,12 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Ast$AnyChar.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	Ast$AnyChar$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Ast$AnyChar$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	Ast$Str.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Ast$Str.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	OpegParser.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/OpegParser.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	Ast$Empty$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Ast$Empty$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	Ast$Grammar$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Ast$Grammar$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	MyData$.class[0m

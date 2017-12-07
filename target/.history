@@ -37,3 +37,9 @@ compile
 run
 tesr
 test
+compile
+run
+test
+compile
+run
+test

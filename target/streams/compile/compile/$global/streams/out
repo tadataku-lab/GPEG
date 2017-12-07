@@ -1,4 +1,6 @@
-[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:29:57: not found: value any[0m
-[0m[[0m[31merror[0m] [0m[0m        lazy val Comment = chr('#') ~ (not(EndOfLine) ~ any).* ~ EndOfLine[0m
-[0m[[0m[31merror[0m] [0m[0m                                                        ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:26:15: type mismatch;[0m
+[0m[[0m[31merror[0m] [0m[0m found   : scala.collection.immutable.Nil.type[0m
+[0m[[0m[31merror[0m] [0m[0m required: OpegParser.ParserCore.Parser[Ast.Exp][0m
+[0m[[0m[31merror[0m] [0m[0m            | Nil[0m
+[0m[[0m[31merror[0m] [0m[0m              ^[0m
 [0m[[0m[31merror[0m] [0m[0mone error found[0m
