@@ -12,7 +12,7 @@ object OpegParser{
         private val any: Parser[Char] = elem(".", c => c != CharSequenceReader.EofCh)
         private def chr(c: Char): Parser[Char] = c
         private def crange(f: Char, t: Char): Parser[Char] = elem("[]", c => f <= c && c <= t)
-        lazy val GRAMMER: Parser[Grammar] = (loc <~ Spacing) ~ Definition.+  ^^ {
+        lazy val GRAMMER: Parser[Grammar] = (loc <~ Spacing) ~ Definition.+ <~ EndOfFile ^^ {
             case pos ~ rules => Grammar(Pos(pos.line, pos.column), rules.head.name, rules)
         }
         lazy val Definition: Parser[Rule] = (Nonterminal <~ (LEFTARROW | EQ)) ~ Nonterminal^^ {
@@ -30,6 +30,7 @@ object OpegParser{
         lazy val Comment = chr('#') ~ (not(EndOfLine) ~ any).* ~ EndOfLine
         lazy val Space = chr(' ') | chr('\t') | EndOfLine
         lazy val EndOfLine = chr('\r') ~ chr('\n') | chr('\n') | chr('\r')
+        lazy val EndOfFile = not(any)
     }
 
     def main(args: Array[String]) = {
