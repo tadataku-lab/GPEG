@@ -5,3 +5,6 @@ compile
 run
 compile
 run
+test
+compile
+run

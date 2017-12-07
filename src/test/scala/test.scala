@@ -2,8 +2,8 @@ import org.scalatest._
 
 class TestParse extends FunSuite {
 
-  test("johnny 121") {
-    assert(TestSimpleParser.parse("johnny 121").toString == "Word <johnny> occurs with frequency 121")
+  test("5a") {
+    assert(OpegParser.parse("5a") == MyData('5','a'))
   }
 
 }
