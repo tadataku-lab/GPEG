@@ -1,4 +1,14 @@
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:3:12: Unused import[0m
-[0m[[0m[33mwarn[0m] [0m[0mimport Ast._[0m
-[0m[[0m[33mwarn[0m] [0m[0m           ^[0m
-[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:11:30: not found: type Position[0m
+[0m[[0m[31merror[0m] [0m[0m        lazy val loc: Parser[Position] = Parser{reader => Success(reader.pos, reader)} [0m
+[0m[[0m[31merror[0m] [0m[0m                             ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:14:91: not enough arguments for method apply: (pos: Ast.Pos, d: Char, a: Char)MyData in object MyData.[0m
+[0m[[0m[31merror[0m] [0m[0mUnspecified value parameter a.[0m
+[0m[[0m[31merror[0m] [0m[0m        val parser: Parser[ MyData ] = (loc) ~ isDigit ~ isAlpha ^^ { case d ~ a => MyData( d, a ) };[0m
+[0m[[0m[31merror[0m] [0m[0m                                                                                          ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:29:27: not found: type ParseException[0m
+[0m[[0m[31merror[0m] [0m[0m                throw new ParseException(Pos(pos.line, pos.column), msg)[0m
+[0m[[0m[31merror[0m] [0m[0m                          ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:32:27: not found: type ParseException[0m
+[0m[[0m[31merror[0m] [0m[0m                throw new ParseException(Pos(pos.line, pos.column), msg)    [0m
+[0m[[0m[31merror[0m] [0m[0m                          ^[0m
+[0m[[0m[31merror[0m] [0m[0mfour errors found[0m
