@@ -14,7 +14,7 @@ object OpegParser{
         lazy val GRAMMER: Parser[Grammar] = (loc <~ Spacing) ~ Definition.+ <~ EndOfFile ^^ {
             case pos ~ rules => Grammar(Pos(pos.line, pos.column), rules.head.name, rules)
         }
-        lazy val Definition: Parser[Rule] = (Nonterminal <~ (LEFTARROW | EQ)) ~ Expression <~ Spacing ^^ {
+        lazy val Definition: Parser[Rule] = (Nonterminal <~ (LEFTARROW | EQ)) ~ Expression <~ SEMI_COLON ^^ {
             case n ~ b => Rule(n.pos, n.name, b)
         }
         lazy val Expression: Parser[Exp] = Sequence ~ (SLASH ~> Sequence).* ^^ {
@@ -54,7 +54,8 @@ object OpegParser{
         }
         lazy val NonterminalStart: Parser[Char] = crange('a','z') | crange('A','Z') | '_'
         lazy val NonterminalCont: Parser[Char] = NonterminalStart | crange('0','9')
-        lazy val loc: Parser[Position] = Parser{reader => Success(reader.pos, reader)} 
+        lazy val loc: Parser[Position] = Parser{reader => Success(reader.pos, reader)}
+        lazy val SEMI_COLON = ';' <~ Spacing
         lazy val LEFTARROW = chr('<') ~ '-' <~ Spacing
         lazy val EQ = chr('=') <~ Spacing
         lazy val SLASH = '/' <~ Spacing
