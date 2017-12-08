@@ -3,7 +3,7 @@ import scala.util.parsing.input.{CharSequenceReader, Position, StreamReader}
 import java.io._
 import Ast._
 
-object OpegParser{
+object GpegParser{
     case class ParseException(pos: Pos, msg: String) extends Exception(pos + msg)
 
     object ParserCore extends Parsers {
