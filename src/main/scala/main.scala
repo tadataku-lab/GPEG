@@ -1,8 +1,7 @@
 import scala.util.parsing.combinator._
-import scala.util.parsing.input.{CharSequenceReader, Position}
+import scala.util.parsing.input.{CharSequenceReader, Position, StreamReader}
+import java.io._
 import Ast._
-
-case class MyData( val pos: Pos,val d: Char, val a: Char ) {}
 
 object OpegParser{
     case class ParseException(pos: Pos, msg: String) extends Exception(pos + msg)
@@ -75,12 +74,13 @@ object OpegParser{
     }
 
     def main(args: Array[String]) = {
-        val g = parse("A = B")
+        //val g = parse(new FileReader(args(0)))
+        val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
         println(g)
     }
     
-    def parse(doc: String):Grammar  = {
-        ParserCore.GRAMMER(new CharSequenceReader( doc )) match {
+    def parse(content: java.io.Reader):Grammar  = {
+        ParserCore.GRAMMER(StreamReader(content)) match {
             case ParserCore.Success(node, _) => node
             case ParserCore.Failure(msg, rest) => 
                 val pos = rest.pos

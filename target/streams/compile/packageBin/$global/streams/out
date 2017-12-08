@@ -14,10 +14,10 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Ast.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	Ast$Wildcard.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Ast$Wildcard.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	GPEG/rule.gpeg[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/GPEG/rule.gpeg[0m
 [0m[[0m[0mdebug[0m] [0m[0m	Ast$Alt$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Ast$Alt$.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	MyData.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/MyData.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	OpegParser$ParserCore$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/OpegParser$ParserCore$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	Ast$Caputure$.class[0m
@@ -34,6 +34,8 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/OpegParser$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	OpegParser$ParseException$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/OpegParser$ParseException$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	GPEG[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/GPEG[0m
 [0m[[0m[0mdebug[0m] [0m[0m	Ast$Pos$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Ast$Pos$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	Ast$Seq$.class[0m
@@ -80,6 +82,4 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Ast$Empty$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	Ast$Grammar$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Ast$Grammar$.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	MyData$.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/MyData$.class[0m
 [0m[[0m[0minfo[0m] [0m[0mDone packaging.[0m
