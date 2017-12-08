@@ -15,4 +15,8 @@ class TestParse extends FunSuite {
     assert(OpegParser.parse(new FileReader("src/test/resources/GPEG/test3.gpeg")).toString == "Grammar(Pos(1,1),'S,List(Rule(Pos(1,1),'S,Alt(Pos(1,16),Alt(Pos(1,11),AnyNonterminal(Pos(1,5),'SSS),AnyNonterminal(Pos(1,11),'SS)),AnyNonterminal(Pos(1,16),'b)))))")
   }
 
+  test("test4") {
+    assert(OpegParser.parse(new FileReader("src/test/resources/GPEG/test4.gpeg")).toString == "Grammar(Pos(1,1),'A,List(Rule(Pos(1,1),'A,CharClass(Pos(1,6),List(CharRange(a,z))))))")
+  }
+
 }

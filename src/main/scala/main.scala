@@ -40,6 +40,7 @@ object OpegParser{
             Nonterminal 
             | OPEN ~> Expression <~ CLOSE
             | Literal
+            | CLASS
             | loc <~ DOT ^^ { case pos => Wildcard(Pos(pos.line, pos.column)) }
         )
         lazy val Literal: Parser[Str] = loc ~ (
@@ -48,6 +49,13 @@ object OpegParser{
             ) ^^ {
             case pos ~ cs => Str(Pos(pos.line, pos.column), cs.foldLeft(""){(acc, n) => acc + n})
         }
+        lazy val CLASS: Parser[CharClass] = (loc <~ chr('[')) ~ (not(chr(']')) ~> Range).* <~ ']' ~> Spacing ^^ {
+            case (pos ~ rs) => CharClass(Pos(pos.line, pos.column), rs);
+        }
+        lazy val Range: Parser[CharClassElement] = (
+            CHAR ~ '-' ~ CHAR ^^ { case f~_~t => CharRange(f, t) }
+            | CHAR ^^ { case c => OneChar(c) }
+        )
         lazy val CHAR: Parser[Char] = ( 
             not('\\') ~ any ^^ { case _ ~ c => c}
         )

@@ -110,3 +110,12 @@ run
 compile
 run
 test
+compile
+run
+test
+compile
+test
+run
+compile
+run
+test
