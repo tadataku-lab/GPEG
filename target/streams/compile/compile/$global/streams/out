@@ -1,4 +1,4 @@
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:23:54: match may not be exhaustive.[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:25:54: match may not be exhaustive.[0m
 [0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following input: Nil[0m
 [0m[[0m[33mwarn[0m] [0m[0m        lazy val Sequence: Parser[Exp] = Prefix.+ ^^ { case x::xs => [0m
 [0m[[0m[33mwarn[0m] [0m[0m                                                     ^[0m

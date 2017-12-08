@@ -17,9 +17,11 @@ object OpegParser{
         lazy val Definition: Parser[Rule] = (Nonterminal <~ (LEFTARROW | EQ)) ~ Expression <~ SEMI_COLON ^^ {
             case n ~ b => Rule(n.pos, n.name, b)
         }
-        lazy val Expression: Parser[Exp] = Sequence ~ (SLASH ~> Sequence).* ^^ {
-            case x ~ xs => xs.foldLeft(x){(a, y) => Choice(y.pos, a, y)}
-        }
+        lazy val Expression: Parser[Exp] = (
+            Sequence ~ (BAR ~> Sequence).+ ^^ { case x ~ xs => xs.foldLeft(x){(a, y) => Alt(y.pos, a, y)}}
+            | Sequence ~ (SLASH ~> Sequence).+ ^^ { case x ~ xs => xs.foldLeft(x){(a, y) => Choice(y.pos, a, y)}}
+            | Sequence
+        )
         lazy val Sequence: Parser[Exp] = Prefix.+ ^^ { case x::xs => 
             xs.foldLeft(x){(a, y) => Seq(y.pos, a, y)}
         }
@@ -59,6 +61,7 @@ object OpegParser{
         lazy val LEFTARROW = chr('<') ~ '-' <~ Spacing
         lazy val EQ = chr('=') <~ Spacing
         lazy val SLASH = '/' <~ Spacing
+        lazy val BAR = '|' <~ Spacing
         lazy val AND = '&' <~ Spacing
         lazy val NOT = '!' <~ Spacing
         lazy val QUESTION = '?' <~ Spacing
