@@ -1,1 +1,4 @@
-A <- [a-z];
+expression <- additive;
+additive <- multitive ('+' multitive / '-' multitive)*;
+multitive <- value ('*' value / '/' value)*;
+value <- [0-9]+ / '(' expression ')';
