@@ -121,3 +121,8 @@ run
 test
 compile
 test
+compile
+run
+compile
+run
+test

@@ -12,10 +12,10 @@ object GpegParser{
         private def chr(c: Char): Parser[Char] = c
         private def crange(f: Char, t: Char): Parser[Char] = elem("[]", c => f <= c && c <= t)
         lazy val GRAMMER: Parser[Grammar] = (loc <~ Spacing) ~ Definition.+ <~ EndOfFile ^^ {
-            case pos ~ rules => Grammar(Pos(pos.line, pos.column), rules.head.name, rules)
+            case pos ~ rules => Grammar(Pos(pos.line, pos.column), rules.head._1, rules.foldLeft(Map[Symbol,Exp]()){(m,r) => m.updated(r._1, r._2)})
         }
-        lazy val Definition: Parser[Rule] = (Nonterminal <~ (LEFTARROW | EQ)) ~ Expression <~ SEMI_COLON ^^ {
-            case n ~ b => Rule(n.pos, n.name, b)
+        lazy val Definition: Parser[(Symbol,Exp)] = (Nonterminal <~ (LEFTARROW | EQ)) ~ Expression <~ SEMI_COLON ^^ {
+            case n ~ b => (n.name, b)
         }
         lazy val Expression: Parser[Exp] = (
             Sequence ~ (BAR ~> Sequence).+ ^^ { case x ~ xs => xs.foldLeft(x){(a, y) => Alt(y.pos, a, y)}}
