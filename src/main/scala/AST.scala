@@ -1,7 +1,7 @@
  
 object Ast {
 
-  case class Grammar(start: Exp, rules: Map[Symbol,Exp]) 
+  case class Grammar(start: Exp, rules: Map[Symbol,Exp])
   sealed trait Exp 
   case class Empty() extends Exp
   case class Any() extends Exp

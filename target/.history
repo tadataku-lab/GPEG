@@ -142,3 +142,15 @@ compile
 run
 compile
 run
+compile
+run
+run test/resources/GPEG/math.result
+run src/test/resources/GPEG/math.result
+compile
+run test/resources/GPEG/test1.result
+run srctest/resources/GPEG/test1.result
+run src/test/resources/GPEG/test1.result
+run src/test/resources/GPEG/test2.result
+run src/test/resources/GPEG/test3.result
+run src/test/resources/GPEG/test4.result
+test
