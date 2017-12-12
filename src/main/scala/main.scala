@@ -2,6 +2,7 @@ import scala.util.parsing.combinator._
 import scala.util.parsing.input.{CharSequenceReader, Position, StreamReader}
 import java.io._
 import Ast._
+import PegParser._
 
 object GpegParser{
     case class ParseException(pos: Pos, msg: String) extends Exception(pos + msg)
@@ -89,6 +90,8 @@ object GpegParser{
         //val g = parse(new FileReader(args(0)))
         val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
         println(g)
+        val result = peg_parse(g,"1+1");
+        println(result)
     }
     
     def parse(content: java.io.Reader):Grammar  = {
