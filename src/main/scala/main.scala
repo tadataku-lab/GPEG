@@ -14,46 +14,46 @@ object GpegParser{
         private val any: Parser[Char] = elem(".", c => c != CharSequenceReader.EofCh)
         private def chr(c: Char): Parser[Char] = c
         private def crange(f: Char, t: Char): Parser[Char] = elem("[]", c => f <= c && c <= t)
-        lazy val GRAMMER: Parser[(Grammar, Pos)] = (loc <~ Spacing) ~ Definition.+ <~ EndOfFile ^^ {
-            case pos ~ rules => ( Grammar( rules.head._2, rules.foldLeft(Map[Symbol,Exp]()){(m,r) => m.updated(r._1, r._2)}), Pos(pos.line, pos.column))
+        lazy val GRAMMER: Parser[Grammar] = (loc <~ Spacing) ~ Definition.+ <~ EndOfFile ^^ {
+            case pos ~ rules =>  Grammar( rules.head._2, rules.foldLeft(Map[Symbol,Exp]()){(m,r) => m.updated(r._1, r._2)})
         }
         lazy val Definition: Parser[(Symbol,Exp)] = (Nonterminal <~ (LEFTARROW | EQ)) ~ Expression <~ SEMI_COLON ^^ {
-            case n ~ b => (n._1.name, b._1)
+            case n ~ b => (n.name, b)
         }
-        lazy val Expression: Parser[(Exp, Pos)] = (
-            Sequence ~ (BAR ~> Sequence).+ ^^ { case x ~ xs => xs.foldLeft(x){(a, y) => (Alt(a._1, y._1), y._2)}}
-            | Sequence ~ (SLASH ~> Sequence).+ ^^ { case x ~ xs => xs.foldLeft(x){(a, y) => (Choice(a._1, y._1), y._2)}}
+        lazy val Expression: Parser[Exp] = (
+            Sequence ~ (BAR ~> Sequence).+ ^^ { case x ~ xs => xs.foldLeft(x){(a, y) => Alt(a, y)}}
+            | Sequence ~ (SLASH ~> Sequence).+ ^^ { case x ~ xs => xs.foldLeft(x){(a, y) => Choice(a, y)}}
             | Sequence
         )
-        lazy val Sequence: Parser[(Exp, Pos)] = Prefix.+ ^^ { case x::xs => 
-            xs.foldLeft(x){(a, y) => (Seq(a._1, y._1), y._2)}
+        lazy val Sequence: Parser[Exp] = Prefix.+ ^^ { case x::xs => 
+            xs.foldLeft(x){(a, y) => Seq(a, y)}
         }
-        lazy val Prefix: Parser[(Exp, Pos)] = (
-            (loc <~ AND) ~ Suffix ^^ { case pos ~ e =>  ( And(e._1), Pos(pos.line, pos.column)) }
-            | (loc <~ NOT) ~ Suffix ^^ { case pos ~ e => ( Not(e._1), Pos(pos.line, pos.column)) }
+        lazy val Prefix: Parser[Exp] = (
+            (loc <~ AND) ~ Suffix ^^ { case pos ~ e =>   And(e) }
+            | (loc <~ NOT) ~ Suffix ^^ { case pos ~ e =>  Not(e) }
             | Suffix
         )
-        lazy val Suffix: Parser[(Exp, Pos)] = (
-            loc ~ Primary <~ QUESTION ^^ { case pos ~ e => (Choice(e._1, Empty()), Pos(pos.line, pos.column)) }
-            | loc ~ Primary <~ STAR ^^ { case pos ~ e => (Many(e._1), Pos(pos.line, pos.column)) }
-            | loc ~ Primary <~ PLUS ^^ { case pos ~ e => (Seq(e._1, Many(e._1)), Pos(pos.line, pos.column)) }
+        lazy val Suffix: Parser[Exp] = (
+            loc ~ Primary <~ QUESTION ^^ { case pos ~ e => Choice(e, Empty()) }
+            | loc ~ Primary <~ STAR ^^ { case pos ~ e => Many(e) }
+            | loc ~ Primary <~ PLUS ^^ { case pos ~ e => Seq(e, Many(e)) }
             | Primary
         )
-        lazy val Primary: Parser[(Exp, Pos)] = (
+        lazy val Primary: Parser[Exp] = (
             Nonterminal 
             | OPEN ~> Expression <~ CLOSE
             | Literal
             | CLASS
-            | loc <~ DOT ^^ { case pos => (Any(), Pos(pos.line, pos.column)) }
+            | loc <~ DOT ^^ { case pos => Any() }
         )
-        lazy val Literal: Parser[(Exp, Pos)] = loc ~ (
+        lazy val Literal: Parser[Exp] = loc ~ (
             chr('\'') ~> (not('\'') ~> CHAR).* <~ chr('\'') <~ Spacing
             | chr('"') ~> (not('"') ~> CHAR).* <~ chr('"') <~ Spacing
             ) ^^ {
-            case pos ~ (c::cs) => (cs.foldLeft(AnyChar(c): Exp){(a, y) => Seq(a, AnyChar(y))}, Pos(pos.line, pos.column))
+            case pos ~ (c::cs) => cs.foldLeft(AnyChar(c): Exp){(a, y) => Seq(a, AnyChar(y))}
         }
-        lazy val CLASS: Parser[(Exp, Pos)] = (loc <~ chr('[')) ~ (not(chr(']')) ~> Range).* <~ ']' ~> Spacing ^^ {
-            case pos ~ (r::rs) => (rs.foldLeft(r){(a, y) => Seq(a, y)}, Pos(pos.line, pos.column));
+        lazy val CLASS: Parser[Exp] = (loc <~ chr('[')) ~ (not(chr(']')) ~> Range).* <~ ']' ~> Spacing ^^ {
+            case pos ~ (r::rs) => rs.foldLeft(r){(a, y) => Seq(a, y)}
         }
         lazy val Range: Parser[Exp] = (
             CHAR ~ '-' ~ CHAR ^^ { case f~_~t => (f to t).foldRight(AnyChar(t): Exp){(x, acc) => Seq(AnyChar(x), acc)} }
@@ -62,8 +62,8 @@ object GpegParser{
         lazy val CHAR: Parser[Char] = ( 
             not('\\') ~ any ^^ { case _ ~ c => c}
         )
-        lazy val Nonterminal: Parser[(NonTerm, Pos)] = loc ~ NonterminalStart ~ NonterminalCont.* <~ Spacing ^^ {
-            case pos ~ s ~ c => ( NonTerm(Symbol("" + s + c.foldLeft("")(_ + _))), Pos(pos.line, pos.column))
+        lazy val Nonterminal: Parser[NonTerm] = loc ~ NonterminalStart ~ NonterminalCont.* <~ Spacing ^^ {
+            case pos ~ s ~ c =>  NonTerm(Symbol("" + s + c.foldLeft("")(_ + _)))
         }
         lazy val NonterminalStart: Parser[Char] = crange('a','z') | crange('A','Z') | '_'
         lazy val NonterminalCont: Parser[Char] = NonterminalStart | crange('0','9')
@@ -98,7 +98,7 @@ object GpegParser{
     
     def parse(content: java.io.Reader):Grammar  = {
         ParserCore.GRAMMER(StreamReader(content)) match {
-            case ParserCore.Success(node, _) => node._1
+            case ParserCore.Success(node, _) => node
             case ParserCore.Failure(msg, rest) => 
                 val pos = rest.pos
                 throw new ParseException(Pos(pos.line, pos.column), msg)
