@@ -1,4 +1,16 @@
 [0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegParser.scala:9:13: local var parser_context in method peg_parse is never set: consider using immutable val[0m
 [0m[[0m[33mwarn[0m] [0m[0m        var parser_context = new ParserContext(g, input)[0m
 [0m[[0m[33mwarn[0m] [0m[0m            ^[0m
-[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:28:61: match may not be exhaustive.[0m
+[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following input: Nil[0m
+[0m[[0m[33mwarn[0m] [0m[0m        lazy val Sequence: Parser[(Exp, Pos)] = Prefix.+ ^^ { case x::xs => [0m
+[0m[[0m[33mwarn[0m] [0m[0m                                                            ^[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:52:18: match may not be exhaustive.[0m
+[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following input: ~(_, Nil)[0m
+[0m[[0m[33mwarn[0m] [0m[0m            ) ^^ {[0m
+[0m[[0m[33mwarn[0m] [0m[0m                 ^[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:55:114: match may not be exhaustive.[0m
+[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following input: ~(_, Nil)[0m
+[0m[[0m[33mwarn[0m] [0m[0m        lazy val CLASS: Parser[(Exp, Pos)] = (loc <~ chr('[')) ~ (not(chr(']')) ~> Range).* <~ ']' ~> Spacing ^^ {[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                                                                                                 ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mfour warnings found[0m
