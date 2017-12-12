@@ -1,6 +1,3 @@
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:104:13: local var sb in method file2string is never set: consider using immutable val[0m
-[0m[[0m[33mwarn[0m] [0m[0m        var sb = new StringBuilder[0m
-[0m[[0m[33mwarn[0m] [0m[0m            ^[0m
 [0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:29:54: match may not be exhaustive.[0m
 [0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following input: Nil[0m
 [0m[[0m[33mwarn[0m] [0m[0m        lazy val Sequence: Parser[Exp] = Prefix.+ ^^ { case x::xs => [0m
@@ -13,4 +10,4 @@
 [0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following input: ~(_, Nil)[0m
 [0m[[0m[33mwarn[0m] [0m[0m        lazy val CLASS: Parser[Exp] = (loc <~ chr('[')) ~ (not(chr(']')) ~> Range).* <~ ']' ~> Spacing ^^ {[0m
 [0m[[0m[33mwarn[0m] [0m[0m                                                                                                          ^[0m
-[0m[[0m[33mwarn[0m] [0m[0mfour warnings found[0m
+[0m[[0m[33mwarn[0m] [0m[0mthree warnings found[0m

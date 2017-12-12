@@ -90,18 +90,18 @@ object GpegParser{
     }
 
     def main(args: Array[String]) = {
-        val file = new PrintWriter(args(0))
-        //val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
+        //val file = new PrintWriter(args(0))
         val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
-        file.write(g.toString())
-        file.close()
+        println(g);
+        //file.write(g.toString())
+        //file.close()
         val result = peg_parse(g,"1+1");
         println(result)
     }
 
     def file2string(filename: String): String = {
         val source = Source.fromFile(filename)
-        var sb = new StringBuilder
+        val sb = new StringBuilder
         for( line <- source.getLines ) {
             sb.append(line)
         }

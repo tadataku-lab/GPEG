@@ -17,27 +17,18 @@ object Ast {
   case class FoldMany(label: Symbol, lhs: Exp, rhs: Exp) extends Exp 
   case class LinkTree(label: Symbol, body: Exp) extends Exp
 
-  /*
-  trait HasPosition { def pos: Pos }
-  case class Pos(line: Int, column: Int)
-  case class Grammar(pos: Pos, start: Symbol, rules: Map[Symbol,Exp]) extends HasPosition 
-  sealed trait Exp extends HasPosition
-  case class Empty(pos: Pos, emp: Unit) extends Exp
-  case class CharClass(pos: Pos, elems: List[CharClassElement]) extends Exp
-  case class Wildcard(pos: Pos) extends Exp 
-  case class AnyNonterminal(pos: Pos, name: Symbol) extends Exp 
-  case class Seq(pos: Pos, lhs: Exp, rhs: Exp) extends Exp
-  case class Choice(pos: Pos, lhs: Exp, rhs: Exp) extends Exp
-  case class Alt(pos: Pos, lhs: Exp, rhs: Exp) extends Exp 
-  case class Rep(pos: Pos, body: Exp) extends Exp 
-  case class Not(pos: Pos, body: Exp) extends Exp 
-  case class And(pos: Pos, body: Exp) extends Exp
-  case class Caputure(pos: Pos, label: Symbol, body: Exp) extends Exp
-  case class FoldMany(pos: Pos, label: Symbol, lhs: Exp, rhs: Exp) extends Exp 
-  case class LinkTree(pos: Pos, label: Symbol, body: Exp) extends Exp
-  case class Str(pos: Pos, target: String) extends Exp
-  sealed trait CharClassElement
-  case class OneChar(ch: Char) extends CharClassElement
-  case class CharRange(from: Char, to: Char) extends CharClassElement 
-  */
+  sealed trait PExp
+  case class PSucc() extends PExp
+  case class PFail() extends PExp
+  case class PMatch(bytes: Array[Byte], next: PExp) extends PExp
+  case class PCall(name: Symbol, next: PExp) extends PExp
+  case class PIf(condition: PExp, succ: PExp, fail: PExp) extends PExp
+  case class PUnion(lhs: PExp, rhs: PExp) extends PExp
+  case class PNot(body: PExp) extends PExp
+  case class PAnd(body: PExp) extends PExp
+  case class PMany(body: PExp) extends PExp
+  case class PCons(name: Symbol, body: PExp, next: PExp) extends PExp
+  case class PFold(name: Symbol, body: PExp, rec: PExp, next: PExp) extends PExp
+  case class PLink(name: Symbol, rhs: PExp, lhs: PExp) extends PExp
+
 }

@@ -154,3 +154,6 @@ run src/test/resources/GPEG/test2.result
 run src/test/resources/GPEG/test3.result
 run src/test/resources/GPEG/test4.result
 test
+compile 
+run
+compile 
