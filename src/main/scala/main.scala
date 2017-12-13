@@ -1,7 +1,7 @@
 import scala.util.parsing.combinator._
 import scala.util.parsing.input.{CharSequenceReader, Position, StreamReader}
 import java.io._
-import Ast._
+import AST._
 import PegParser._
 import scala.io.Source
 
@@ -16,7 +16,7 @@ object GpegParser{
         private def chr(c: Char): Parser[Char] = c
         private def crange(f: Char, t: Char): Parser[Char] = elem("[]", c => f <= c && c <= t)
         lazy val GRAMMER: Parser[Grammar] = (loc <~ Spacing) ~ Definition.+ <~ EndOfFile ^^ {
-            case pos ~ rules =>  Grammar( rules.head._2, rules.foldLeft(Map[Symbol,Exp]()){(m,r) => m.updated(r._1, r._2)})
+            case pos ~ rules =>  Grammar( rules.head._2, rules)
         }
         lazy val Definition: Parser[(Symbol,Exp)] = (Nonterminal <~ (LEFTARROW | EQ)) ~ Expression <~ SEMI_COLON ^^ {
             case n ~ b => (n.name, b)
@@ -90,11 +90,12 @@ object GpegParser{
     }
 
     def main(args: Array[String]) = {
-        //val file = new PrintWriter(args(0))
-        val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
+        val file = new PrintWriter(args(0))
+        //val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
+        val g = parse(new FileReader(args(1)))
         println(g);
-        //file.write(g.toString())
-        //file.close()
+        file.write(g.toString())
+        file.close()
         val result = peg_parse(g,"1+1");
         println(result)
     }

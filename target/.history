@@ -157,3 +157,12 @@ test
 compile 
 run
 compile 
+compile
+run
+run src/test/resources/GPEG/test2.gpeg
+run src/test/resources/GPEG/test2.result
+run src/test/resources/GPEG/test1.result src/test/resources/GPEG/test1.gpeg
+run src/test/resources/GPEG/test3.result src/test/resources/GPEG/test3.gpeg
+run src/test/resources/GPEG/test4.result src/test/resources/GPEG/test4.gpeg
+run src/test/resources/GPEG/math.result src/test/resources/GPEG/math.gpeg
+test

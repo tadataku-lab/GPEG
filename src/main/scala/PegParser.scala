@@ -1,4 +1,4 @@
-import Ast._
+import AST._
 
 sealed trait Tree[T]
 case class Leaf[T](name: Symbol, v: T) extends Tree[T]

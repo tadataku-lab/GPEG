@@ -1,7 +1,7 @@
  
-object Ast {
+object AST {
 
-  case class Grammar(start: Exp, rules: Map[Symbol,Exp])
+  case class Grammar(start: Exp, rules: List[(Symbol,Exp)])
   sealed trait Exp 
   case class Empty() extends Exp
   case class Any() extends Exp
@@ -24,11 +24,11 @@ object Ast {
   case class PCall(name: Symbol, next: PExp) extends PExp
   case class PIf(condition: PExp, succ: PExp, fail: PExp) extends PExp
   case class PUnion(lhs: PExp, rhs: PExp) extends PExp
-  case class PNot(body: PExp) extends PExp
-  case class PAnd(body: PExp) extends PExp
-  case class PMany(body: PExp) extends PExp
+  case class PNot(body: PExp, next: PExp) extends PExp
+  case class PAnd(body: PExp, next: PExp) extends PExp
+  case class PMany(body: PExp, next: PExp) extends PExp
   case class PCons(name: Symbol, body: PExp, next: PExp) extends PExp
   case class PFold(name: Symbol, body: PExp, rec: PExp, next: PExp) extends PExp
-  case class PLink(name: Symbol, rhs: PExp, lhs: PExp) extends PExp
+  case class PLink(name: Symbol, body: PExp, next: PExp) extends PExp
 
 }
