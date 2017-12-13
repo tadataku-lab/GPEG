@@ -3,7 +3,6 @@ import AST._
 object Optimization{
     def optimize(target: Grammar):PGrammar = {
         var rules = target.rules.map( rule => (rule._1, transform(rule._2, null)))
-        println(rules)
         return PGrammar(target.start, rules.toMap)
     }
 

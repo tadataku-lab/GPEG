@@ -201,3 +201,12 @@ run src/test/resources/GPEG/math.result src/test/resources/GPEG/math.gpeg
 run src/test/resources/GPEG/test2.result src/test/resources/GPEG/test2.gpeg
 run src/test/resources/GPEG/test3.result src/test/resources/GPEG/test3.gpeg
  test
+run
+ test
+run
+test
+compile
+run
+run src/test/resources/GPEG/test4.result src/test/resources/GPEG/test4.gpeg
+run src/test/resources/GPEG/math.result src/test/resources/GPEG/math.gpeg
+test

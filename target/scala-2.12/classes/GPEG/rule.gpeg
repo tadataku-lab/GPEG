@@ -1,2 +1,4 @@
-A <- B;
-B <- "Hello";
+expression <- additive;
+additive <- multitive ('+' multitive / '-' multitive)*;
+multitive <- value ('*' value / '/' value)*;
+value <- [0-9]+ / '(' expression ')';

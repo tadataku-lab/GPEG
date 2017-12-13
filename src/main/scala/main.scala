@@ -58,7 +58,7 @@ object GpegParser{
             case pos ~ (r::rs) => rs.foldLeft(r){(a, y) => Seq(y, a)}
         }
         lazy val Range: Parser[Exp] = (
-            CHAR ~ '-' ~ CHAR ^^ { case f~_~t => (f to t).foldRight(AnyChar(t): Exp){(x, acc) => Seq(AnyChar(x), acc)} }
+            CHAR ~ '-' ~ CHAR ^^ { case f~_~t => (f to t).foldRight(AnyChar(t): Exp){(x, acc) => Choice(AnyChar(x), acc)} }
             | CHAR ^^ { case c => AnyChar(c) }
         )
         lazy val CHAR: Parser[Char] = ( 
@@ -91,13 +91,21 @@ object GpegParser{
     }
 
     def main(args: Array[String]):Unit = {
-        //val file = new PrintWriter(args(0))
-        val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
-        //val g = parse(new FileReader(args(1)))
-        println(g);
-        optimize(g);
-        //file.write(g.toString())
-        //file.close()
+        if(args.length == 0){
+            val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
+            println(g);
+            println(optimize(g));
+        }else if(args.length == 1){
+            val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
+            val file = new PrintWriter(args(0))
+            file.write(g.toString())
+            file.close()
+        }else{
+            val file = new PrintWriter(args(0))
+            val g = parse(new FileReader(args(1)))
+            file.write(g.toString())
+            file.close()
+        }
         //val result = peg_parse(g,"1+1");
         //println(result)
     }
