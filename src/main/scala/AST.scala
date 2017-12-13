@@ -17,6 +17,7 @@ object AST {
   case class FoldMany(label: Symbol, lhs: Exp, rhs: Exp) extends Exp 
   case class LinkTree(label: Symbol, body: Exp) extends Exp
 
+  case class PGrammar(start: Exp, rules: Map[Symbol,PExp])
   sealed trait PExp
   case class PSucc() extends PExp
   case class PFail() extends PExp

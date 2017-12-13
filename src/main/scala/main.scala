@@ -4,6 +4,7 @@ import java.io._
 import AST._
 import PegParser._
 import scala.io.Source
+import Optimization._
 
 object GpegParser{
     case class Pos(line: Int, column: Int)
@@ -22,12 +23,12 @@ object GpegParser{
             case n ~ b => (n.name, b)
         }
         lazy val Expression: Parser[Exp] = (
-            Sequence ~ (BAR ~> Sequence).+ ^^ { case x ~ xs => xs.foldLeft(x){(a, y) => Alt(a, y)}}
-            | Sequence ~ (SLASH ~> Sequence).+ ^^ { case x ~ xs => xs.foldLeft(x){(a, y) => Choice(a, y)}}
+            Sequence ~ (BAR ~> Sequence).+ ^^ { case x ~ xs => xs.foldLeft(x){(a, y) => Alt(y, a)}}
+            | Sequence ~ (SLASH ~> Sequence).+ ^^ { case x ~ xs => xs.foldLeft(x){(a, y) => Choice(y, a)}}
             | Sequence
         )
         lazy val Sequence: Parser[Exp] = Prefix.+ ^^ { case x::xs => 
-            xs.foldLeft(x){(a, y) => Seq(a, y)}
+            xs.foldLeft(x){(a, y) => Seq(y, a)}
         }
         lazy val Prefix: Parser[Exp] = (
             (loc <~ AND) ~ Suffix ^^ { case pos ~ e =>   And(e) }
@@ -51,10 +52,10 @@ object GpegParser{
             chr('\'') ~> (not('\'') ~> CHAR).* <~ chr('\'') <~ Spacing
             | chr('"') ~> (not('"') ~> CHAR).* <~ chr('"') <~ Spacing
             ) ^^ {
-            case pos ~ (c::cs) => cs.foldLeft(AnyChar(c): Exp){(a, y) => Seq(a, AnyChar(y))}
+            case pos ~ (cs:+c) => cs.foldRight(AnyChar(c): Exp){(y, a) => Seq(AnyChar(y), a)}
         }
         lazy val CLASS: Parser[Exp] = (loc <~ chr('[')) ~ (not(chr(']')) ~> Range).* <~ ']' ~> Spacing ^^ {
-            case pos ~ (r::rs) => rs.foldLeft(r){(a, y) => Seq(a, y)}
+            case pos ~ (r::rs) => rs.foldLeft(r){(a, y) => Seq(y, a)}
         }
         lazy val Range: Parser[Exp] = (
             CHAR ~ '-' ~ CHAR ^^ { case f~_~t => (f to t).foldRight(AnyChar(t): Exp){(x, acc) => Seq(AnyChar(x), acc)} }
@@ -89,15 +90,16 @@ object GpegParser{
         lazy val EndOfFile = not(any)
     }
 
-    def main(args: Array[String]) = {
-        val file = new PrintWriter(args(0))
-        //val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
-        val g = parse(new FileReader(args(1)))
+    def main(args: Array[String]):Unit = {
+        //val file = new PrintWriter(args(0))
+        val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
+        //val g = parse(new FileReader(args(1)))
         println(g);
-        file.write(g.toString())
-        file.close()
-        val result = peg_parse(g,"1+1");
-        println(result)
+        optimize(g);
+        //file.write(g.toString())
+        //file.close()
+        //val result = peg_parse(g,"1+1");
+        //println(result)
     }
 
     def file2string(filename: String): String = {
