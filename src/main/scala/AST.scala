@@ -17,13 +17,13 @@ object AST {
   case class FoldMany(label: Symbol, lhs: Exp, rhs: Exp) extends Exp 
   case class LinkTree(label: Symbol, body: Exp) extends Exp
 
-  case class PGrammar(start: Exp, rules: Map[Symbol,PExp])
+  case class PGrammar(start: PExp, rules: Map[Symbol,PExp])
   sealed trait PExp
   case class PSucc() extends PExp
   case class PFail() extends PExp
   case class PMatch(bytes: Array[Byte], next: PExp) extends PExp
   case class PCall(name: Symbol, next: PExp) extends PExp
-  case class PIf(condition: PExp, succ: PExp, fail: PExp) extends PExp
+  case class PIf(lhs: PExp, rhs: PExp, next: PExp) extends PExp
   case class PUnion(lhs: PExp, rhs: PExp) extends PExp
   case class PNot(body: PExp, next: PExp) extends PExp
   case class PAnd(body: PExp, next: PExp) extends PExp

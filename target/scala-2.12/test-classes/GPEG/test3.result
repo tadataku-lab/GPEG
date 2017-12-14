@@ -1,1 +1,1 @@
-Grammar(Alt(NonTerm('b),Alt(NonTerm('SS),NonTerm('SSS))),List(('S,Alt(NonTerm('b),Alt(NonTerm('SS),NonTerm('SSS))))))
+Grammar(Alt(NonTerm('SSS),Alt(NonTerm('SS),NonTerm('b))),List(('S,Alt(NonTerm('SSS),Alt(NonTerm('SS),NonTerm('b))))))

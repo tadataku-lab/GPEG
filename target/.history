@@ -210,3 +210,35 @@ run
 run src/test/resources/GPEG/test4.result src/test/resources/GPEG/test4.gpeg
 run src/test/resources/GPEG/math.result src/test/resources/GPEG/math.gpeg
 test
+compile
+tun
+run
+compile
+run
+compile
+run
+compile
+run
+compile
+run
+test
+compile
+run
+compile
+run
+compile
+run
+compile
+run
+compile
+run
+compile
+run
+compile
+run
+compile
+run
+test
+run src/test/resources/GPEG/test3.result src/test/resources/GPEG/test3.gpeg
+run src/test/resources/GPEG/math.result src/test/resources/GPEG/math.gpeg
+test

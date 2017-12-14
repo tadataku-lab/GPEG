@@ -1,12 +1,13 @@
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:5:18: Unused import[0m
-[0m[[0m[33mwarn[0m] [0m[0mimport PegParser._[0m
-[0m[[0m[33mwarn[0m] [0m[0m                 ^[0m
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:30:54: match may not be exhaustive.[0m
-[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following input: Nil[0m
-[0m[[0m[33mwarn[0m] [0m[0m        lazy val Sequence: Parser[Exp] = Prefix.+ ^^ { case x::xs => [0m
-[0m[[0m[33mwarn[0m] [0m[0m                                                     ^[0m
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:57:107: match may not be exhaustive.[0m
-[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following input: ~(_, Nil)[0m
-[0m[[0m[33mwarn[0m] [0m[0m        lazy val CLASS: Parser[Exp] = (loc <~ chr('[')) ~ (not(chr(']')) ~> Range).* <~ ']' ~> Spacing ^^ {[0m
-[0m[[0m[33mwarn[0m] [0m[0m                                                                                                          ^[0m
-[0m[[0m[33mwarn[0m] [0m[0mthree warnings found[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegParser.scala:20:24: not found: type T[0m
+[0m[[0m[31merror[0m] [0m[0m        var tree: Tree[T] = null[0m
+[0m[[0m[31merror[0m] [0m[0m                       ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegParser.scala:23:42: not found: type T[0m
+[0m[[0m[31merror[0m] [0m[0m        def makeNode(name: Symbol): Tree[T] = {[0m
+[0m[[0m[31merror[0m] [0m[0m                                         ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegParser.scala:25:29: not found: type T[0m
+[0m[[0m[31merror[0m] [0m[0m                return Node[T](name, null, null)[0m
+[0m[[0m[31merror[0m] [0m[0m                            ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegParser.scala:27:29: not found: type T[0m
+[0m[[0m[31merror[0m] [0m[0m                return Node[T](name, null, null)[0m
+[0m[[0m[31merror[0m] [0m[0m                            ^[0m
+[0m[[0m[31merror[0m] [0m[0mfour errors found[0m

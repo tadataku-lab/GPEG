@@ -23,12 +23,12 @@ object GpegParser{
             case n ~ b => (n.name, b)
         }
         lazy val Expression: Parser[Exp] = (
-            Sequence ~ (BAR ~> Sequence).+ ^^ { case x ~ xs => xs.foldLeft(x){(a, y) => Alt(y, a)}}
-            | Sequence ~ (SLASH ~> Sequence).+ ^^ { case x ~ xs => xs.foldLeft(x){(a, y) => Choice(y, a)}}
+            Sequence ~ (BAR ~> Sequence).+ ^^ { case x ~ (xs:+tx) => (x::xs).foldRight(tx){(y, a) => Alt(y, a)}}
+            | Sequence ~ (SLASH ~> Sequence).+ ^^ { case x ~ (xs:+tx) => (x::xs).foldRight(tx){(y, a) => Choice(y, a)}}
             | Sequence
         )
-        lazy val Sequence: Parser[Exp] = Prefix.+ ^^ { case x::xs => 
-            xs.foldLeft(x){(a, y) => Seq(y, a)}
+        lazy val Sequence: Parser[Exp] = Prefix.+ ^^ { case (xs:+x) => 
+            xs.foldRight(x){(y, a) => Seq(y, a)}
         }
         lazy val Prefix: Parser[Exp] = (
             (loc <~ AND) ~ Suffix ^^ { case pos ~ e =>   And(e) }
@@ -94,7 +94,10 @@ object GpegParser{
         if(args.length == 0){
             val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
             println(g);
-            println(optimize(g));
+            val opt_g = optimize(g)
+            println(opt_g);
+            val result = peg_parse(opt_g,"1+1");
+            println(result)
         }else if(args.length == 1){
             val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
             val file = new PrintWriter(args(0))
@@ -106,8 +109,6 @@ object GpegParser{
             file.write(g.toString())
             file.close()
         }
-        //val result = peg_parse(g,"1+1");
-        //println(result)
     }
 
     def file2string(filename: String): String = {
