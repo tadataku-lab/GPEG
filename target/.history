@@ -251,3 +251,20 @@ compile
 run
 test
 run
+compile
+run
+compile
+run
+compile
+run
+compile
+run
+compile
+test
+run src/test/resources/GPEG/math.result src/test/resources/GPEG/math.gpeg
+run src/test/resources/GPEG/test1.result src/test/resources/GPEG/test1.gpeg
+run src/test/resources/GPEG/test2.result src/test/resources/GPEG/test2.gpeg
+run src/test/resources/GPEG/test3.result src/test/resources/GPEG/test4.gpeg
+run src/test/resources/GPEG/test3.result src/test/resources/GPEG/test3.gpeg
+run src/test/resources/GPEG/test4.result src/test/resources/GPEG/test4.gpeg
+test

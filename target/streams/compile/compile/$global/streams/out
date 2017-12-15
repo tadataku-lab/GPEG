@@ -1,19 +1,9 @@
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/CPS.scala:5:13: local var rules in method toContinuation is never set: consider using immutable val[0m
-[0m[[0m[33mwarn[0m] [0m[0m        var rules = target.rules.map( rule => (rule._1, transform(rule._2, null)))[0m
-[0m[[0m[33mwarn[0m] [0m[0m            ^[0m
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:5:18: Unused import[0m
-[0m[[0m[33mwarn[0m] [0m[0mimport PegParser._[0m
-[0m[[0m[33mwarn[0m] [0m[0m                 ^[0m
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/CPS.scala:10:9: match may not be exhaustive.[0m
-[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following inputs: Caputure(_, _), FoldMany(_, _, _), LinkTree(_, _)[0m
-[0m[[0m[33mwarn[0m] [0m[0m        target match {[0m
-[0m[[0m[33mwarn[0m] [0m[0m        ^[0m
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegParser.scala:30:11: match may not be exhaustive.[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegParser.scala:35:11: match may not be exhaustive.[0m
+[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following inputs: PAnd(_, _), PCons(_, _, _), PFail(), PFold(_, _, _, _), PIf(_, _, _), PLink(_, _, _), PMany(_, _), PNot(_, _), PSucc(), PUnion(_, _)[0m
+[0m[[0m[33mwarn[0m] [0m[0m        p.exp match {[0m
+[0m[[0m[33mwarn[0m] [0m[0m          ^[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegParser.scala:67:11: match may not be exhaustive.[0m
 [0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following inputs: PAnd(_, _), PCons(_, _, _), PFold(_, _, _, _), PLink(_, _, _), PMany(_, _), PNot(_, _), PUnion(_, _)[0m
 [0m[[0m[33mwarn[0m] [0m[0m        p.exp match {[0m
 [0m[[0m[33mwarn[0m] [0m[0m          ^[0m
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:57:107: match may not be exhaustive.[0m
-[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following input: ~(_, Nil)[0m
-[0m[[0m[33mwarn[0m] [0m[0m        lazy val CLASS: Parser[Exp] = (loc <~ chr('[')) ~ (not(chr(']')) ~> Range).* <~ ']' ~> Spacing ^^ {[0m
-[0m[[0m[33mwarn[0m] [0m[0m                                                                                                          ^[0m
-[0m[[0m[33mwarn[0m] [0m[0m5 warnings found[0m
+[0m[[0m[33mwarn[0m] [0m[0mtwo warnings found[0m

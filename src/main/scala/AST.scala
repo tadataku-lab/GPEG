@@ -1,7 +1,7 @@
  
 object AST {
 
-  case class Grammar(start: Exp, rules: List[(Symbol,Exp)])
+  case class Grammar(start: Symbol, rules: List[(Symbol,Exp)])
   sealed trait Exp 
   case class Empty() extends Exp
   case class Any() extends Exp
@@ -17,7 +17,7 @@ object AST {
   case class FoldMany(label: Symbol, lhs: Exp, rhs: Exp) extends Exp 
   case class LinkTree(label: Symbol, body: Exp) extends Exp
 
-  case class PGrammar(start: PExp, rules: Map[Symbol,PExp])
+  case class PGrammar(start: Symbol, rules: Map[Symbol,PExp])
   sealed trait PExp
   case class PSucc() extends PExp
   case class PFail() extends PExp

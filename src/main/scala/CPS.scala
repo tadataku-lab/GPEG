@@ -3,7 +3,7 @@ import AST._
 object CPS{
     def toContinuation(target: Grammar):PGrammar = {
         var rules = target.rules.map( rule => (rule._1, transform(rule._2, null)))
-        return PGrammar(rules.head._2, rules.toMap)
+        return PGrammar(target.start, rules.toMap)
     }
 
     def transform(target: Exp, next: Exp): PExp = {

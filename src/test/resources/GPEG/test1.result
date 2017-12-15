@@ -1,1 +1,1 @@
-Grammar(NonTerm('B),List(('A,NonTerm('B))))
+Grammar('A,List(('A,NonTerm('B))))

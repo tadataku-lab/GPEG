@@ -17,7 +17,7 @@ object GpegParser{
         private def chr(c: Char): Parser[Char] = c
         private def crange(f: Char, t: Char): Parser[Char] = elem("[]", c => f <= c && c <= t)
         lazy val GRAMMER: Parser[Grammar] = (loc <~ Spacing) ~ Definition.+ <~ EndOfFile ^^ {
-            case pos ~ rules =>  Grammar( rules.head._2, rules)
+            case pos ~ rules =>  Grammar( rules.head._1, rules)
         }
         lazy val Definition: Parser[(Symbol,Exp)] = (Nonterminal <~ (LEFTARROW | EQ)) ~ Expression <~ SEMI_COLON ^^ {
             case n ~ b => (n.name, b)
