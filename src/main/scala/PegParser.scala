@@ -55,7 +55,7 @@ object PegParser{
                         buf.exp = next
                         dispatch(buf)
                     }else{
-                    PFail()
+                        PFail()
                     }
                 }
             }

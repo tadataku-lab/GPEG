@@ -242,3 +242,12 @@ test
 run src/test/resources/GPEG/test3.result src/test/resources/GPEG/test3.gpeg
 run src/test/resources/GPEG/math.result src/test/resources/GPEG/math.gpeg
 test
+run
+compile
+run
+compile
+run
+compile
+run
+test
+run

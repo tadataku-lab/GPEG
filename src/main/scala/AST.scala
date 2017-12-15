@@ -21,7 +21,11 @@ object AST {
   sealed trait PExp
   case class PSucc() extends PExp
   case class PFail() extends PExp
-  case class PMatch(bytes: Array[Byte], next: PExp) extends PExp
+  case class PMatch(bytes: Array[Byte], next: PExp) extends PExp{
+    override def toString: String = {
+      "PMatch(" + (bytes.map(_.toChar)).mkString + "," + next.toString +")"
+    }
+  }
   case class PCall(name: Symbol, next: PExp) extends PExp
   case class PIf(lhs: PExp, rhs: PExp, next: PExp) extends PExp
   case class PUnion(lhs: PExp, rhs: PExp) extends PExp

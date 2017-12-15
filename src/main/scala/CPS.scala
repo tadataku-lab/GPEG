@@ -1,7 +1,7 @@
 import AST._
 
-object Optimization{
-    def optimize(target: Grammar):PGrammar = {
+object CPS{
+    def toContinuation(target: Grammar):PGrammar = {
         var rules = target.rules.map( rule => (rule._1, transform(rule._2, null)))
         return PGrammar(rules.head._2, rules.toMap)
     }

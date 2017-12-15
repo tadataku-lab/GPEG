@@ -4,7 +4,7 @@ import java.io._
 import AST._
 import PegParser._
 import scala.io.Source
-import Optimization._
+import CPS._
 
 object GpegParser{
     case class Pos(line: Int, column: Int)
@@ -94,10 +94,10 @@ object GpegParser{
         if(args.length == 0){
             val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
             println(g);
-            val opt_g = optimize(g)
-            println(opt_g);
-            val result = peg_parse(opt_g,"1+1");
-            println(result)
+            val pg = toContinuation(g)
+            println(pg);
+            //val result = peg_parse(opt_g,"1+1");
+            //println(result)
         }else if(args.length == 1){
             val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
             val file = new PrintWriter(args(0))
