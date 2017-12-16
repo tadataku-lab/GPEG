@@ -1,31 +1,4 @@
-[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/test/scala/test.scala:9:12: reference to parse is ambiguous;[0m
-[0m[[0m[31merror[0m] [0m[0mit is imported twice in the same scope by[0m
-[0m[[0m[31merror[0m] [0m[0mimport PegParser._[0m
-[0m[[0m[31merror[0m] [0m[0mand import GpegParser._[0m
-[0m[[0m[31merror[0m] [0m[0m    assert(parse(new FileReader("src/test/resources/GPEG/test1.gpeg")).toString == file2string("src/test/resources/GPEG/test1.result"))[0m
-[0m[[0m[31merror[0m] [0m[0m           ^[0m
-[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/test/scala/test.scala:13:12: reference to parse is ambiguous;[0m
-[0m[[0m[31merror[0m] [0m[0mit is imported twice in the same scope by[0m
-[0m[[0m[31merror[0m] [0m[0mimport PegParser._[0m
-[0m[[0m[31merror[0m] [0m[0mand import GpegParser._[0m
-[0m[[0m[31merror[0m] [0m[0m    assert(parse(new FileReader("src/test/resources/GPEG/test2.gpeg")).toString == file2string("src/test/resources/GPEG/test2.result"))[0m
-[0m[[0m[31merror[0m] [0m[0m           ^[0m
-[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/test/scala/test.scala:17:12: reference to parse is ambiguous;[0m
-[0m[[0m[31merror[0m] [0m[0mit is imported twice in the same scope by[0m
-[0m[[0m[31merror[0m] [0m[0mimport PegParser._[0m
-[0m[[0m[31merror[0m] [0m[0mand import GpegParser._[0m
-[0m[[0m[31merror[0m] [0m[0m    assert(parse(new FileReader("src/test/resources/GPEG/test3.gpeg")).toString == file2string("src/test/resources/GPEG/test3.result"))[0m
-[0m[[0m[31merror[0m] [0m[0m           ^[0m
-[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/test/scala/test.scala:21:12: reference to parse is ambiguous;[0m
-[0m[[0m[31merror[0m] [0m[0mit is imported twice in the same scope by[0m
-[0m[[0m[31merror[0m] [0m[0mimport PegParser._[0m
-[0m[[0m[31merror[0m] [0m[0mand import GpegParser._[0m
-[0m[[0m[31merror[0m] [0m[0m    assert(parse(new FileReader("src/test/resources/GPEG/test4.gpeg")).toString == file2string("src/test/resources/GPEG/test4.result"))[0m
-[0m[[0m[31merror[0m] [0m[0m           ^[0m
-[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/test/scala/test.scala:25:12: reference to parse is ambiguous;[0m
-[0m[[0m[31merror[0m] [0m[0mit is imported twice in the same scope by[0m
-[0m[[0m[31merror[0m] [0m[0mimport PegParser._[0m
-[0m[[0m[31merror[0m] [0m[0mand import GpegParser._[0m
-[0m[[0m[31merror[0m] [0m[0m    assert(parse(new FileReader("src/test/resources/GPEG/math.gpeg")).toString == file2string("src/test/resources/GPEG/math.result"))[0m
-[0m[[0m[31merror[0m] [0m[0m           ^[0m
-[0m[[0m[31merror[0m] [0m[0m5 errors found[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/test/scala/test.scala:27:25: value toContinuation is not a member of object GpegParser[0m
+[0m[[0m[31merror[0m] [0m[0m    val pg = GpegParser.toContinuation(g)[0m
+[0m[[0m[31merror[0m] [0m[0m                        ^[0m
+[0m[[0m[31merror[0m] [0m[0mone error found[0m

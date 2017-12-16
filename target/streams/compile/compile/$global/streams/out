@@ -1,8 +1,5 @@
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegParser.scala:11:13: local var sb in method toString is never set: consider using immutable val[0m
-[0m[[0m[33mwarn[0m] [0m[0m        var sb = new StringBuilder[0m
-[0m[[0m[33mwarn[0m] [0m[0m            ^[0m
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegParser.scala:49:11: match may not be exhaustive.[0m
-[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following inputs: PCons(_, _, _), PFold(_, _, _, _), PLink(_, _, _), PUnion(_, _)[0m
-[0m[[0m[33mwarn[0m] [0m[0m        p.exp match {[0m
-[0m[[0m[33mwarn[0m] [0m[0m          ^[0m
-[0m[[0m[33mwarn[0m] [0m[0mtwo warnings found[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:57:107: match may not be exhaustive.[0m
+[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following input: ~(_, Nil)[0m
+[0m[[0m[33mwarn[0m] [0m[0m        lazy val CLASS: Parser[Exp] = (loc <~ chr('[')) ~ (not(chr(']')) ~> Range).* <~ ']' ~> Spacing ^^ {[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                                                                                          ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m

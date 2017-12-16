@@ -96,7 +96,7 @@ object GpegParser{
             println(g);
             val pg = toContinuation(g)
             println(pg);
-            val result = peg_parse(pg,"1+1");
+            val result = peg_parse(pg,"1*2+12");
             result match {
                 case Some(body) => println(body._1)
                 case None => println("can't parse")
