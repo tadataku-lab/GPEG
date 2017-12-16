@@ -268,3 +268,11 @@ run src/test/resources/GPEG/test3.result src/test/resources/GPEG/test4.gpeg
 run src/test/resources/GPEG/test3.result src/test/resources/GPEG/test3.gpeg
 run src/test/resources/GPEG/test4.result src/test/resources/GPEG/test4.gpeg
 test
+compile
+run
+compile
+run
+compile
+run
+compile
+run

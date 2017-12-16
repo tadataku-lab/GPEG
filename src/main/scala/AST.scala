@@ -20,7 +20,7 @@ object AST {
   case class PGrammar(start: Symbol, rules: Map[Symbol,PExp])
   sealed trait PExp
   case class PSucc() extends PExp
-  case class PFail() extends PExp
+  case class PFail(msg: String) extends PExp
   case class PMatch(bytes: Array[Byte], next: PExp) extends PExp{
     override def toString: String = {
       "PMatch(" + (bytes.map(_.toChar)).mkString + "," + next.toString +")"

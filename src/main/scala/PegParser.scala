@@ -27,12 +27,16 @@ object PegParser{
     }
 
     def exec(start: Symbol, p: ParserContext): Option[(Tree, String)]={
-        dispatch(Node(start,null), p)
-        return Some((p.tree, p.input.substring(p.pos)))
+        val (treeList, new_p) = parse(List.empty[Tree], p)
+        return Some((Node(start, treeList), new_p.input.substring(new_p.pos)))
     }
 
     def parse(tree: List[Tree], p: ParserContext):(List[Tree], ParserContext) = {
         p.exp match {
+            case PSucc() => {
+                return (tree, p)
+            }
+            case PFail(msg) => throw new RuntimeException(msg)
             case PMatch(bytes, next) => {
                 val s = p.input.substring(p.pos, p.pos + bytes.length)
                 if(bytesEq(bytes,s)){
@@ -40,7 +44,10 @@ object PegParser{
                     p.pos = p.pos + bytes.length
                     tree:+Leaf(s)
                     parse(tree, p)
-                }else throw new RuntimeException(s + ": don't match " + (bytes.map(_.toChar)).mkString)
+                }else {
+                    p.exp = PFail(s + ": don't match " + (bytes.map(_.toChar)).mkString)
+                    (tree, p)
+                }
             }
             case PCall(symbol, next) => {
                 rules.get(symbol) match {
@@ -54,6 +61,109 @@ object PegParser{
                     case None => throw new RuntimeException(symbol + ": Rule can not be found")
                 }
             }
+            case PIf(lhs, rhs, next) => {
+                p.exp = lhs
+                val (lhs_tree, lhs_p) = parse(tree, p)
+                lhs_p.exp match {
+                    case PFail(_) => {
+                        p.exp = rhs
+                        val (rhs_tree, rhs_p) = parse(tree,p)
+                        rhs_p.exp match {
+                            case PFail(msg) => {
+                                p.exp = PFail(msg)
+                                (tree, p)
+                            }
+                            case _ => {
+                                rhs_p.exp = next
+                                parse(rhs_tree, rhs_p) 
+                            }
+                        }
+                    }
+                    case _ => {
+                        lhs_p.exp = next
+                        parse(lhs_tree, lhs_p)
+                    }
+                }
+            }
+            /**
+            case PUnion(lhs, rhs) => {
+                p.exp = lhs
+                val (lhs_tree, lhs_p) = parse(tree, p)
+                lhs_p.exp match {
+                    case PFail(_) => {
+                        val (rhs_tree, rhs_p) = parse(tree,p)
+                        rhs_p.exp match {
+                            case PFail(msg) => throw new RuntimeException(msg)
+                            case _ => {
+                                parse(rhs_tree, rhs_p) 
+                            }
+                        }
+                    }
+                    case _ => {
+                        val (rhs_tree, rhs_p) = parse(tree,p)
+                        rhs_p.exp match {
+                            case PFail(_) => {
+                                parse(lhs_tree, lhs_p)
+                            }
+                            case _ => {
+                                Node("ambiguity", List())
+                                (tree, p)
+                            }
+                        }
+                    }
+                }
+            }
+            */
+
+            case PNot(body, next) => {
+                p.exp = body
+                val (new_tree, new_p) = parse(tree, p)
+                new_p.exp match {
+                    case PFail(_) => {
+                        p.exp = next
+                        parse(tree, p)
+                    } 
+                    case _ => {
+                        p.exp = PFail("Match PExp: " + body)
+                        parse(tree, p)
+                    }
+                }
+            }
+
+            case PAnd(body, next) => {
+                p.exp = body
+                val (new_tree, new_p) = parse(tree, p)
+                new_p.exp match {
+                    case PFail(_) => {
+                        p.exp = PFail("Dont't match PExp: " + body)
+                        parse(tree, p)
+                    } 
+                    case _ => {
+                        p.exp = next
+                        parse(tree, p)
+                    }
+                }
+            }
+
+            case PMany(body, next) => {
+                p.exp = body
+                val (new_tree, new_p) = many(tree, p)
+                new_p.exp = next
+                parse(new_tree, new_p)
+            }
+
+        }
+    }
+
+    def many(tree: List[Tree], p: ParserContext): (List[Tree], ParserContext) = {
+        val body = p.exp
+        val (new_tree, new_p) = parse(tree,p)
+        p.exp match {
+            case PFail(_) => return (tree, p)
+            case _ => {
+                new_p.exp = body
+                many(new_tree, new_p)
+            }
         }
     }
 
@@ -62,6 +172,8 @@ object PegParser{
             bytes.sameElements(string.getBytes)
         }else throw new Exception("don't match length")
     }
+
+    /**
 
     def dispatch(tree: Tree, p: ParserContext):PExp = {
         p.exp match {
@@ -110,5 +222,7 @@ object PegParser{
             p
         }
     }
+
+    */
 
 }

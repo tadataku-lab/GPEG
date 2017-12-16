@@ -96,8 +96,8 @@ object GpegParser{
             println(g);
             val pg = toContinuation(g)
             println(pg);
-            //val result = peg_parse(opt_g,"1+1");
-            //println(result)
+            val result = peg_parse(pg,"1+1");
+            println(result)
         }else if(args.length == 1){
             val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
             val file = new PrintWriter(args(0))
