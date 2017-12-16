@@ -1,8 +1,22 @@
 import AST._
 
 sealed trait Tree
-case class Leaf(v: String) extends Tree
-case class Node(name: Symbol, next: List[Tree]) extends Tree
+case class Leaf(v: String) extends Tree{
+    override def toString: String = {
+      "[" + v + "]" 
+    }
+}
+case class Node(name: Symbol, next: List[Tree]) extends Tree{
+    override def toString: String = {
+        var sb = new StringBuilder
+        sb.append("[" + name + " ")
+        for (tree <- next){
+            sb.append(tree)
+        }
+        sb.append("]")
+        sb.toString
+    }
+}
 
 object PegParser{
 
@@ -38,12 +52,16 @@ object PegParser{
             }
             case PFail(msg) => throw new RuntimeException(msg)
             case PMatch(bytes, next) => {
+                if((bytes.length + p.pos) > p.input.length){
+                    p.exp = PFail("String index out of range:" + (bytes.length + p.pos))
+                    return (tree, p)
+                }
                 val s = p.input.substring(p.pos, p.pos + bytes.length)
                 if(bytesEq(bytes,s)){
                     p.exp = next
                     p.pos = p.pos + bytes.length
-                    tree:+Leaf(s)
-                    parse(tree, p)
+                    val new_tree = tree:+Leaf(s)
+                    parse(new_tree, p)
                 }else {
                     p.exp = PFail(s + ": don't match " + (bytes.map(_.toChar)).mkString)
                     (tree, p)
@@ -53,10 +71,14 @@ object PegParser{
                 rules.get(symbol) match {
                     case Some(exp) => {
                         p.exp = exp
-                        val result = parse(tree, p)
+                        val result = parse(List.empty[Tree], p)
+                        var new_tree = List.empty[Tree]
+                        p.exp match {
+                            case PFail(_) => /**do nothing*/
+                            case _ => {new_tree = tree:+Node(symbol,result._1)}
+                        }
                         p.exp = next
-                        tree:+Node(symbol,result._1)
-                        parse(tree, p)
+                        parse(new_tree, p)
                     }
                     case None => throw new RuntimeException(symbol + ": Rule can not be found")
                 }

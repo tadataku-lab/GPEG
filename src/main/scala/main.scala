@@ -97,7 +97,10 @@ object GpegParser{
             val pg = toContinuation(g)
             println(pg);
             val result = peg_parse(pg,"1+1");
-            println(result)
+            result match {
+                case Some(body) => println(body._1)
+                case None => println("can't parse")
+            }
         }else if(args.length == 1){
             val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
             val file = new PrintWriter(args(0))
