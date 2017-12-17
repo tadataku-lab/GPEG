@@ -29,15 +29,18 @@ object PegParser{
             case Some(exp) => exp
             case None => throw new RuntimeException(g.start + ": Rule can not be found")
         }
-        val parser_context = new ParserContext(input, start)
+        val parser_context = new ParserContext(input, 0, start)
         return exec(g.start, parser_context)
     }
 
-    class ParserContext(in: String, start: PExp){
+    class ParserContext(in: String, _pos: Int, start: PExp){
         val input = in
-        var pos = 0
-        var tree = null
+        var pos = _pos
         var exp = start
+
+        def copy(): ParserContext = {
+            new ParserContext(input, pos, exp.copy)
+        }
     }
 
     def exec(start: Symbol, p: ParserContext): Option[(Tree, String)]={
@@ -63,7 +66,7 @@ object PegParser{
                     val new_tree = tree:+Leaf(s)
                     parse(new_tree, p)
                 }else {
-                    p.exp = PFail(s + ": don't match " + (bytes.map(_.toChar)).mkString)
+                    p.exp = PFail("pos: " + (p.pos + 1) + " string: "+ s + " -> don't match " + (bytes.map(_.toChar)).mkString)
                     (tree, p)
                 }
             }
@@ -78,6 +81,7 @@ object PegParser{
                             case _ => {new_tree = tree:+Node(symbol,result._1)}
                         }
                         p.exp = next
+                        p.pos = result._2.pos
                         parse(new_tree, p)
                     }
                     case None => throw new RuntimeException(symbol + ": Rule can not be found")
@@ -107,36 +111,42 @@ object PegParser{
                     }
                 }
             }
-            /**
-            case PUnion(lhs, rhs) => {
-                p.exp = lhs
-                val (lhs_tree, lhs_p) = parse(tree, p)
+
+            case PUnion(lhs, rhs) => {               
+                p.exp = lhs.copy
+                val (lhs_tree, lhs_p) = parse(tree, p.copy)
                 lhs_p.exp match {
                     case PFail(_) => {
-                        val (rhs_tree, rhs_p) = parse(tree,p)
+                        p.exp = rhs.copy
+                        val (rhs_tree, rhs_p) = parse(tree,p.copy)
                         rhs_p.exp match {
-                            case PFail(msg) => throw new RuntimeException(msg)
+                            case PFail(msg) => {                                                              
+                                p.exp = PFail(msg)
+                                (tree, p)
+                            }
                             case _ => {
-                                parse(rhs_tree, rhs_p) 
+                                (rhs_tree, rhs_p) 
                             }
                         }
                     }
                     case _ => {
-                        val (rhs_tree, rhs_p) = parse(tree,p)
+                        p.exp = rhs.copy
+                        val (rhs_tree, rhs_p) = parse(tree,p.copy)
                         rhs_p.exp match {
                             case PFail(_) => {
-                                parse(lhs_tree, lhs_p)
+                                (lhs_tree, lhs_p)
                             }
                             case _ => {
-                                Node("ambiguity", List())
-                                (tree, p)
+                                if(lhs_p.pos == rhs_p.pos){
+                                    val new_tree = tree:+Node(Symbol("ambiguity"), List(Node(Symbol("lhs"),lhs_tree), Node(Symbol("rhs"),rhs_tree)))
+                                    (new_tree, lhs_p)
+                                }else throw new RuntimeException("Don't hold confluence")
                             }
                         }
                     }
                 }
             }
-            */
-
+            
             case PNot(body, next) => {
                 p.exp = body
                 val (new_tree, new_p) = parse(tree, p)

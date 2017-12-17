@@ -28,10 +28,6 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$Grammar.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	GPEG/rule.gpeg[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/GPEG/rule.gpeg[0m
-[0m[[0m[0mdebug[0m] [0m[0m	AST$PCons.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$PCons.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	AST$PLink$.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$PLink$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$AnyChar.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$AnyChar.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$PCall$.class[0m
@@ -40,8 +36,6 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/PegParser$ParserContext.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	GpegParser.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/GpegParser.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	AST$PFold.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$PFold.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$NonTerm$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$NonTerm$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$PUnion$.class[0m
@@ -74,8 +68,6 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$PIf$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	GpegParser$Pos$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/GpegParser$Pos$.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	AST$PLink.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$PLink.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$PMatch$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$PMatch$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$And.class[0m
@@ -114,8 +106,6 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$PSucc$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	Node.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Node.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	AST$PFold$.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$PFold$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$PAnd.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$PAnd.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$PCall.class[0m
@@ -138,8 +128,6 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$FoldMany$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$Exp.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$Exp.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	AST$PCons$.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$PCons$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$Not$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$Not$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$.class[0m
