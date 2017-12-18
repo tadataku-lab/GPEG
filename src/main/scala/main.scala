@@ -97,7 +97,8 @@ object GpegParser{
             val pg = toContinuation(g)
             println(pg);
             val start = System.currentTimeMillis
-            val result = peg_parse(pg,"((((((((((((((1)))))))))))))");
+            val result = peg_parse(pg,"((((((((((((((1))))))))))))))");
+            //val result = peg_parse(pg,"1+1");
             println((System.currentTimeMillis - start) + "ms")
             result match {
                 case Some(body) => println(body._1)

@@ -56,6 +56,7 @@ object PegParser{
                 return (tree, p)
             }
             case PFail(msg) => throw new RuntimeException(msg)
+            
             case PMatch(bytes, next) => {
                 if((bytes.length + p.pos) > p.input.length){
                     p.exp = PFail("String index out of range:" + (bytes.length + p.pos))
@@ -65,8 +66,13 @@ object PegParser{
                 if(bytesEq(bytes,s)){
                     p.exp = next
                     p.pos = p.pos + bytes.length
-                    val new_tree = tree:+Leaf(s)
-                    parse(new_tree, p)
+                    if((bytes.length + p.pos) == p.input.length){
+                        val new_tree = tree:+Leaf(s)
+                        (new_tree, p)
+                    }else{
+                        val new_tree = tree:+Leaf(s)
+                        parse(new_tree, p)
+                    }
                 }else {
                     p.exp = PFail("pos: " + (p.pos + 1) + " string: "+ s + " -> don't match " + (bytes.map(_.toChar)).mkString)
                     (tree, p)
@@ -91,7 +97,7 @@ object PegParser{
                         val result = parse(List.empty[Tree], p)
                         var new_tree = List.empty[Tree]
                         p.exp match {
-                            case PFail(_) => do nothing
+                            case PFail(_) => //do nothing
                             case _ => {new_tree = tree:+Node(symbol,result._1)}
                         }
                         p.exp = next
@@ -102,14 +108,16 @@ object PegParser{
                 }
             }
             */
+            
             case PCall(symbol, next) => {
                 p.hash_table.get((symbol,p.pos)) match {
                     case Some((memo_tree, memo_pos)) => {
+                        println("memo")
                         p.exp = next
                         p.pos = memo_pos
                         var new_tree = List.empty[Tree]
                         memo_tree match {
-                            case null => /**do nothing*/
+                            case null => //do nothing
                             case _ => {new_tree = tree:+Node(symbol,memo_tree)}
                         }
                         parse(new_tree, p)
@@ -129,9 +137,10 @@ object PegParser{
                                         p.hash_table += ((symbol,memo_pos) -> (result._1, result._2.pos))
                                         new_tree = tree:+Node(symbol,result._1)
                                     }
-                                }
+                                } 
                                 p.exp = next
                                 p.pos = result._2.pos
+                                p.hash_table = result._2.hash_table
                                 parse(new_tree, p)
                             }
                             case None => throw new RuntimeException(symbol + ": Rule can not be found")
@@ -139,6 +148,7 @@ object PegParser{
                     }
                 }
             }
+            
             case PIf(lhs, rhs, next) => {
                 p.exp = lhs
                 val (lhs_tree, lhs_p) = parse(tree, p.copy)

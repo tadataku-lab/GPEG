@@ -1,10 +1,10 @@
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegParser.scala:126:76: Adapting argument list by creating a 2-tuple: this may not be what you want.[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegParser.scala:134:76: Adapting argument list by creating a 2-tuple: this may not be what you want.[0m
 [0m[[0m[33mwarn[0m] [0m[0m        signature: ArrowAssoc.->[B](y: B): (A, B)[0m
 [0m[[0m[33mwarn[0m] [0m[0m  given arguments: null, result._2.pos[0m
 [0m[[0m[33mwarn[0m] [0m[0m after adaptation: ArrowAssoc.->((null, result._2.pos): (Null, Int))[0m
 [0m[[0m[33mwarn[0m] [0m[0m                                        p.hash_table += ((symbol,memo_pos) -> (null, result._2.pos))[0m
 [0m[[0m[33mwarn[0m] [0m[0m                                                                           ^[0m
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegParser.scala:129:76: Adapting argument list by creating a 2-tuple: this may not be what you want.[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegParser.scala:137:76: Adapting argument list by creating a 2-tuple: this may not be what you want.[0m
 [0m[[0m[33mwarn[0m] [0m[0m        signature: ArrowAssoc.->[B](y: B): (A, B)[0m
 [0m[[0m[33mwarn[0m] [0m[0m  given arguments: result._1, result._2.pos[0m
 [0m[[0m[33mwarn[0m] [0m[0m after adaptation: ArrowAssoc.->((result._1, result._2.pos): (List[Tree], Int))[0m
