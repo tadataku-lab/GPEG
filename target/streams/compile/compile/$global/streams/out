@@ -1,15 +1,16 @@
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/CPS.scala:5:13: local var rules in method toContinuation is never set: consider using immutable val[0m
-[0m[[0m[33mwarn[0m] [0m[0m        var rules = target.rules.map( rule => (rule._1, transform(rule._2, null)))[0m
-[0m[[0m[33mwarn[0m] [0m[0m            ^[0m
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegParser.scala:11:13: local var sb in method toString is never set: consider using immutable val[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegParser.scala:126:76: Adapting argument list by creating a 2-tuple: this may not be what you want.[0m
+[0m[[0m[33mwarn[0m] [0m[0m        signature: ArrowAssoc.->[B](y: B): (A, B)[0m
+[0m[[0m[33mwarn[0m] [0m[0m  given arguments: null, result._2.pos[0m
+[0m[[0m[33mwarn[0m] [0m[0m after adaptation: ArrowAssoc.->((null, result._2.pos): (Null, Int))[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                        p.hash_table += ((symbol,memo_pos) -> (null, result._2.pos))[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                                                           ^[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegParser.scala:129:76: Adapting argument list by creating a 2-tuple: this may not be what you want.[0m
+[0m[[0m[33mwarn[0m] [0m[0m        signature: ArrowAssoc.->[B](y: B): (A, B)[0m
+[0m[[0m[33mwarn[0m] [0m[0m  given arguments: result._1, result._2.pos[0m
+[0m[[0m[33mwarn[0m] [0m[0m after adaptation: ArrowAssoc.->((result._1, result._2.pos): (List[Tree], Int))[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                        p.hash_table += ((symbol,memo_pos) -> (result._1, result._2.pos))[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                                                           ^[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegParser.scala:12:13: local var sb in method toString is never set: consider using immutable val[0m
 [0m[[0m[33mwarn[0m] [0m[0m        var sb = new StringBuilder[0m
 [0m[[0m[33mwarn[0m] [0m[0m            ^[0m
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/CPS.scala:10:9: match may not be exhaustive.[0m
-[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following inputs: Caputure(_, _), FoldMany(_, _, _), LinkTree(_, _)[0m
-[0m[[0m[33mwarn[0m] [0m[0m        target match {[0m
-[0m[[0m[33mwarn[0m] [0m[0m        ^[0m
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:57:107: match may not be exhaustive.[0m
-[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following input: ~(_, Nil)[0m
-[0m[[0m[33mwarn[0m] [0m[0m        lazy val CLASS: Parser[Exp] = (loc <~ chr('[')) ~ (not(chr(']')) ~> Range).* <~ ']' ~> Spacing ^^ {[0m
-[0m[[0m[33mwarn[0m] [0m[0m                                                                                                          ^[0m
-[0m[[0m[33mwarn[0m] [0m[0mfour warnings found[0m
+[0m[[0m[33mwarn[0m] [0m[0mthree warnings found[0m

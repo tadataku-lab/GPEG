@@ -293,3 +293,6 @@ run
 compile
 run
 test
+test]
+run
+test

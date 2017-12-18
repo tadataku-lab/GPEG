@@ -1,4 +1,5 @@
 import AST._
+import scala.collection.mutable.{HashMap}
 
 sealed trait Tree
 case class Leaf(v: String) extends Tree{
@@ -37,6 +38,7 @@ object PegParser{
         val input = in
         var pos = _pos
         var exp = start
+        var hash_table = new HashMap[(Symbol, Int),(List[Tree], Int)]
 
         def copy(): ParserContext = {
             new ParserContext(input, pos, exp.copy)
@@ -81,6 +83,7 @@ object PegParser{
                 val new_tree = tree:+Leaf(s)
                 parse(new_tree, p)        
             }
+            /**
             case PCall(symbol, next) => {
                 rules.get(symbol) match {
                     case Some(exp) => {
@@ -88,7 +91,7 @@ object PegParser{
                         val result = parse(List.empty[Tree], p)
                         var new_tree = List.empty[Tree]
                         p.exp match {
-                            case PFail(_) => /**do nothing*/
+                            case PFail(_) => do nothing
                             case _ => {new_tree = tree:+Node(symbol,result._1)}
                         }
                         p.exp = next
@@ -98,13 +101,51 @@ object PegParser{
                     case None => throw new RuntimeException(symbol + ": Rule can not be found")
                 }
             }
+            */
+            case PCall(symbol, next) => {
+                p.hash_table.get((symbol,p.pos)) match {
+                    case Some((memo_tree, memo_pos)) => {
+                        p.exp = next
+                        p.pos = memo_pos
+                        var new_tree = List.empty[Tree]
+                        memo_tree match {
+                            case null => /**do nothing*/
+                            case _ => {new_tree = tree:+Node(symbol,memo_tree)}
+                        }
+                        parse(new_tree, p)
+                    }
+                    case None => {
+                        rules.get(symbol) match {
+                            case Some(exp) => {
+                                val memo_pos = p.pos
+                                p.exp = exp
+                                val result = parse(List.empty[Tree], p)
+                                var new_tree = List.empty[Tree]
+                                p.exp match {
+                                    case PFail(_) => {
+                                        p.hash_table += ((symbol,memo_pos) -> (null, result._2.pos))
+                                    }
+                                    case _ => {
+                                        p.hash_table += ((symbol,memo_pos) -> (result._1, result._2.pos))
+                                        new_tree = tree:+Node(symbol,result._1)
+                                    }
+                                }
+                                p.exp = next
+                                p.pos = result._2.pos
+                                parse(new_tree, p)
+                            }
+                            case None => throw new RuntimeException(symbol + ": Rule can not be found")
+                        }
+                    }
+                }
+            }
             case PIf(lhs, rhs, next) => {
                 p.exp = lhs
-                val (lhs_tree, lhs_p) = parse(tree, p)
+                val (lhs_tree, lhs_p) = parse(tree, p.copy)
                 lhs_p.exp match {
                     case PFail(_) => {
                         p.exp = rhs
-                        val (rhs_tree, rhs_p) = parse(tree,p)
+                        val (rhs_tree, rhs_p) = parse(tree,p.copy)
                         rhs_p.exp match {
                             case PFail(msg) => {
                                 p.exp = PFail(msg)
