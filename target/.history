@@ -289,3 +289,7 @@ run
 test
 run
 test
+run
+compile
+run
+test

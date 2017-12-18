@@ -96,7 +96,9 @@ object GpegParser{
             println(g);
             val pg = toContinuation(g)
             println(pg);
-            val result = peg_parse(pg,"1*2+1");
+            val start = System.currentTimeMillis
+            val result = peg_parse(pg,"((((((((((((((1)))))))))))))");
+            println((System.currentTimeMillis - start) + "ms")
             result match {
                 case Some(body) => println(body._1)
                 case None => println("can't parse")

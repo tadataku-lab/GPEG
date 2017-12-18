@@ -10,7 +10,7 @@ object CPS{
         target match {
             case Seq(lhs,rhs) => transform(lhs, rhs)
             case Empty() => PMatch("".getBytes, transform(next, null))
-            case Any() => PMatch(null, transform(next, null))
+            case Any() => PAny(transform(next, null))
             case AnyChar(body) => PMatch(Array(body.toByte), transform(next, null))
             case NonTerm(symbol) => PCall(symbol, transform(next, null))
             case Choice(lhs, rhs) => PIf(transform(lhs, null), transform(rhs, null), transform(next, null))

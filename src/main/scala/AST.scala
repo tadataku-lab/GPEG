@@ -39,6 +39,11 @@ object AST {
       PMatch(bytes, next.copy)
     }
   }
+  case class PAny(next: PExp) extends PExp{
+    def copy(): PAny = {
+      PAny(next.copy)
+    }
+  }
   case class PCall(name: Symbol, next: PExp) extends PExp{
     def copy(): PCall = {
       PCall(name, next.copy)

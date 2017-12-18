@@ -70,6 +70,17 @@ object PegParser{
                     (tree, p)
                 }
             }
+            case PAny(next) => {
+                if((1 + p.pos) > p.input.length){
+                    p.exp = PFail("String index out of range:" + (1 + p.pos))
+                    return (tree, p)
+                }
+                val s = p.input.substring(p.pos, p.pos + 1)
+                p.exp = next
+                p.pos = p.pos + 1
+                val new_tree = tree:+Leaf(s)
+                parse(new_tree, p)        
+            }
             case PCall(symbol, next) => {
                 rules.get(symbol) match {
                     case Some(exp) => {
