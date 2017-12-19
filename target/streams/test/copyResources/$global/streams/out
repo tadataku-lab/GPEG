@@ -1,7 +1,9 @@
 [0m[[0m[0mdebug[0m] [0m[0mCopy resource mappings: [0m
 [0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/AST,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/AST)[0m
 [0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/GPEG,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/GPEG)[0m
-[0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/AST/math.ast,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/AST/math.ast)[0m
+[0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/AST/math1.ast,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/AST/math1.ast)[0m
+[0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/AST/math2.ast,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/AST/math2.ast)[0m
+[0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/AST/math3.ast,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/AST/math3.ast)[0m
 [0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/GPEG/math.gpeg,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/GPEG/math.gpeg)[0m
 [0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/GPEG/math.result,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/GPEG/math.result)[0m
 [0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/GPEG/memo.gpeg,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/GPEG/memo.gpeg)[0m

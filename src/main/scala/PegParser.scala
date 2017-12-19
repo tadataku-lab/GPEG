@@ -66,13 +66,8 @@ object PegParser{
                 if(bytesEq(bytes,s)){
                     p.exp = next
                     p.pos = p.pos + bytes.length
-                    if((bytes.length + p.pos) == p.input.length){
-                        val new_tree = tree:+Leaf(s)
-                        (new_tree, p)
-                    }else{
-                        val new_tree = tree:+Leaf(s)
-                        parse(new_tree, p)
-                    }
+                    val new_tree = tree:+Leaf(s)
+                    parse(new_tree, p)
                 }else {
                     p.exp = PFail("pos: " + (p.pos + 1) + " string: "+ s + " -> don't match " + (bytes.map(_.toChar)).mkString)
                     (tree, p)
@@ -89,7 +84,7 @@ object PegParser{
                 val new_tree = tree:+Leaf(s)
                 parse(new_tree, p)        
             }
-            /**
+            
             case PCall(symbol, next) => {
                 rules.get(symbol) match {
                     case Some(exp) => {
@@ -107,7 +102,8 @@ object PegParser{
                     case None => throw new RuntimeException(symbol + ": Rule can not be found")
                 }
             }
-            */
+            
+            /**
             
             case PCall(symbol, next) => {
                 p.hash_table.get((symbol,p.pos)) match {
@@ -148,6 +144,7 @@ object PegParser{
                     }
                 }
             }
+            */
             
             case PIf(lhs, rhs, next) => {
                 p.exp = lhs
