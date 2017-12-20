@@ -6,6 +6,7 @@ object AST {
   case class Empty() extends Exp
   case class Any() extends Exp
   case class AnyChar(body: Char) extends Exp
+  case class Str(body: String) extends Exp
   case class NonTerm(name: Symbol) extends Exp 
   case class Seq(lhs: Exp, rhs: Exp) extends Exp
   case class Choice(lhs: Exp, rhs: Exp) extends Exp

@@ -17,6 +17,11 @@ object GpegParser{
         private val any: Parser[Char] = elem(".", c => c != CharSequenceReader.EofCh)
         private def chr(c: Char): Parser[Char] = c
         private def crange(f: Char, t: Char): Parser[Char] = elem("[]", c => f <= c && c <= t)
+        private def cset(cs: Char*): Parser[Char] = elem("[]", c => cs.indexWhere(_ == c) >= 0)
+        private val escapeMap: Map[Char, Char] = Map(
+            'n' -> '\n', 'r' -> '\r', 't' -> '\t', '\'' -> '\'', '"' -> '"', '[' -> '[',
+            ']' -> ']', '\\' -> '\\'
+        )
         lazy val GRAMMER: Parser[Grammar] = (loc <~ Spacing) ~ Definition.+ <~ EndOfFile ^^ {
             case pos ~ rules =>  Grammar( rules.head._1, rules)
         }
@@ -53,7 +58,8 @@ object GpegParser{
             chr('\'') ~> (not('\'') ~> CHAR).* <~ chr('\'') <~ Spacing
             | chr('"') ~> (not('"') ~> CHAR).* <~ chr('"') <~ Spacing
             ) ^^ {
-            case pos ~ (cs:+c) => cs.foldRight(AnyChar(c): Exp){(y, a) => Seq(AnyChar(y), a)}
+            //case pos ~ (cs:+c) => cs.foldRight(AnyChar(c): Exp){(y, a) => Seq(AnyChar(y), a)}
+            case pos ~ cs => Str(cs.foldLeft(""){(acc, n) => acc + n})
         }
         lazy val CLASS: Parser[Exp] = (loc <~ chr('[')) ~ (not(chr(']')) ~> Range).* <~ ']' ~> Spacing ^^ {
             case pos ~ (r::rs) => rs.foldLeft(r){(a, y) => Seq(y, a)}
@@ -62,8 +68,9 @@ object GpegParser{
             CHAR ~ '-' ~ CHAR ^^ { case f~_~t => (f to t).foldRight(AnyChar(t): Exp){(x, acc) => Choice(AnyChar(x), acc)} }
             | CHAR ^^ { case c => AnyChar(c) }
         )
-        lazy val CHAR: Parser[Char] = ( 
-            not('\\') ~ any ^^ { case _ ~ c => c}
+        lazy val CHAR: Parser[Char] = (
+            chr('\\') ~ cset('n','r','t','\'','"','[',']','\\') ^^ { case _ ~ c => escapeMap(c) }
+            |not('\\') ~ any ^^ { case _ ~ c => c}
         )
         lazy val Nonterminal: Parser[NonTerm] = loc ~ NonterminalStart ~ NonterminalCont.* <~ Spacing ^^ {
             case pos ~ s ~ c =>  NonTerm(Symbol("" + s + c.foldLeft("")(_ + _)))
@@ -93,18 +100,34 @@ object GpegParser{
 
     def main(args: Array[String]):Unit = {
         if(args.length == 0){
-            val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
-            //val g = parse(new FileReader("src/test/resources/GPEG/memo.gpeg"))
+            //val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
+            val g = parse(new FileReader("src/test/resources/GPEG/test5.gpeg"))
             println(g);
             val pg = toContinuation(g)
             println(pg);
+            /**
+            val source = Source.fromFile("src/main/resources/XML/pom.xml")
+            val sb = new StringBuilder
+            try{
+                for(line <- source.getLines){
+                    sb.append(line)
+                }
+            }finally{
+                source.close
+            }
+            */
             val start = System.currentTimeMillis
-            val result = peg_parse(pg,"((((((((((((((1))))))))))))))");
+            //val result = peg_parse(pg,"((((((((((((((1))))))))))))))");
             //val result = peg_parse(pg,"((((1))))");
             //val result = peg_parse(pg,"1*2+12");
+            val result = peg_parse(pg,"  a");
+            //val result = peg_parse(pg,sb.toString);
             val time = System.currentTimeMillis - start
             result match {
-                case Some(body) => println(body._1)
+                case Some(body) => {
+                    println("tree: " + body._1)
+                    println("rest: " + body._2)
+                }
                 case None => println("can't parse")
             }
             println(time + "ms")

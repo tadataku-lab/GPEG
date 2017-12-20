@@ -1,1 +1,1 @@
-Grammar('A,List(('A,NonTerm('B)), ('B,Seq(AnyChar(H),Seq(AnyChar(e),Seq(AnyChar(l),Seq(AnyChar(l),AnyChar(o))))))))
+Grammar('A,List(('A,NonTerm('B)), ('B,Str(Hello))))

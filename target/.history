@@ -319,3 +319,25 @@ test
 run
 tets
 test
+run
+test
+run
+test
+run
+test
+run
+sbt
+compile
+sbt
+run
+test
+run src/test/resources/GPEG/test2.result src/test/resources/GPEG/test2.gpeg
+test
+run src/test/resources/GPEG/math1.result src/test/resources/GPEG/math1.gpeg
+run src/test/resources/GPEG/math1.result src/test/resources/GPEG/math.gpeg
+run
+test
+run
+test
+run
+test

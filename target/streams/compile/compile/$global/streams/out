@@ -1,4 +1,5 @@
-[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegPackratParser.scala:271:94: too many arguments (4) for constructor Memo: (_pos: Int, _tree: List[Tree])PegPackratParser.Memo[0m
-[0m[[0m[31merror[0m] [0m[0m                        p.hash_table += ((memo_info) -> new Memo(new_p.pos, new_p.exp, new_p.nonterm, new_tree))[0m
-[0m[[0m[31merror[0m] [0m[0m                                                                                             ^[0m
-[0m[[0m[31merror[0m] [0m[0mone error found[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:64:107: match may not be exhaustive.[0m
+[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following input: ~(_, Nil)[0m
+[0m[[0m[33mwarn[0m] [0m[0m        lazy val CLASS: Parser[Exp] = (loc <~ chr('[')) ~ (not(chr(']')) ~> Range).* <~ ']' ~> Spacing ^^ {[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                                                                                          ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m

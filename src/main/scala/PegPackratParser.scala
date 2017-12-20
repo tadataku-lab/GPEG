@@ -60,7 +60,7 @@ object PegPackratParser{
     }
 
     def exec(start: Symbol, p: ParserContext): Option[(Tree, String)]={
-        val (treeList, new_p) = memorized(List.empty[Tree], p)
+        val (treeList, new_p) = parse(List.empty[Tree], p)
         //println(p.hash_table)
         return Some((Node(start, treeList), (input.drop(new_p.pos)).map(_.toChar).mkString))
     }
@@ -85,12 +85,17 @@ object PegPackratParser{
                             val new_tree = tree:+Leaf((bytes.map(_.toChar)).mkString)
                             parse(new_tree, p)
                         }else {
+                            if((bytes.map(_.toChar)).mkString == ""){ // case Empty
+                                p.exp = next
+                                val new_tree = tree:+Leaf("")
+                                return parse(new_tree, p)
+                            }
                             p.exp = PFail("")//"pos: " + (p.pos + 1) + " string: "+ s + " -> don't match " + (bytes.map(_.toChar)).mkString)
                             (tree, p)
                         }
                     }
                     case PAny(next) => {
-                        if((1 + p.pos) > input.length){
+                        if((p.pos + 1) > input.length){
                             p.exp = PFail("String index out of range:" + (1 + p.pos))
                             return (tree, p)
                         }
@@ -151,11 +156,11 @@ object PegPackratParser{
                     }
 
                     case PUnion(lhs, rhs) => {               
-                        p.exp = lhs.copy
+                        p.exp = lhs
                         val (lhs_tree, lhs_p) = memorized(tree, p.copy)
                         lhs_p.exp match {
                             case PFail(_) => {
-                                p.exp = rhs.copy
+                                p.exp = rhs
                                 val (rhs_tree, rhs_p) = memorized(tree,p.copy)
                                 rhs_p.exp match {
                                     case PFail(msg) => {                                                              
@@ -168,7 +173,7 @@ object PegPackratParser{
                                 }
                             }
                             case _ => {
-                                p.exp = rhs.copy
+                                p.exp = rhs
                                 val (rhs_tree, rhs_p) = memorized(tree,p.copy)
                                 rhs_p.exp match {
                                     case PFail(_) => {
@@ -187,30 +192,30 @@ object PegPackratParser{
             
                     case PNot(body, next) => {
                         p.exp = body
-                        val (new_tree, new_p) = memorized(tree, p)
+                        val (new_tree, new_p) = parse(tree, p.copy)
                         new_p.exp match {
                             case PFail(_) => {
                                 p.exp = next
-                                memorized(tree, p)
+                                parse(tree, p)
                             } 
                             case _ => {
                                 p.exp = PFail("Match PExp: " + body)
-                                memorized(tree, p)
+                                parse(tree, p)
                             }
                         }
                     }
 
                     case PAnd(body, next) => {
                         p.exp = body
-                        val (new_tree, new_p) = memorized(tree, p)
+                        val (new_tree, new_p) = parse(tree, p.copy)
                         new_p.exp match {
                             case PFail(_) => {
                                 p.exp = PFail("Dont't match PExp: " + body)
-                                memorized(tree, p)
+                                parse(tree, p)
                             } 
                             case _ => {
                                 p.exp = next
-                                memorized(tree, p)
+                                parse(tree, p)
                             }
                         }
                     }

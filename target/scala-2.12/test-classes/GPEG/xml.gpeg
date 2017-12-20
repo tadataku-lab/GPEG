@@ -1,0 +1,29 @@
+File = PROLOG? DTD? Xml;
+
+Chunk = Xml;
+
+Expr = Xml;
+
+PROLOG = '<?xml' (!'?>' .)* '?>' S*;
+
+DTD = '<!' (!'>' .)* '>' S*;
+
+Xml = '<' Name S* (Attribute)* ( '/>' / '>' S* (Content / COMMENT)* '</' NAME '>' )  S*;
+
+Name = (':' / [A-Z_a-z]) ('-' / [.0-9:A-Z_a-z])*;
+
+Attribute = Name S* '=' S* String  S*;
+
+String = '"' (!'"' .)*  '"';
+
+Content = Xml / CDataSec / Text;
+
+CDataSec = '<![CDATA['  CDATA  ']]>' S*;
+
+CDATA =  (!']]>' !'<![CDATA[' .)* ('<![CDATA[' CDATA ']]>' CDATA)?;
+
+COMMENT = '<!--' (!'-->' .)* '-->' S*;
+
+Text = (!'<' .)+ ;
+
+S = [ \t\r\n];
