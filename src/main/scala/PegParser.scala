@@ -4,12 +4,12 @@ import scala.collection.mutable.{HashMap}
 sealed trait Tree
 case class Leaf(v: String) extends Tree{
     override def toString: String = {
-      "[" + v + "]" 
+        "[" + v + "]"
     }
 }
 case class Node(name: Symbol, next: List[Tree]) extends Tree{
     override def toString: String = {
-        var sb = new StringBuilder
+        val sb = new StringBuilder
         sb.append("[" + name + " ")
         for (tree <- next){
             sb.append(tree)
@@ -102,49 +102,6 @@ object PegParser{
                     case None => throw new RuntimeException(symbol + ": Rule can not be found")
                 }
             }
-            
-            /**
-            
-            case PCall(symbol, next) => {
-                p.hash_table.get((symbol,p.pos)) match {
-                    case Some((memo_tree, memo_pos)) => {
-                        println("memo")
-                        p.exp = next
-                        p.pos = memo_pos
-                        var new_tree = List.empty[Tree]
-                        memo_tree match {
-                            case null => //do nothing
-                            case _ => {new_tree = tree:+Node(symbol,memo_tree)}
-                        }
-                        parse(new_tree, p)
-                    }
-                    case None => {
-                        rules.get(symbol) match {
-                            case Some(exp) => {
-                                val memo_pos = p.pos
-                                p.exp = exp
-                                val result = parse(List.empty[Tree], p)
-                                var new_tree = List.empty[Tree]
-                                p.exp match {
-                                    case PFail(_) => {
-                                        p.hash_table += ((symbol,memo_pos) -> (null, result._2.pos))
-                                    }
-                                    case _ => {
-                                        p.hash_table += ((symbol,memo_pos) -> (result._1, result._2.pos))
-                                        new_tree = tree:+Node(symbol,result._1)
-                                    }
-                                } 
-                                p.exp = next
-                                p.pos = result._2.pos
-                                p.hash_table = result._2.hash_table
-                                parse(new_tree, p)
-                            }
-                            case None => throw new RuntimeException(symbol + ": Rule can not be found")
-                        }
-                    }
-                }
-            }
-            */
             
             case PIf(lhs, rhs, next) => {
                 p.exp = lhs

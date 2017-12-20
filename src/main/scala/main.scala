@@ -2,8 +2,8 @@ import scala.util.parsing.combinator._
 import scala.util.parsing.input.{CharSequenceReader, Position, StreamReader}
 import java.io._
 import AST._
-//import PegPackratParser._
-import PegParser._
+import PegPackratParser._
+//import PegParser._
 import scala.io.Source
 import CPS._
 
@@ -93,20 +93,21 @@ object GpegParser{
 
     def main(args: Array[String]):Unit = {
         if(args.length == 0){
-            //val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
-            val g = parse(new FileReader("src/test/resources/GPEG/memo.gpeg"))
+            val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
+            //val g = parse(new FileReader("src/test/resources/GPEG/memo.gpeg"))
             println(g);
             val pg = toContinuation(g)
             println(pg);
             val start = System.currentTimeMillis
             val result = peg_parse(pg,"((((((((((((((1))))))))))))))");
             //val result = peg_parse(pg,"((((1))))");
-            //val result = peg_parse(pg,"1+1");
-            println((System.currentTimeMillis - start) + "ms")
+            //val result = peg_parse(pg,"1*2+12");
+            val time = System.currentTimeMillis - start
             result match {
                 case Some(body) => println(body._1)
                 case None => println("can't parse")
             }
+            println(time + "ms")
         }else if(args.length == 1){
             val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
             val file = new PrintWriter(args(0))

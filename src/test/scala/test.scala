@@ -1,7 +1,7 @@
 import org.scalatest._
 import java.io._
 import GpegParser._
-import PegParser._
+import PegPackratParser._
 
 class TestParse extends FunSuite {
 
@@ -43,7 +43,7 @@ class TestParse extends FunSuite {
     }
   }
 
-  test("math3") {
+  test("math3.0") {
     val g = GpegParser.parse(new FileReader("src/test/resources/GPEG/math.gpeg"))
     assert(g.toString == file2string("src/test/resources/GPEG/math.result"))
     val pg = CPS.toContinuation(g)
@@ -54,8 +54,14 @@ class TestParse extends FunSuite {
     }
   }
 
-  test("bytesEq") {
-    assert(bytesEq("0123456789".getBytes, "0123456789"))
+  test("memo3") {
+    val g = GpegParser.parse(new FileReader("src/test/resources/GPEG/memo.gpeg"))
+    val pg = CPS.toContinuation(g)
+    val result = peg_parse(pg,"((((((((((((((1))))))))))))))");
+    result match {
+      case Some(body) => assert(body._1.toString == file2string("src/test/resources/AST/memo1.ast"))
+      case None => println("can't parse")
+    }
   }
 
 }

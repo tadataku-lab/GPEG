@@ -24,34 +24,33 @@ case class Node(name: Symbol, next: List[Tree]) extends Tree{
 object PegPackratParser{
 
     var rules: Map[Symbol, PExp] = Map.empty[Symbol, PExp]
+    var input: Array[Byte] = Array.empty[Byte]
 
-    def peg_parse(g: PGrammar, input: String): Option[(Tree, String)] = {
+    def peg_parse(g: PGrammar, _input: String): Option[(Tree, String)] = {
         rules = g.rules;
         val start = 
         rules.get(g.start) match {
             case Some(exp) => exp
             case None => throw new RuntimeException(g.start + ": Rule can not be found")
         }
-        val parser_context = new ParserContext(input, 0, start, new HashMap[(Symbol, Int),Memo], g.start)
+        input = _input.getBytes
+        val parser_context = new ParserContext(0, start, new HashMap[(Symbol, Int),Memo], g.start)
         return exec(g.start, parser_context)
     }
 
-    class ParserContext(in: String, _pos: Int, start: PExp, _hash_table: HashMap[(Symbol, Int),Memo], startN: Symbol){
-        val input = in
+    class ParserContext(_pos: Int, start: PExp, _hash_table: HashMap[(Symbol, Int),Memo], startN: Symbol){
         var pos = _pos
         var exp = start
         var hash_table = _hash_table
         var nonterm = startN
 
         def copy(): ParserContext = {
-            new ParserContext(input, pos, exp.copy, hash_table, nonterm)
+            new ParserContext(pos, exp.copy, hash_table, nonterm)
         }
     }
 
-    class Memo(_pos: Int, _exp: PExp, _nonterm: Symbol, _tree: List[Tree]){
+    class Memo(_pos: Int, _tree: List[Tree]){
         val pos = _pos
-        val exp = _exp
-        val nonterm = _nonterm
         val tree = _tree
         override def toString: String = {
             val sb = new StringBuilder
@@ -63,7 +62,7 @@ object PegPackratParser{
     def exec(start: Symbol, p: ParserContext): Option[(Tree, String)]={
         val (treeList, new_p) = memorized(List.empty[Tree], p)
         //println(p.hash_table)
-        return Some((Node(start, treeList), new_p.input.substring(new_p.pos)))
+        return Some((Node(start, treeList), (input.drop(new_p.pos)).map(_.toChar).mkString))
     }
 
     def parse(tree: List[Tree], p: ParserContext):(List[Tree], ParserContext) = {
@@ -74,30 +73,30 @@ object PegPackratParser{
                     case PFail(msg) => throw new RuntimeException(msg)
             
                     case PMatch(bytes, next) => {
-                        if((bytes.length + p.pos) > p.input.length){
-                            p.exp = PFail("String index out of range:" + (bytes.length + p.pos))
+                        val in = input
+                        val bytes_length = bytes.length
+                        if((bytes_length + p.pos) > in.length){
+                            p.exp = PFail("")//"String index out of range:" + (bytes.length + p.pos))
                             return (tree, p)
                         }
-                        val s = p.input.substring(p.pos, p.pos + bytes.length)
-                        if(bytesEq(bytes,s)){
+                        if(bytesEq(bytes, p.pos, bytes_length)){
                             p.exp = next
-                            p.pos = p.pos + bytes.length
-                            val new_tree = tree:+Leaf(s)
+                            p.pos = p.pos + bytes_length
+                            val new_tree = tree:+Leaf((bytes.map(_.toChar)).mkString)
                             parse(new_tree, p)
                         }else {
-                            p.exp = PFail("pos: " + (p.pos + 1) + " string: "+ s + " -> don't match " + (bytes.map(_.toChar)).mkString)
+                            p.exp = PFail("")//"pos: " + (p.pos + 1) + " string: "+ s + " -> don't match " + (bytes.map(_.toChar)).mkString)
                             (tree, p)
                         }
                     }
                     case PAny(next) => {
-                        if((1 + p.pos) > p.input.length){
+                        if((1 + p.pos) > input.length){
                             p.exp = PFail("String index out of range:" + (1 + p.pos))
                             return (tree, p)
                         }
-                        val s = p.input.substring(p.pos, p.pos + 1)
                         p.exp = next
                         p.pos = p.pos + 1
-                        val new_tree = tree:+Leaf(s)
+                        val new_tree = tree:+Leaf((input(p.pos).toChar).toString)
                         parse(new_tree, p)        
                     }
                     case PCall(symbol, next) => {
@@ -129,12 +128,10 @@ object PegPackratParser{
                     case PIf(lhs, rhs, next) => {
                         p.exp = lhs
                         val (lhs_tree, lhs_p) = parse(tree, p.copy)
-                        p.hash_table = lhs_p.hash_table
                         lhs_p.exp match {
                             case PFail(_) => {
                                 p.exp = rhs
                                 val (rhs_tree, rhs_p) = parse(tree,p.copy)
-                                p.hash_table = rhs_p.hash_table
                                 rhs_p.exp match {
                                     case PFail(msg) => {
                                         p.exp = PFail(msg)
@@ -142,13 +139,13 @@ object PegPackratParser{
                                     }
                                     case _ => {
                                         rhs_p.exp = next
-                                        (rhs_tree, rhs_p) 
+                                        parse(rhs_tree, rhs_p) 
                                     }
                                 }
                             }
                             case _ => {
                                 lhs_p.exp = next
-                                (lhs_tree, lhs_p)
+                                parse(lhs_tree, lhs_p)
                             }
                         }
                     }
@@ -231,7 +228,7 @@ object PegPackratParser{
 
     def many(tree: List[Tree], p: ParserContext): (List[Tree], ParserContext) = {
         val body = p.exp
-        val (new_tree, new_p) = memorized(tree,p)
+        val (new_tree, new_p) = parse(tree,p)
         p.exp match {
             case PFail(_) => return (tree, p)
             case _ => {
@@ -241,9 +238,15 @@ object PegPackratParser{
         }
     }
 
-    def bytesEq(bytes: Array[Byte], string: String):Boolean = {
-        if(bytes.length == string.length){
-            bytes.sameElements(string.getBytes)
+    def bytesEq(bytes: Array[Byte], pos: Int, length: Int):Boolean = {
+        if(bytes.length == length){
+            /**
+            for(i <- 0 until length){
+                if(bytes(i) != input(pos + i)) return false
+            }
+            true
+            */
+            bytes.sameElements(input.slice(pos, pos + length))
         }else throw new Exception("don't match length")
     }
 
@@ -253,17 +256,8 @@ object PegPackratParser{
                 //println(p.pos + " " + p.nonterm)
                 //println(memo.pos + " " + memo.nonterm + " " + memo.exp)
                 p.pos = memo.pos
-                p.nonterm = memo.nonterm
-                p.exp = memo.exp
-                /**
-                var new_tree = List.empty[Tree]
-                memo_tree match {
-                    case null => //do nothing
-                    case _ => {
-                        new_tree = tree:+Node(p.nonterm,memo_tree)
-                    }
-                }
-                */
+                //p.nonterm = memo.nonterm
+                //p.exp = memo.exp
                 (memo.tree, p)
             }
             case None => {
@@ -274,7 +268,7 @@ object PegPackratParser{
                         //p.hash_table += ((memo_info) -> new Memo(new_p.pos, new_p.exp, new_p.nonterm, new_tree))
                     }
                     case _ => {
-                        p.hash_table += ((memo_info) -> new Memo(new_p.pos, new_p.exp, new_p.nonterm, new_tree))
+                        p.hash_table += ((memo_info) -> new Memo(new_p.pos, new_tree))
                     }
                 }
                 //p.hash_table += ((memo_info) -> new Memo(new_p.pos, new_p.exp, new_p.nonterm, new_tree))
