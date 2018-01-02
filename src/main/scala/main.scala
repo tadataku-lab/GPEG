@@ -99,9 +99,11 @@ object GpegParser{
     }
 
     def main(args: Array[String]):Unit = {
+        val test = "\n".getBytes
+        println(test(0))
         if(args.length == 0){
-            //val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
-            val g = parse(new FileReader("src/test/resources/GPEG/test5.gpeg"))
+            val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
+            //val g = parse(new FileReader("src/test/resources/GPEG/test6.gpeg"))
             println(g);
             val pg = toContinuation(g)
             println(pg);
@@ -116,11 +118,12 @@ object GpegParser{
                 source.close
             }
             */
+        
             val start = System.currentTimeMillis
             //val result = peg_parse(pg,"((((((((((((((1))))))))))))))");
             //val result = peg_parse(pg,"((((1))))");
             //val result = peg_parse(pg,"1*2+12");
-            val result = peg_parse(pg,"  a");
+            val result = peg_parse(pg,"bbb");
             //val result = peg_parse(pg,sb.toString);
             val time = System.currentTimeMillis - start
             result match {

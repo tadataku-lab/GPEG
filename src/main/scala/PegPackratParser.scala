@@ -61,12 +61,12 @@ object PegPackratParser{
 
     def exec(start: Symbol, p: ParserContext): Option[(Tree, String)]={
         val (treeList, new_p) = parse(List.empty[Tree], p)
-        //println(p.hash_table)
+        //println(new_p.hash_table)
         return Some((Node(start, treeList), (input.drop(new_p.pos)).map(_.toChar).mkString))
     }
 
     def parse(tree: List[Tree], p: ParserContext):(List[Tree], ParserContext) = {
-                p.exp match {
+               p.exp match {
                     case PSucc() => {
                         return (tree, p)
                     }
@@ -76,7 +76,7 @@ object PegPackratParser{
                         val in = input
                         val bytes_length = bytes.length
                         if((bytes_length + p.pos) > in.length){
-                            p.exp = PFail("")//"String index out of range:" + (bytes.length + p.pos))
+                            p.exp = PFail("")//String index out of range:" + (bytes.length + p.pos))
                             return (tree, p)
                         }
                         if(bytesEq(bytes, p.pos, bytes_length)){
@@ -87,8 +87,8 @@ object PegPackratParser{
                         }else {
                             if((bytes.map(_.toChar)).mkString == ""){ // case Empty
                                 p.exp = next
-                                val new_tree = tree:+Leaf("")
-                                return parse(new_tree, p)
+                                //val new_tree = tree:+Leaf("")
+                                return parse(tree, p)
                             }
                             p.exp = PFail("")//"pos: " + (p.pos + 1) + " string: "+ s + " -> don't match " + (bytes.map(_.toChar)).mkString)
                             (tree, p)
@@ -114,15 +114,15 @@ object PegPackratParser{
                                 var new_tree = List.empty[Tree]
                                 new_p.exp match {
                                     case PFail(_) => {
-                                        // do nothing
+                                        p.exp = new_p.exp
+                                        (tree, p)
                                     }
                                     case _ => {
                                         new_tree = tree:+Node(symbol,child_tree)
+                                        new_p.exp = next
+                                        parse(new_tree, new_p)
                                     }
                                 } 
-                                new_p.exp = next
-                                //new_p.hash_table = p.hash_table
-                                parse(new_tree, new_p)
                             }
                         
                             case None => throw new RuntimeException(symbol + ": Rule can not be found")
@@ -155,13 +155,13 @@ object PegPackratParser{
                         }
                     }
 
-                    case PUnion(lhs, rhs) => {               
+                    case PUnion(lhs, rhs) => {         
                         p.exp = lhs
-                        val (lhs_tree, lhs_p) = memorized(tree, p.copy)
+                        val (lhs_tree, lhs_p) = parse(tree, p.copy)
                         lhs_p.exp match {
                             case PFail(_) => {
                                 p.exp = rhs
-                                val (rhs_tree, rhs_p) = memorized(tree,p.copy)
+                                val (rhs_tree, rhs_p) = parse(tree,p.copy)
                                 rhs_p.exp match {
                                     case PFail(msg) => {                                                              
                                         p.exp = PFail(msg)
@@ -174,7 +174,7 @@ object PegPackratParser{
                             }
                             case _ => {
                                 p.exp = rhs
-                                val (rhs_tree, rhs_p) = memorized(tree,p.copy)
+                                val (rhs_tree, rhs_p) = parse(tree,p.copy)
                                 rhs_p.exp match {
                                     case PFail(_) => {
                                         (lhs_tree, lhs_p)
@@ -200,7 +200,7 @@ object PegPackratParser{
                             } 
                             case _ => {
                                 p.exp = PFail("Match PExp: " + body)
-                                parse(tree, p)
+                                (tree, p)
                             }
                         }
                     }
@@ -224,23 +224,49 @@ object PegPackratParser{
                         p.exp = body
                         val (new_tree, new_p) = many(tree, p)
                         new_p.exp = next
-                        (new_tree, new_p)
+                        parse(new_tree, new_p)
                     }
 
                 }
     }        
 
-
+/**
     def many(tree: List[Tree], p: ParserContext): (List[Tree], ParserContext) = {
+        
         val body = p.exp
-        val (new_tree, new_p) = parse(tree,p)
-        p.exp match {
-            case PFail(_) => return (tree, p)
+        val (new_tree, new_p) = parse(tree,p.copy)
+        new_p.exp match {
+            case PFail(_) => {
+                println("fail")
+                return (tree, p)
+            }
             case _ => {
                 new_p.exp = body
                 many(new_tree, new_p)
             }
         }
+    }
+*/
+    def many(tree: List[Tree], p: ParserContext): (List[Tree], ParserContext) = {
+        var result = true
+        var (now_tree, now_p) = (tree,p)
+
+        while(result){
+            val body = now_p.exp
+            val (new_tree, new_p) = parse(now_tree,now_p.copy)
+            new_p.exp match {
+                case PFail(_) => {
+                    result = false
+                }
+                case _ => {
+                    new_p.exp = body
+                    now_tree = new_tree
+                    now_p = new_p
+                }
+            }
+        }
+        
+        (now_tree, now_p)
     }
 
     def bytesEq(bytes: Array[Byte], pos: Int, length: Int):Boolean = {
