@@ -1,4 +1,2 @@
-S <- A A A | A A2 | A3;
-A <- 'a';
-A2 <- "aa";
-A3 <- "aaa";
+S <- 'b' R;
+R <- S S R | S R | "";

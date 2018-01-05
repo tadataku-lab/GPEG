@@ -62,13 +62,13 @@ object PegPackratParser{
     def exec(start: Symbol, p: ParserContext): Option[(Tree, String)]={
         val (treeList, new_p) = parse(List.empty[Tree], p)
         //println(new_p.hash_table)
-        return Some((Node(start, treeList), (input.drop(new_p.pos)).map(_.toChar).mkString))
+        return Some((Node(start, treeList), (input.drop(new_p.head.pos)).map(_.toChar).mkString))
     }
 
-    def parse(tree: List[Tree], p: ParserContext):(List[Tree], ParserContext) = {
+    def parse(tree: List[Tree], p: ParserContext):(List[Tree], List[ParserContext]) = {
                p.exp match {
                     case PSucc() => {
-                        return (tree, p)
+                        return (tree, List(p))
                     }
                     case PFail(msg) => throw new RuntimeException(msg)
             
@@ -77,7 +77,7 @@ object PegPackratParser{
                         val bytes_length = bytes.length
                         if((bytes_length + p.pos) > in.length){
                             p.exp = PFail("")//String index out of range:" + (bytes.length + p.pos))
-                            return (tree, p)
+                            return (tree, List(p))
                         }
                         if(bytesEq(bytes, p.pos, bytes_length)){
                             p.exp = next
@@ -91,13 +91,13 @@ object PegPackratParser{
                                 return parse(tree, p)
                             }
                             p.exp = PFail("")//"pos: " + (p.pos + 1) + " string: "+ s + " -> don't match " + (bytes.map(_.toChar)).mkString)
-                            (tree, p)
+                            (tree, List(p))
                         }
                     }
                     case PAny(next) => {
                         if((p.pos + 1) > input.length){
                             p.exp = PFail("String index out of range:" + (1 + p.pos))
-                            return (tree, p)
+                            return (tree, List(p))
                         }
                         p.exp = next
                         p.pos = p.pos + 1
@@ -112,15 +112,15 @@ object PegPackratParser{
                                 p.nonterm = symbol
                                 val (child_tree, new_p) = memorized(List.empty[Tree], p)
                                 var new_tree = List.empty[Tree]
-                                new_p.exp match {
+                                new_p.head.exp match {
                                     case PFail(_) => {
-                                        p.exp = new_p.exp
-                                        (tree, p)
+                                        p.exp = new_p.head.exp
+                                        (tree, List(p))
                                     }
                                     case _ => {
                                         new_tree = tree:+Node(symbol,child_tree)
-                                        new_p.exp = next
-                                        parse(new_tree, new_p)
+                                        new_p.head.exp = next
+                                        parse(new_tree, new_p.head)
                                     }
                                 } 
                             }
@@ -133,24 +133,24 @@ object PegPackratParser{
                     case PIf(lhs, rhs, next) => {
                         p.exp = lhs
                         val (lhs_tree, lhs_p) = parse(tree, p.copy)
-                        lhs_p.exp match {
+                        lhs_p.head.exp match {
                             case PFail(_) => {
                                 p.exp = rhs
                                 val (rhs_tree, rhs_p) = parse(tree,p.copy)
-                                rhs_p.exp match {
+                                rhs_p.head.exp match {
                                     case PFail(msg) => {
                                         p.exp = PFail(msg)
-                                        (tree, p)
+                                        (tree, List(p))
                                     }
                                     case _ => {
-                                        rhs_p.exp = next
-                                        parse(rhs_tree, rhs_p) 
+                                        rhs_p.head.exp = next
+                                        parse(rhs_tree, rhs_p.head) 
                                     }
                                 }
                             }
                             case _ => {
-                                lhs_p.exp = next
-                                parse(lhs_tree, lhs_p)
+                                lhs_p.head.exp = next
+                                parse(lhs_tree, lhs_p.head)
                             }
                         }
                     }
@@ -158,14 +158,14 @@ object PegPackratParser{
                     case PUnion(lhs, rhs) => {         
                         p.exp = lhs
                         val (lhs_tree, lhs_p) = parse(tree, p.copy)
-                        lhs_p.exp match {
+                        lhs_p.head.exp match {
                             case PFail(_) => {
                                 p.exp = rhs
                                 val (rhs_tree, rhs_p) = parse(tree,p.copy)
-                                rhs_p.exp match {
+                                rhs_p.head.exp match {
                                     case PFail(msg) => {                                                              
                                         p.exp = PFail(msg)
-                                        (tree, p)
+                                        (tree, List(p))
                                     }
                                     case _ => {
                                         (rhs_tree, rhs_p) 
@@ -175,12 +175,12 @@ object PegPackratParser{
                             case _ => {
                                 p.exp = rhs
                                 val (rhs_tree, rhs_p) = parse(tree,p.copy)
-                                rhs_p.exp match {
+                                rhs_p.head.exp match {
                                     case PFail(_) => {
                                         (lhs_tree, lhs_p)
                                     }
                                     case _ => {
-                                        if(lhs_p.pos == rhs_p.pos){
+                                        if(lhs_p.head.pos == rhs_p.head.pos){
                                             val new_tree = tree:+Node(Symbol("ambiguity"), List(Node(Symbol("lhs"),lhs_tree), Node(Symbol("rhs"),rhs_tree)))
                                             (new_tree, lhs_p)
                                         }else throw new RuntimeException("Don't hold confluence")
@@ -193,14 +193,14 @@ object PegPackratParser{
                     case PNot(body, next) => {
                         p.exp = body
                         val (new_tree, new_p) = parse(tree, p.copy)
-                        new_p.exp match {
+                        new_p.head.exp match {
                             case PFail(_) => {
                                 p.exp = next
                                 parse(tree, p)
                             } 
                             case _ => {
                                 p.exp = PFail("Match PExp: " + body)
-                                (tree, p)
+                                (tree, List(p))
                             }
                         }
                     }
@@ -208,7 +208,7 @@ object PegPackratParser{
                     case PAnd(body, next) => {
                         p.exp = body
                         val (new_tree, new_p) = parse(tree, p.copy)
-                        new_p.exp match {
+                        new_p.head.exp match {
                             case PFail(_) => {
                                 p.exp = PFail("Dont't match PExp: " + body)
                                 parse(tree, p)
@@ -254,14 +254,14 @@ object PegPackratParser{
         while(result){
             val body = now_p.exp
             val (new_tree, new_p) = parse(now_tree,now_p.copy)
-            new_p.exp match {
+            new_p.head.exp match {
                 case PFail(_) => {
                     result = false
                 }
                 case _ => {
-                    new_p.exp = body
+                    new_p.head.exp = body
                     now_tree = new_tree
-                    now_p = new_p
+                    now_p = new_p.head
                 }
             }
         }
@@ -281,7 +281,7 @@ object PegPackratParser{
         }else throw new Exception("don't match length")
     }
 
-    def memorized(tree: List[Tree], p: ParserContext):(List[Tree], ParserContext) = {
+    def memorized(tree: List[Tree], p: ParserContext):(List[Tree], List[ParserContext]) = {
         p.hash_table.get((p.nonterm,p.pos)) match {
             case Some(memo) => {
                 //println(p.pos + " " + p.nonterm)
@@ -289,17 +289,17 @@ object PegPackratParser{
                 p.pos = memo.pos
                 //p.nonterm = memo.nonterm
                 //p.exp = memo.exp
-                (memo.tree, p)
+                (memo.tree, List(p))
             }
             case None => {
                 val memo_info = (p.nonterm, p.pos)
                 val (new_tree, new_p) = parse(tree, p)
-                new_p.exp match {
+                new_p.head.exp match {
                     case PFail(_) => {
                         //p.hash_table += ((memo_info) -> new Memo(new_p.pos, new_p.exp, new_p.nonterm, new_tree))
                     }
                     case _ => {
-                        p.hash_table += ((memo_info) -> new Memo(new_p.pos, new_tree))
+                        p.hash_table += ((memo_info) -> new Memo(new_p.head.pos, new_tree))
                     }
                 }
                 //p.hash_table += ((memo_info) -> new Memo(new_p.pos, new_p.exp, new_p.nonterm, new_tree))
