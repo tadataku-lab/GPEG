@@ -26,7 +26,7 @@ object PegPackratParser{
     var rules: Map[Symbol, PExp] = Map.empty[Symbol, PExp]
     var input: Array[Byte] = Array.empty[Byte]
 
-    def peg_parse(g: PGrammar, _input: String): Option[(Tree, String)] = {
+    def peg_parse(g: PGrammar, _input: String): Option[(Tree, ContextTree)] = {
         rules = g.rules;
         val start = 
         rules.get(g.start) match {
@@ -38,7 +38,31 @@ object PegPackratParser{
         return exec(g.start, parser_context)
     }
 
-    class ParserContext(_pos: Int, start: PExp, _hash_table: HashMap[(Symbol, Int),Memo], startN: Symbol){
+    sealed trait ContextTree {
+        def setExp(body: PExp): Unit = {
+            this match {
+                case AmbContext(lhs, rhs) => {
+                    lhs.setExp(body)
+                    rhs.setExp(body)
+                }
+                case p_c: ParserContext => {
+                    p_c.exp = body
+                }
+            }
+        }
+
+        def copy(): ContextTree
+    }
+
+    case class AmbContext(_lhs: ContextTree, _rhs: ContextTree) extends ContextTree{
+        val lhs = _lhs
+        val rhs = _rhs
+        def copy(): AmbContext = {
+            new AmbContext(lhs.copy, rhs.copy)
+        }
+    }
+
+    case class ParserContext(_pos: Int, start: PExp, _hash_table: HashMap[(Symbol, Int),Memo], startN: Symbol) extends ContextTree{
         var pos = _pos
         var exp = start
         var hash_table = _hash_table
@@ -49,26 +73,53 @@ object PegPackratParser{
         }
     }
 
-    class Memo(_pos: Int, _tree: List[Tree]){
-        val pos = _pos
+    class Memo(_context: ContextTree, _tree: List[Tree]){
+        val context = _context
         val tree = _tree
         override def toString: String = {
             val sb = new StringBuilder
-            sb.append("pos: " + pos + " tree: " + tree.toString)
+            sb.append("context: " + context + " tree: " + tree.toString)
             sb.toString
         }
     }
 
-    def exec(start: Symbol, p: ParserContext): Option[(Tree, String)]={
+    def exec(start: Symbol, p: ParserContext): Option[(Tree, ContextTree)]={
         val (treeList, new_p) = parse(List.empty[Tree], p)
         //println(new_p.hash_table)
-        return Some((Node(start, treeList), (input.drop(new_p.head.pos)).map(_.toChar).mkString))
+        //return Some((Node(start, treeList), (input.drop(new_p.head.pos)).map(_.toChar).mkString))
+        return Some((Node(start, treeList), new_p))
     }
 
-    def parse(tree: List[Tree], p: ParserContext):(List[Tree], List[ParserContext]) = {
+    def amb_parse(tree: List[Tree], p: ContextTree):(List[Tree], ContextTree) = {
+        p match {
+            case p_c: ParserContext => {
+                parse(tree, p_c)
+            }
+            case AmbContext(lhs, rhs) => {
+                val (lhs_tree, lhs_p) = amb_parse(tree, lhs)
+                val (rhs_tree, rhs_p) = amb_parse(tree, rhs)
+                (tree:+Node(Symbol("ambiguity"), List(Node(Symbol("lhs"),lhs_tree), Node(Symbol("rhs"),rhs_tree))), p)
+            }
+        }
+    }
+
+    def amb_memorized(tree: List[Tree], p: ContextTree):(List[Tree], ContextTree) = {
+        p match {
+            case p_c: ParserContext => {
+                memorized(tree, p_c)
+            }
+            case AmbContext(lhs, rhs) => {
+                val (lhs_tree, lhs_p) = amb_memorized(tree, lhs)
+                val (rhs_tree, rhs_p) = amb_memorized(tree, rhs)
+                (tree:+Node(Symbol("ambiguity"), List(Node(Symbol("lhs"),lhs_tree), Node(Symbol("rhs"),rhs_tree))), p)
+            }
+        }
+    }
+
+    def parse(tree: List[Tree], p: ParserContext):(List[Tree], ContextTree) = {
                p.exp match {
                     case PSucc() => {
-                        return (tree, List(p))
+                        return (tree, p)
                     }
                     case PFail(msg) => throw new RuntimeException(msg)
             
@@ -77,7 +128,7 @@ object PegPackratParser{
                         val bytes_length = bytes.length
                         if((bytes_length + p.pos) > in.length){
                             p.exp = PFail("")//String index out of range:" + (bytes.length + p.pos))
-                            return (tree, List(p))
+                            return (tree, p)
                         }
                         if(bytesEq(bytes, p.pos, bytes_length)){
                             p.exp = next
@@ -91,13 +142,13 @@ object PegPackratParser{
                                 return parse(tree, p)
                             }
                             p.exp = PFail("")//"pos: " + (p.pos + 1) + " string: "+ s + " -> don't match " + (bytes.map(_.toChar)).mkString)
-                            (tree, List(p))
+                            (tree, p)
                         }
                     }
                     case PAny(next) => {
                         if((p.pos + 1) > input.length){
                             p.exp = PFail("String index out of range:" + (1 + p.pos))
-                            return (tree, List(p))
+                            return (tree, p)
                         }
                         p.exp = next
                         p.pos = p.pos + 1
@@ -110,19 +161,30 @@ object PegPackratParser{
                             case Some(exp) => {
                                 p.exp = exp
                                 p.nonterm = symbol
-                                val (child_tree, new_p) = memorized(List.empty[Tree], p)
+                                val (child_tree, new_p) = amb_memorized(List.empty[Tree], p)
                                 var new_tree = List.empty[Tree]
-                                new_p.head.exp match {
-                                    case PFail(_) => {
-                                        p.exp = new_p.head.exp
-                                        (tree, List(p))
+                                new_p match {
+                                    case p_c: ParserContext => {
+                                        p_c.exp match {
+                                            case PFail(_) => {
+                                                p.exp = p_c.exp
+                                                (tree, p)
+                                            }
+                                            case _ => {
+                                                new_tree = tree:+Node(symbol,child_tree)
+                                                p_c.exp = next
+                                                amb_parse(new_tree, p_c.copy)
+                                                //(new_tree, p_c.copy)
+                                            }
+                                        } 
                                     }
-                                    case _ => {
+                                    case AmbContext(_, _) => {
                                         new_tree = tree:+Node(symbol,child_tree)
-                                        new_p.head.exp = next
-                                        parse(new_tree, new_p.head)
+                                        new_p.setExp(next)
+                                        //amb_parse(new_tree, new_p)
+                                        (new_tree, new_p)
                                     }
-                                } 
+                                }
                             }
                         
                             case None => throw new RuntimeException(symbol + ": Rule can not be found")
@@ -132,58 +194,136 @@ object PegPackratParser{
             
                     case PIf(lhs, rhs, next) => {
                         p.exp = lhs
-                        val (lhs_tree, lhs_p) = parse(tree, p.copy)
-                        lhs_p.head.exp match {
-                            case PFail(_) => {
-                                p.exp = rhs
-                                val (rhs_tree, rhs_p) = parse(tree,p.copy)
-                                rhs_p.head.exp match {
-                                    case PFail(msg) => {
-                                        p.exp = PFail(msg)
-                                        (tree, List(p))
+                        val (lhs_tree, lhs_p) = amb_parse(tree, p.copy)
+                        lhs_p match {
+                            case lhs_p_c: ParserContext => {
+                                lhs_p_c.exp match {
+                                    case PFail(_) => {
+                                        p.exp = rhs
+                                        val (rhs_tree, rhs_p) = amb_parse(tree,p.copy)
+                                        rhs_p match {
+                                            case rhs_p_c: ParserContext => {
+                                                rhs_p_c.exp match {
+                                                    case PFail(msg) => {
+                                                        p.exp = PFail(msg)
+                                                        (tree, p)
+                                                    }
+                                                    case _ => {
+                                                        rhs_p_c.exp = next
+                                                        amb_parse(rhs_tree, rhs_p_c.copy) 
+                                                    }
+                                                }
+                                            }
+                                            case AmbContext(_,_) => {
+                                                rhs_p.setExp(next)
+                                                amb_parse(rhs_tree, rhs_p) 
+                                            }
+                                        }
                                     }
                                     case _ => {
-                                        rhs_p.head.exp = next
-                                        parse(rhs_tree, rhs_p.head) 
+                                        lhs_p_c.exp = next
+                                        amb_parse(lhs_tree, lhs_p_c.copy)
                                     }
                                 }
                             }
-                            case _ => {
-                                lhs_p.head.exp = next
-                                parse(lhs_tree, lhs_p.head)
+                            case AmbContext(_, _) => {
+                                lhs_p.setExp(next)
+                                amb_parse(lhs_tree, lhs_p)
                             }
                         }
                     }
 
                     case PUnion(lhs, rhs) => {         
                         p.exp = lhs
-                        val (lhs_tree, lhs_p) = parse(tree, p.copy)
-                        lhs_p.head.exp match {
-                            case PFail(_) => {
-                                p.exp = rhs
-                                val (rhs_tree, rhs_p) = parse(tree,p.copy)
-                                rhs_p.head.exp match {
-                                    case PFail(msg) => {                                                              
-                                        p.exp = PFail(msg)
-                                        (tree, List(p))
+                        val (lhs_tree, lhs_p) = amb_parse(tree, p.copy)
+                        lhs_p match {
+                            case lhs_p_c: ParserContext => {
+                                lhs_p_c.exp match {
+                                    case PFail(_) => {
+                                        p.exp = rhs
+                                        val (rhs_tree, rhs_p) = amb_parse(tree,p.copy)
+                                        rhs_p match {
+                                            case rhs_p_c: ParserContext => {
+                                                rhs_p_c.exp match {
+                                                    case PFail(msg) => {                                                              
+                                                        p.exp = PFail(msg)
+                                                        (tree, p)
+                                                    }
+                                                    case _ => {
+                                                        (rhs_tree, rhs_p_c.copy)
+                                                    }
+                                                }
+                                            }
+                                            case AmbContext(_, _) => {
+                                                (rhs_tree, rhs_p)
+                                            }
+                                        }
                                     }
                                     case _ => {
-                                        (rhs_tree, rhs_p) 
+                                        p.exp = rhs
+                                        val (rhs_tree, rhs_p) = amb_parse(tree,p.copy)
+                                        rhs_p match {
+                                            case rhs_p_c: ParserContext => {
+                                                rhs_p_c.exp match {
+                                                    case PFail(_) => {
+                                                        (lhs_tree, lhs_p_c.copy)
+                                                    }
+                                                    case _ => {
+                                                        if(isEqualPos(lhs_p_c.copy, rhs_p_c.copy)){
+                                                            val new_tree = tree:+Node(Symbol("ambiguity"), List(Node(Symbol("lhs"),lhs_tree), Node(Symbol("rhs"),rhs_tree)))
+                                                            (new_tree, lhs_p_c.copy)
+                                                        }else {
+                                                            val new_tree = tree:+Node(Symbol("ambiguity"), List(Node(Symbol("lhs"),lhs_tree), Node(Symbol("rhs"),rhs_tree)))
+                                                            val new_p = AmbContext(lhs_p_c.copy, rhs_p_c.copy)
+                                                            (new_tree, new_p)
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            case AmbContext(_, _) => {
+                                                if(isEqualPos(lhs_p_c.copy,rhs_p.copy)){
+                                                    val new_tree = tree:+Node(Symbol("ambiguity"), List(Node(Symbol("lhs"),lhs_tree), Node(Symbol("rhs"),rhs_tree)))
+                                                    (new_tree, lhs_p_c.copy)
+                                                }else {
+                                                    val new_tree = tree:+Node(Symbol("ambiguity"), List(Node(Symbol("lhs"),lhs_tree), Node(Symbol("rhs"),rhs_tree)))
+                                                    val new_p = AmbContext(lhs_p_c.copy, rhs_p.copy)
+                                                    (new_tree, new_p)
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
-                            case _ => {
+                            case AmbContext(_, _) => {
                                 p.exp = rhs
-                                val (rhs_tree, rhs_p) = parse(tree,p.copy)
-                                rhs_p.head.exp match {
-                                    case PFail(_) => {
-                                        (lhs_tree, lhs_p)
+                                val (rhs_tree, rhs_p) = amb_parse(tree,p.copy)
+                                rhs_p match {
+                                    case rhs_p_c: ParserContext => {
+                                        rhs_p_c.exp match {
+                                            case PFail(_) => {
+                                                (lhs_tree, lhs_p)
+                                            }
+                                            case _ => {
+                                                if(isEqualPos(lhs_p.copy,rhs_p.copy)){
+                                                    val new_tree = tree:+Node(Symbol("ambiguity"), List(Node(Symbol("lhs"),lhs_tree), Node(Symbol("rhs"),rhs_tree)))
+                                                    (new_tree, lhs_p)
+                                                }else {
+                                                    val new_tree = tree:+Node(Symbol("ambiguity"), List(Node(Symbol("lhs"),lhs_tree), Node(Symbol("rhs"),rhs_tree)))
+                                                    val new_p = AmbContext(lhs_p.copy, rhs_p_c.copy)
+                                                    (new_tree, new_p)
+                                                }
+                                            }
+                                        }
                                     }
-                                    case _ => {
-                                        if(lhs_p.head.pos == rhs_p.head.pos){
+                                    case AmbContext(_, _) => {
+                                        if(isEqualPos(lhs_p.copy,rhs_p.copy)){
                                             val new_tree = tree:+Node(Symbol("ambiguity"), List(Node(Symbol("lhs"),lhs_tree), Node(Symbol("rhs"),rhs_tree)))
                                             (new_tree, lhs_p)
-                                        }else throw new RuntimeException("Don't hold confluence")
+                                        }else {
+                                            val new_tree = tree:+Node(Symbol("ambiguity"), List(Node(Symbol("lhs"),lhs_tree), Node(Symbol("rhs"),rhs_tree)))
+                                            val new_p = AmbContext(lhs_p.copy, rhs_p.copy)
+                                            (new_tree, new_p)
+                                        }
                                     }
                                 }
                             }
@@ -193,14 +333,23 @@ object PegPackratParser{
                     case PNot(body, next) => {
                         p.exp = body
                         val (new_tree, new_p) = parse(tree, p.copy)
-                        new_p.head.exp match {
-                            case PFail(_) => {
-                                p.exp = next
-                                parse(tree, p)
-                            } 
-                            case _ => {
-                                p.exp = PFail("Match PExp: " + body)
-                                (tree, List(p))
+                        new_p match {
+                            case p_c: ParserContext => {
+                                p_c.exp match {
+                                    case PFail(_) => {
+                                        p_c.exp = next
+                                        parse(tree, p_c)
+                                    }
+                                    case _ => {
+                                        p_c.exp = PFail("Match PExp: " + body)
+                                        parse(tree, p_c)
+                                    }
+                                }
+                            }
+                            case AmbContext(lhs, rhs) => {
+                                lhs.setExp(PFail("Match PExp: " + body))
+                                rhs.setExp(PFail("Match PExp: " + body))
+                                amb_parse(tree, new_p)
                             }
                         }
                     }
@@ -208,14 +357,23 @@ object PegPackratParser{
                     case PAnd(body, next) => {
                         p.exp = body
                         val (new_tree, new_p) = parse(tree, p.copy)
-                        new_p.head.exp match {
-                            case PFail(_) => {
-                                p.exp = PFail("Dont't match PExp: " + body)
-                                parse(tree, p)
-                            } 
-                            case _ => {
-                                p.exp = next
-                                parse(tree, p)
+                        new_p match {
+                            case p_c: ParserContext => {
+                                p_c.exp match {
+                                    case PFail(_) => {
+                                        p_c.exp = PFail("Dont't match PExp: " + body)
+                                        parse(tree, p_c)
+                                    }
+                                    case _ => {
+                                        p_c.exp = next
+                                        parse(tree, p_c)
+                                    }
+                                }
+                            }
+                            case AmbContext(lhs, rhs) => {
+                                lhs.setExp(next)
+                                rhs.setExp(next)
+                                amb_parse(tree, new_p)
                             }
                         }
                     }
@@ -223,8 +381,8 @@ object PegPackratParser{
                     case PMany(body, next) => {
                         p.exp = body
                         val (new_tree, new_p) = many(tree, p)
-                        new_p.exp = next
-                        parse(new_tree, new_p)
+                        new_p.setExp(next)
+                        amb_parse(new_tree, new_p)
                     }
 
                 }
@@ -247,26 +405,56 @@ object PegPackratParser{
         }
     }
 */
-    def many(tree: List[Tree], p: ParserContext): (List[Tree], ParserContext) = {
+    def many(tree: List[Tree], p: ParserContext): (List[Tree], ContextTree) = {
         var result = true
-        var (now_tree, now_p) = (tree,p)
+        val body = p.exp
+        var (now_tree, now_p: ContextTree) = (tree,p)
 
         while(result){
-            val body = now_p.exp
-            val (new_tree, new_p) = parse(now_tree,now_p.copy)
-            new_p.head.exp match {
-                case PFail(_) => {
-                    result = false
+            val (new_tree: List[Tree], new_p: ContextTree) = amb_parse(now_tree,now_p.copy)
+            new_p match {
+                    case p_c: ParserContext => {
+                        p_c.exp match {
+                            case PFail(_) => {
+                                result = false
+                            }
+                            case _ => {
+                                p_c.exp = body
+                                now_tree = new_tree
+                                now_p = new_p
+                            }
+                        }
+                    }
+                    case AmbContext(lhs, rhs) => {
+                        lhs.setExp(body)
+                        rhs.setExp(body)
+                        now_tree = new_tree
+                        now_p = new_p
+                    }
                 }
-                case _ => {
-                    new_p.head.exp = body
-                    now_tree = new_tree
-                    now_p = new_p.head
-                }
-            }
         }
         
         (now_tree, now_p)
+    }
+
+    def isEqualPos(lhs: ContextTree, rhs: ContextTree): Boolean = {
+        var pos: Int = 0
+        lhs match {
+            case ParserContext(_pos, _, _, _) => {
+                pos = _pos
+            }
+            case AmbContext(lhs, rhs) => {
+                return isEqualPos(lhs, rhs)
+            }
+        }
+        rhs match {
+            case ParserContext(_pos, _, _, _) => {
+                return pos == _pos
+            }
+            case AmbContext(lhs, rhs) => {
+                return isEqualPos(lhs, rhs)
+            }
+        }
     }
 
     def bytesEq(bytes: Array[Byte], pos: Int, length: Int):Boolean = {
@@ -281,27 +469,35 @@ object PegPackratParser{
         }else throw new Exception("don't match length")
     }
 
-    def memorized(tree: List[Tree], p: ParserContext):(List[Tree], List[ParserContext]) = {
+    def memorized(tree: List[Tree], p: ParserContext):(List[Tree], ContextTree) = {
         p.hash_table.get((p.nonterm,p.pos)) match {
             case Some(memo) => {
                 //println(p.pos + " " + p.nonterm)
                 //println(memo.pos + " " + memo.nonterm + " " + memo.exp)
-                p.pos = memo.pos
+                //p.pos = memo.pos
                 //p.nonterm = memo.nonterm
                 //p.exp = memo.exp
-                (memo.tree, List(p))
+                (memo.tree, memo.context)
             }
             case None => {
                 val memo_info = (p.nonterm, p.pos)
                 val (new_tree, new_p) = parse(tree, p)
-                new_p.head.exp match {
-                    case PFail(_) => {
-                        //p.hash_table += ((memo_info) -> new Memo(new_p.pos, new_p.exp, new_p.nonterm, new_tree))
+                new_p match {
+                    case ParserContext(_, exp, _, _) => {
+                        exp match {
+                            case PFail(_) => {
+                                //p.hash_table += ((memo_info) -> new Memo(new_p.pos, new_p.exp, new_p.nonterm, new_tree))
+                            }
+                            case _ => {
+                                p.hash_table += ((memo_info) -> new Memo(new_p, new_tree))
+                            }
+                        }
                     }
-                    case _ => {
-                        p.hash_table += ((memo_info) -> new Memo(new_p.head.pos, new_tree))
+                    case AmbContext(_, _) => {
+                        p.hash_table += ((memo_info) -> new Memo(new_p, new_tree))
                     }
                 }
+                
                 //p.hash_table += ((memo_info) -> new Memo(new_p.pos, new_p.exp, new_p.nonterm, new_tree))
                 //println(p.hash_table)
                 (new_tree, new_p)

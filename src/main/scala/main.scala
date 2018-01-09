@@ -129,7 +129,7 @@ object GpegParser{
             result match {
                 case Some(body) => {
                     println("tree: " + body._1)
-                    println("rest: " + body._2)
+                    //println("rest: " + body._2)
                 }
                 case None => println("can't parse")
             }
