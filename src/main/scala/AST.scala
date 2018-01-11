@@ -22,6 +22,11 @@ object AST {
   sealed trait PExp{
     def copy(): PExp
   }
+  case class PEmpty(next: PExp) extends PExp{
+    def copy(): PEmpty = {
+      PEmpty(next.copy)
+    }
+  }
   case class PSucc() extends PExp{
     def copy(): PSucc = {
       PSucc()

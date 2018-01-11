@@ -1,5 +1,13 @@
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/CPS.scala:10:9: match may not be exhaustive.[0m
+[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following inputs: Caputure(_, _), FoldMany(_, _, _), LinkTree(_, _)[0m
+[0m[[0m[33mwarn[0m] [0m[0m        target match {[0m
+[0m[[0m[33mwarn[0m] [0m[0m        ^[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegParser.scala:54:11: match may not be exhaustive.[0m
+[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following input: PEmpty(_)[0m
+[0m[[0m[33mwarn[0m] [0m[0m        p.exp match {[0m
+[0m[[0m[33mwarn[0m] [0m[0m          ^[0m
 [0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:64:107: match may not be exhaustive.[0m
 [0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following input: ~(_, Nil)[0m
 [0m[[0m[33mwarn[0m] [0m[0m        lazy val CLASS: Parser[Exp] = (loc <~ chr('[')) ~ (not(chr(']')) ~> Range).* <~ ']' ~> Spacing ^^ {[0m
 [0m[[0m[33mwarn[0m] [0m[0m                                                                                                          ^[0m
-[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m
+[0m[[0m[33mwarn[0m] [0m[0mthree warnings found[0m

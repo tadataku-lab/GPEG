@@ -39,19 +39,22 @@ object PegPackratParser{
     }
 
     sealed trait ContextTree {
-        def setExp(body: PExp): Unit = {
+        def setExp(body: PExp): ContextTree = {
             this match {
-                case AmbContext(lhs, rhs) => {
-                    lhs.setExp(body)
-                    rhs.setExp(body)
+                case a_c: AmbContext => {
+                    a_c.lhs.setExp(body)
+                    a_c.rhs.setExp(body)
+                    a_c
                 }
                 case p_c: ParserContext => {
                     p_c.exp = body
+                    p_c
                 }
             }
         }
 
         def copy(): ContextTree
+        def toString() : String
     }
 
     case class AmbContext(_lhs: ContextTree, _rhs: ContextTree) extends ContextTree{
@@ -59,6 +62,11 @@ object PegPackratParser{
         val rhs = _rhs
         def copy(): AmbContext = {
             new AmbContext(lhs.copy, rhs.copy)
+        }
+        override def toString: String = {
+            val sb = new StringBuilder
+            sb.append("{[lhs: " + lhs.toString + " ][rhs: " + rhs.toString + " ]}")
+            sb.toString
         }
     }
 
@@ -70,6 +78,12 @@ object PegPackratParser{
 
         def copy(): ParserContext = {
             new ParserContext(pos, exp.copy, hash_table, nonterm)
+        }
+
+        override def toString: String = {
+            val sb = new StringBuilder
+            sb.append("{pos<" + pos + ">exp<" + exp.toString + ">}")
+            sb.toString
         }
     }
 
@@ -96,8 +110,8 @@ object PegPackratParser{
                 parse(tree, p_c)
             }
             case AmbContext(lhs, rhs) => {
-                val (lhs_tree, lhs_p) = amb_parse(tree, lhs)
-                val (rhs_tree, rhs_p) = amb_parse(tree, rhs)
+                val (lhs_tree, lhs_p) = amb_parse(List.empty[Tree], lhs)
+                val (rhs_tree, rhs_p) = amb_parse(List.empty[Tree], rhs)
                 (tree:+Node(Symbol("ambiguity"), List(Node(Symbol("lhs"),lhs_tree), Node(Symbol("rhs"),rhs_tree))), p)
             }
         }
@@ -109,8 +123,8 @@ object PegPackratParser{
                 memorized(tree, p_c)
             }
             case AmbContext(lhs, rhs) => {
-                val (lhs_tree, lhs_p) = amb_memorized(tree, lhs)
-                val (rhs_tree, rhs_p) = amb_memorized(tree, rhs)
+                val (lhs_tree, lhs_p) = amb_memorized(List.empty[Tree], lhs)
+                val (rhs_tree, rhs_p) = amb_memorized(List.empty[Tree], rhs)
                 (tree:+Node(Symbol("ambiguity"), List(Node(Symbol("lhs"),lhs_tree), Node(Symbol("rhs"),rhs_tree))), p)
             }
         }
@@ -120,6 +134,10 @@ object PegPackratParser{
                p.exp match {
                     case PSucc() => {
                         return (tree, p)
+                    }
+                    case PEmpty(next) => {
+                        p.exp = next
+                        return parse(tree, p)
                     }
                     case PFail(msg) => throw new RuntimeException(msg)
             
@@ -136,11 +154,13 @@ object PegPackratParser{
                             val new_tree = tree:+Leaf((bytes.map(_.toChar)).mkString)
                             parse(new_tree, p)
                         }else {
+                            /**
                             if((bytes.map(_.toChar)).mkString == ""){ // case Empty
                                 p.exp = next
                                 //val new_tree = tree:+Leaf("")
                                 return parse(tree, p)
                             }
+                            */
                             p.exp = PFail("")//"pos: " + (p.pos + 1) + " string: "+ s + " -> don't match " + (bytes.map(_.toChar)).mkString)
                             (tree, p)
                         }
@@ -170,19 +190,20 @@ object PegPackratParser{
                                                 p.exp = p_c.exp
                                                 (tree, p)
                                             }
+                                            case PEmpty(next) => {
+                                                p_c.exp = next 
+                                                parse(new_tree, p_c.copy)
+                                            }
                                             case _ => {
                                                 new_tree = tree:+Node(symbol,child_tree)
                                                 p_c.exp = next
-                                                amb_parse(new_tree, p_c.copy)
-                                                //(new_tree, p_c.copy)
+                                                parse(new_tree, p_c.copy)
                                             }
                                         } 
                                     }
                                     case AmbContext(_, _) => {
                                         new_tree = tree:+Node(symbol,child_tree)
-                                        new_p.setExp(next)
-                                        //amb_parse(new_tree, new_p)
-                                        (new_tree, new_p)
+                                        amb_parse(new_tree, new_p.setExp(next))
                                     }
                                 }
                             }
@@ -194,13 +215,13 @@ object PegPackratParser{
             
                     case PIf(lhs, rhs, next) => {
                         p.exp = lhs
-                        val (lhs_tree, lhs_p) = amb_parse(tree, p.copy)
+                        val (lhs_tree, lhs_p) = parse(tree, p.copy)
                         lhs_p match {
                             case lhs_p_c: ParserContext => {
                                 lhs_p_c.exp match {
                                     case PFail(_) => {
                                         p.exp = rhs
-                                        val (rhs_tree, rhs_p) = amb_parse(tree,p.copy)
+                                        val (rhs_tree, rhs_p) = parse(tree,p.copy)
                                         rhs_p match {
                                             case rhs_p_c: ParserContext => {
                                                 rhs_p_c.exp match {
@@ -210,7 +231,7 @@ object PegPackratParser{
                                                     }
                                                     case _ => {
                                                         rhs_p_c.exp = next
-                                                        amb_parse(rhs_tree, rhs_p_c.copy) 
+                                                        parse(rhs_tree, rhs_p_c.copy) 
                                                     }
                                                 }
                                             }
@@ -222,7 +243,7 @@ object PegPackratParser{
                                     }
                                     case _ => {
                                         lhs_p_c.exp = next
-                                        amb_parse(lhs_tree, lhs_p_c.copy)
+                                        parse(lhs_tree, lhs_p_c.copy)
                                     }
                                 }
                             }
@@ -235,13 +256,13 @@ object PegPackratParser{
 
                     case PUnion(lhs, rhs) => {         
                         p.exp = lhs
-                        val (lhs_tree, lhs_p) = amb_parse(tree, p.copy)
+                        val (lhs_tree, lhs_p) = parse(tree, p.copy)
                         lhs_p match {
                             case lhs_p_c: ParserContext => {
                                 lhs_p_c.exp match {
                                     case PFail(_) => {
                                         p.exp = rhs
-                                        val (rhs_tree, rhs_p) = amb_parse(tree,p.copy)
+                                        val (rhs_tree, rhs_p) = parse(tree,p.copy)
                                         rhs_p match {
                                             case rhs_p_c: ParserContext => {
                                                 rhs_p_c.exp match {
@@ -261,7 +282,7 @@ object PegPackratParser{
                                     }
                                     case _ => {
                                         p.exp = rhs
-                                        val (rhs_tree, rhs_p) = amb_parse(tree,p.copy)
+                                        val (rhs_tree, rhs_p) = parse(tree,p.copy)
                                         rhs_p match {
                                             case rhs_p_c: ParserContext => {
                                                 rhs_p_c.exp match {
@@ -296,7 +317,7 @@ object PegPackratParser{
                             }
                             case AmbContext(_, _) => {
                                 p.exp = rhs
-                                val (rhs_tree, rhs_p) = amb_parse(tree,p.copy)
+                                val (rhs_tree, rhs_p) = parse(tree,p.copy)
                                 rhs_p match {
                                     case rhs_p_c: ParserContext => {
                                         rhs_p_c.exp match {
