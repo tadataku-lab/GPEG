@@ -203,7 +203,10 @@ object PegPackratParser{
                                     }
                                     case AmbContext(_, _) => {
                                         new_tree = tree:+Node(symbol,child_tree)
-                                        amb_parse(new_tree, new_p.setExp(next))
+                                        next match {
+                                            case PSucc() => (new_tree, new_p)
+                                            case _ => amb_parse(new_tree, new_p.setExp(next))
+                                        }
                                     }
                                 }
                             }

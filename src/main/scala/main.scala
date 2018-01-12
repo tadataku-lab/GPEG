@@ -102,8 +102,12 @@ object GpegParser{
         val test = "\n".getBytes
         println(test(0))
         if(args.length == 0){
-            val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
-            //val g = parse(new FileReader("src/test/resources/GPEG/test6.gpeg"))
+            val g2 = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
+            println(g2);
+            val pg2 = toContinuation(g2)
+            println(pg2);
+            //val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
+            val g = parse(new FileReader("src/test/resources/GPEG/test7.gpeg"))
             println(g);
             val pg = toContinuation(g)
             println(pg);
