@@ -52,6 +52,8 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$PFail.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$PGrammar.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$PGrammar.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	.DS_Store[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/.DS_Store[0m
 [0m[[0m[0mdebug[0m] [0m[0m	CPS.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/CPS.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$PEmpty$.class[0m
@@ -88,6 +90,8 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$Str.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$PMatch$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$PMatch$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	RemoveLeftRecursion$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/RemoveLeftRecursion$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	PegPackratParser.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/PegPackratParser.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$And.class[0m
@@ -118,6 +122,8 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$LinkTree$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$Any$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$Any$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	RemoveLeftRecursion$RLRContext.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/RemoveLeftRecursion$RLRContext.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	Tree.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Tree.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	PegParser$.class[0m
@@ -128,6 +134,8 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/PegPackratParser$Memo.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$PSucc$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$PSucc$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	RemoveLeftRecursion.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/RemoveLeftRecursion.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	Node.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Node.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$PAnd.class[0m

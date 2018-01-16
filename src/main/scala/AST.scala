@@ -21,19 +21,29 @@ object AST {
   case class PGrammar(start: Symbol, rules: Map[Symbol,PExp])
   sealed trait PExp{
     def copy(): PExp
+    def set_next(new_next: PExp): PExp
   }
   case class PEmpty(next: PExp) extends PExp{
     def copy(): PEmpty = {
       PEmpty(next.copy)
+    }
+    def set_next(new_next: PExp): PEmpty = {
+      PEmpty(next.set_next(new_next))
     }
   }
   case class PSucc() extends PExp{
     def copy(): PSucc = {
       PSucc()
     }
+    def set_next(new_next: PExp): PExp = {
+      new_next
+    }
   }
   case class PFail(msg: String) extends PExp{
     def copy(): PFail = {
+      PFail(msg)
+    }
+    def set_next(new_next: PExp): PFail = {
       PFail(msg)
     }
   }
@@ -44,40 +54,64 @@ object AST {
     def copy(): PMatch = {
       PMatch(bytes, next.copy)
     }
+    def set_next(new_next: PExp): PMatch = {
+      PMatch(bytes, next.set_next(new_next))
+    }
   }
   case class PAny(next: PExp) extends PExp{
     def copy(): PAny = {
       PAny(next.copy)
+    }
+    def set_next(new_next: PExp): PAny = {
+      PAny(next.set_next(new_next))
     }
   }
   case class PCall(name: Symbol, next: PExp) extends PExp{
     def copy(): PCall = {
       PCall(name, next.copy)
     }
+    def set_next(new_next: PExp): PCall = {
+      PCall(name, next.set_next(new_next))
+    }
   }
   case class PIf(lhs: PExp, rhs: PExp, next: PExp) extends PExp{
     def copy(): PIf = {
       PIf(lhs.copy, rhs.copy, next.copy)
+    }
+    def set_next(new_next: PExp): PIf = {
+      PIf(lhs.copy, rhs.copy, next.set_next(new_next))
     }
   }
   case class PUnion(lhs: PExp, rhs: PExp) extends PExp{
     def copy(): PUnion = {
       PUnion(lhs.copy, rhs.copy)
     }
+    def set_next(new_next: PExp): PUnion = {
+      PUnion(lhs.set_next(new_next), rhs.set_next(new_next))
+    }
   }
   case class PNot(body: PExp, next: PExp) extends PExp{
     def copy(): PNot = {
       PNot(body.copy, next.copy)
+    }
+    def set_next(new_next: PExp): PNot = {
+      PNot(body.copy, next.set_next(new_next))
     }
   }
   case class PAnd(body: PExp, next: PExp) extends PExp{
     def copy(): PAnd = {
       PAnd(body.copy, next.copy)
     }
+    def set_next(new_next: PExp): PAnd = {
+      PAnd(body.copy, next.set_next(new_next))
+    }
   }
   case class PMany(body: PExp, next: PExp) extends PExp{
     def copy(): PMany = {
       PMany(body.copy, next.copy)
+    }
+    def set_next(new_next: PExp): PMany = {
+      PMany(body.copy, next.set_next(new_next))
     }
   }
   /**
