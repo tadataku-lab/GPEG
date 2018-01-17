@@ -6,4 +6,16 @@
 [0m[[0m[0minfo[0m] [0m[0m[32m- math1[0m[0m
 [0m[[0m[0minfo[0m] [0m[0m[32m- math2[0m[0m
 [0m[[0m[0minfo[0m] [0m[0m[32m- math3.0[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[32m- memo3[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m- memo3 *** FAILED ***[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  java.lang.RuntimeException: 'P: Rule can not be found[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at PegPackratParser$.parse(PegPackratParser.scala:285)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at PegPackratParser$.parse(PegPackratParser.scala:292)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at PegPackratParser$.memorized(PegPackratParser.scala:582)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at PegPackratParser$.amb_memorized(PegPackratParser.scala:157)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at PegPackratParser$.parse(PegPackratParser.scala:252)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at PegPackratParser$.exec(PegPackratParser.scala:101)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at PegPackratParser$.peg_parse(PegPackratParser.scala:38)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at TestParse.$anonfun$new$8(test.scala:60)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at org.scalatest.OutcomeOf.outcomeOf(OutcomeOf.scala:85)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at org.scalatest.OutcomeOf.outcomeOf$(OutcomeOf.scala:83)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
