@@ -25,6 +25,8 @@ object PegPackratParser{
 
     var rules: Map[Symbol, PExp] = Map.empty[Symbol, PExp]
     var input: Array[Byte] = Array.empty[Byte]
+    var id: Int = 0
+    var lrbs: Map[Int, LorRorB] = Map.empty[Int,LorRorB]
 
     def peg_parse(g: PGrammar, _input: String): Option[(Tree, ContextTree)] = {
         rules = g.rules;
@@ -37,6 +39,12 @@ object PegPackratParser{
         val parser_context = new ParserContext(0, start, new HashMap[(Symbol, Int),Memo], g.start)
         return exec(g.start, parser_context)
     }
+
+    sealed trait LorRorB
+
+    case class Left() extends LorRorB
+    case class Right() extends LorRorB
+    case class Both() extends LorRorB
 
     sealed trait ContextTree {
         def setExp(body: PExp): ContextTree = {
@@ -57,11 +65,12 @@ object PegPackratParser{
         def toString() : String
     }
 
-    case class AmbContext(_lhs: ContextTree, _rhs: ContextTree) extends ContextTree{
+    case class AmbContext(_lhs: ContextTree, _rhs: ContextTree, _id: Int) extends ContextTree{
         val lhs = _lhs
         val rhs = _rhs
+        val id = _id
         def copy(): AmbContext = {
-            new AmbContext(lhs.copy, rhs.copy)
+            new AmbContext(lhs.copy, rhs.copy, id)
         }
         override def toString: String = {
             val sb = new StringBuilder
@@ -99,24 +108,35 @@ object PegPackratParser{
 
     def exec(start: Symbol, p: ParserContext): Option[(Tree, ContextTree)]={
         val (treeList, new_p) = parse(List.empty[Tree], p)
+        println(lrbs)
         //println(new_p.hash_table)
         //return Some((Node(start, treeList), (input.drop(new_p.head.pos)).map(_.toChar).mkString))
-        return Some((Node(start, treeList), new_p))
+        return Some((Node(start, disambiguity(treeList)), new_p))
     }
 
-    def disambiguity(tree: List[Tree], isLeft: Boolean): List[Tree] = {
-        tree.last match {
-            case Node(name, next) => next.last match {
-                case AmbNode(_, lhs, rhs) => {
-                    if(isLeft){
-                        tree.init:+Node(name, lhs)
-                    }else{
-                        tree.init:+Node(name, rhs)
+    def disambiguity(trees: List[Tree]): List[Tree] = {
+        if(trees.isEmpty) return trees
+        var new_trees = List.empty[Tree]
+        for(tree <- trees){
+            new_trees = new_trees:::disamb(tree)
+        }
+        new_trees
+    }
+
+    def disamb(tree: Tree): List[Tree] = {
+        tree match {
+            case Node(name, nexts) => List(Node(name, disambiguity(nexts)))
+            case AmbNode(ambid, lhs, rhs) => {
+                lrbs.get(ambid) match {
+                    case Some(lrb) => lrb match {
+                        case Left() => disambiguity(lhs)
+                        case Right() => disambiguity(rhs)
+                        case Both() => List()
                     }
+                    case None => List(AmbNode(ambid, disambiguity(lhs), disambiguity(rhs)))
                 }
-                case _ => tree.init:+Node(name, disambiguity(next, isLeft))
             }
-            case _ => throw new RuntimeException("error 1: can't do disambiguity")
+            case _ => List(tree) //throw new RuntimeException("error 1: can't do disambiguity")
         }
     }
 
@@ -125,7 +145,7 @@ object PegPackratParser{
             case p_c: ParserContext => {
                 parse(tree, p_c)
             }
-            case AmbContext(lhs, rhs) => {
+            case AmbContext(lhs, rhs, _id) => {
                 val (lhs_tree, lhs_p) = amb_parse(List.empty[Tree], lhs)
                 val (rhs_tree, rhs_p) = amb_parse(List.empty[Tree], rhs)
                 lhs_p match {
@@ -135,35 +155,45 @@ object PegPackratParser{
                                 case rhs_p_c : ParserContext => {
                                     rhs_p_c.exp match {
                                         case PFail(_) => {
-                                            (tree, rhs_p_c) // want to return fail
+                                            lrbs = lrbs + (_id -> Both())
+                                            (disambiguity(tree), rhs_p_c) // want to return fail
                                         }
                                         case _ => {
-                                            println(tree)
-                                            (disambiguity(tree, false):::rhs_tree, rhs_p_c)
+                                            lrbs = lrbs + (_id -> Right())
+                                            (disambiguity(tree):::rhs_tree, rhs_p_c)
                                         }
                                     }
                                 }
-                                case AmbContext(_, _) => (disambiguity(tree, false):::rhs_tree, rhs_p)
+                                case AmbContext(_, _, _) => {
+                                    lrbs = lrbs + (_id -> Right())
+                                    (disambiguity(tree):::rhs_tree, rhs_p)
+                                }
                             }
                             case _ => rhs_p match {
                                 case rhs_p_c : ParserContext => {
                                     rhs_p_c.exp match {
-                                        case PFail(_) => (disambiguity(tree, true):::lhs_tree, lhs_p_c)
-                                        case _ => (tree:+AmbNode(Symbol("ambiguity"), lhs_tree, rhs_tree), AmbContext(lhs_p_c.copy, rhs_p_c.copy))
+                                        case PFail(_) => {
+                                            lrbs = lrbs + (_id -> Left())
+                                            (disambiguity(tree):::lhs_tree, lhs_p_c)
+                                        }
+                                        case _ => (tree:+AmbNode(_id, lhs_tree, rhs_tree), AmbContext(lhs_p_c.copy, rhs_p_c.copy, _id))
                                     }
                                 }
-                                case AmbContext(_, _) => (tree:+AmbNode(Symbol("ambiguity"), lhs_tree, rhs_tree), AmbContext(lhs_p_c.copy, rhs_p.copy))
+                                case AmbContext(_, _, _) => (tree:+AmbNode(_id , lhs_tree, rhs_tree), AmbContext(lhs_p_c.copy, rhs_p.copy, _id))
                             }
                         }
                     }
-                    case AmbContext(_, _) => rhs_p match {
+                    case AmbContext(_, _, _) => rhs_p match {
                         case rhs_p_c : ParserContext => {
                             rhs_p_c.exp match {
-                                case PFail(_) => (disambiguity(tree, true):::lhs_tree, lhs_p)
-                                case _ => (tree:+AmbNode(Symbol("ambiguity"), lhs_tree, rhs_tree), AmbContext(lhs_p.copy, rhs_p_c.copy))
+                                case PFail(_) => {
+                                    lrbs = lrbs + (_id -> Left())
+                                    (disambiguity(tree):::lhs_tree, lhs_p)
+                                }
+                                case _ => (tree:+AmbNode(_id, lhs_tree, rhs_tree), AmbContext(lhs_p.copy, rhs_p_c.copy, _id))
                             }
                         }
-                        case AmbContext(_, _) => (tree:+AmbNode(Symbol("ambiguity"), lhs_tree, rhs_tree), AmbContext(lhs_p.copy, rhs_p.copy))
+                        case AmbContext(_, _, _) => (tree:+AmbNode(_id, lhs_tree, rhs_tree), AmbContext(lhs_p.copy, rhs_p.copy, _id))
                     }
                 }
             }
@@ -175,7 +205,7 @@ object PegPackratParser{
             case p_c: ParserContext => {
                 memorized(tree, p_c)
             }
-            case AmbContext(lhs, rhs) => {
+            case AmbContext(lhs, rhs, _id) => {
                 val (lhs_tree, lhs_p) = amb_memorized(List.empty[Tree], lhs)
                 val (rhs_tree, rhs_p) = amb_memorized(List.empty[Tree], rhs)
                 lhs_p match {
@@ -185,32 +215,45 @@ object PegPackratParser{
                                 case rhs_p_c : ParserContext => {
                                     rhs_p_c.exp match {
                                         case PFail(_) => {
-                                            (tree, rhs_p_c)
+                                            lrbs = lrbs + (_id -> Both())
+                                            (disambiguity(tree), rhs_p_c)
                                         }
-                                        case _ => (disambiguity(tree, false):::rhs_tree, rhs_p_c)
+                                        case _ => {
+                                            lrbs = lrbs + (_id -> Right())
+                                            (disambiguity(tree):::rhs_tree, rhs_p_c)
+                                        }
                                     }
                                 }
-                                case AmbContext(_, _) => (disambiguity(tree, false):::rhs_tree, rhs_p)
+                                case AmbContext(_, _, _) => {
+                                    lrbs = lrbs + (_id -> Right())
+                                    (disambiguity(tree):::rhs_tree, rhs_p)
+                                }
                             }
                             case _ => rhs_p match {
                                 case rhs_p_c : ParserContext => {
                                     rhs_p_c.exp match {
-                                        case PFail(_) => (disambiguity(tree, true):::lhs_tree, lhs_p_c)
-                                        case _ => (tree:+AmbNode(Symbol("ambiguity"), lhs_tree, rhs_tree), AmbContext(lhs_p_c.copy, rhs_p_c.copy))
+                                        case PFail(_) => {
+                                            lrbs = lrbs + (_id -> Left())
+                                            (disambiguity(tree):::lhs_tree, lhs_p_c)
+                                        }
+                                        case _ => (tree:+AmbNode( _id, lhs_tree, rhs_tree), AmbContext(lhs_p_c.copy, rhs_p_c.copy, _id))
                                     }
                                 }
-                                case AmbContext(_, _) => (tree:+AmbNode(Symbol("ambiguity"), lhs_tree, rhs_tree), AmbContext(lhs_p_c.copy, rhs_p.copy))
+                                case AmbContext(_, _, _) => (tree:+AmbNode( _id, lhs_tree, rhs_tree), AmbContext(lhs_p_c.copy, rhs_p.copy, _id))
                             }
                         }
                     }
-                    case AmbContext(_, _) => rhs_p match {
+                    case AmbContext(_, _, _) => rhs_p match {
                         case rhs_p_c : ParserContext => {
                             rhs_p_c.exp match {
-                                case PFail(_) => (disambiguity(tree, true):::lhs_tree, lhs_p)
-                                case _ => (tree:+AmbNode(Symbol("ambiguity"), lhs_tree, rhs_tree), AmbContext(lhs_p.copy, rhs_p_c.copy))
+                                case PFail(_) => {
+                                    lrbs = lrbs + (_id -> Left())
+                                    (disambiguity(tree):::lhs_tree, lhs_p)
+                                }
+                                case _ => (tree:+AmbNode(_id, lhs_tree, rhs_tree), AmbContext(lhs_p.copy, rhs_p_c.copy, _id))
                             }
                         }
-                        case AmbContext(_, _) => (tree:+AmbNode(Symbol("ambiguity"), lhs_tree, rhs_tree), AmbContext(lhs_p.copy, rhs_p.copy))
+                        case AmbContext(_, _, _) => (tree:+AmbNode(_id, lhs_tree, rhs_tree), AmbContext(lhs_p.copy, rhs_p.copy, _id))
                     }
                 }
             }
@@ -289,7 +332,7 @@ object PegPackratParser{
                                             }
                                         } 
                                     }
-                                    case AmbContext(_, _) => {
+                                    case AmbContext(_, _, _) => {
                                         new_tree = tree:+Node(symbol,child_tree)
                                         next match {
                                             case PSucc() => (new_tree, new_p)
@@ -328,7 +371,7 @@ object PegPackratParser{
                                                     }
                                                 }
                                             }
-                                            case AmbContext(_,_) => {
+                                            case AmbContext(_, _, _) => {
                                                 rhs_p.setExp(next)
                                                 amb_parse(rhs_tree, rhs_p) 
                                             }
@@ -340,7 +383,7 @@ object PegPackratParser{
                                     }
                                 }
                             }
-                            case AmbContext(_, _) => {
+                            case AmbContext(_, _, _) => {
                                 lhs_p.setExp(next)
                                 amb_parse(lhs_tree, lhs_p)
                             }
@@ -370,7 +413,7 @@ object PegPackratParser{
                                                     }
                                                 }
                                             }
-                                            case AmbContext(_, _) => {
+                                            case AmbContext(_, _, _) => {
                                                 (rhs_tree, rhs_p)
                                             }
                                         }
@@ -386,23 +429,27 @@ object PegPackratParser{
                                                     }
                                                     case _ => {
                                                         if(isEqualPos(lhs_p_c.copy, rhs_p_c.copy)){
-                                                            val new_tree = tree:+AmbNode(Symbol("ambiguity"), lhs_tree, rhs_tree)
+                                                            val new_tree = tree:+AmbNode(id, lhs_tree, rhs_tree)
+                                                            id += 1
                                                             (new_tree, lhs_p_c.copy)
                                                         }else {
-                                                            val new_tree = tree:+AmbNode(Symbol("ambiguity"), lhs_tree, rhs_tree)
-                                                            val new_p = AmbContext(lhs_p_c.copy, rhs_p_c.copy)
+                                                            val new_tree = tree:+AmbNode(id, lhs_tree, rhs_tree)
+                                                            val new_p = AmbContext(lhs_p_c.copy, rhs_p_c.copy, id)
+                                                            id += 1
                                                             (new_tree, new_p)
                                                         }
                                                     }
                                                 }
                                             }
-                                            case AmbContext(_, _) => {
+                                            case AmbContext(_, _, _) => {
                                                 if(isEqualPos(lhs_p_c.copy,rhs_p.copy)){
-                                                    val new_tree = tree:+AmbNode(Symbol("ambiguity"), lhs_tree, rhs_tree)
+                                                    val new_tree = tree:+AmbNode(id, lhs_tree, rhs_tree)
+                                                    id += 1
                                                     (new_tree, lhs_p_c.copy)
                                                 }else {
-                                                    val new_tree = tree:+AmbNode(Symbol("ambiguity"), lhs_tree, rhs_tree)
-                                                    val new_p = AmbContext(lhs_p_c.copy, rhs_p.copy)
+                                                    val new_tree = tree:+AmbNode(id, lhs_tree, rhs_tree)
+                                                    val new_p = AmbContext(lhs_p_c.copy, rhs_p.copy, id)
+                                                    id += 1
                                                     (new_tree, new_p)
                                                 }
                                             }
@@ -410,7 +457,7 @@ object PegPackratParser{
                                     }
                                 }
                             }
-                            case AmbContext(_, _) => {
+                            case AmbContext(_, _, _) => {
                                 p.exp = rhs
                                 val (rhs_tree, rhs_p) = parse(tree,p.copy)
                                 rhs_p match {
@@ -421,23 +468,27 @@ object PegPackratParser{
                                             }
                                             case _ => {
                                                 if(isEqualPos(lhs_p.copy,rhs_p.copy)){
-                                                    val new_tree = tree:+AmbNode(Symbol("ambiguity"), lhs_tree, rhs_tree)
+                                                    val new_tree = tree:+AmbNode(id, lhs_tree, rhs_tree)
+                                                    id += 1
                                                     (new_tree, lhs_p)
                                                 }else {
-                                                    val new_tree = tree:+AmbNode(Symbol("ambiguity"), lhs_tree, rhs_tree)
-                                                    val new_p = AmbContext(lhs_p.copy, rhs_p_c.copy)
+                                                    val new_tree = tree:+AmbNode(id, lhs_tree, rhs_tree)
+                                                    val new_p = AmbContext(lhs_p.copy, rhs_p_c.copy, id)
+                                                    id += 1
                                                     (new_tree, new_p)
                                                 }
                                             }
                                         }
                                     }
-                                    case AmbContext(_, _) => {
+                                    case AmbContext(_, _, _) => {
                                         if(isEqualPos(lhs_p.copy,rhs_p.copy)){
-                                            val new_tree = tree:+AmbNode(Symbol("ambiguity"), lhs_tree, rhs_tree)
+                                            val new_tree = tree:+AmbNode(id, lhs_tree, rhs_tree)
+                                            id += 1
                                             (new_tree, lhs_p)
                                         }else {
-                                            val new_tree = tree:+AmbNode(Symbol("ambiguity"), lhs_tree, rhs_tree)
-                                            val new_p = AmbContext(lhs_p.copy, rhs_p.copy)
+                                            val new_tree = tree:+AmbNode(id, lhs_tree, rhs_tree)
+                                            val new_p = AmbContext(lhs_p.copy, rhs_p.copy, id)
+                                            id += 1
                                             (new_tree, new_p)
                                         }
                                     }
@@ -462,7 +513,7 @@ object PegPackratParser{
                                     }
                                 }
                             }
-                            case AmbContext(lhs, rhs) => {
+                            case AmbContext(lhs, rhs, _) => {
                                 lhs.setExp(PFail("Match PExp: " + body))
                                 rhs.setExp(PFail("Match PExp: " + body))
                                 amb_parse(tree, new_p)
@@ -486,7 +537,7 @@ object PegPackratParser{
                                     }
                                 }
                             }
-                            case AmbContext(lhs, rhs) => {
+                            case AmbContext(lhs, rhs, _) => {
                                 lhs.setExp(next)
                                 rhs.setExp(next)
                                 amb_parse(tree, new_p)
@@ -541,7 +592,7 @@ object PegPackratParser{
                             }
                         }
                     }
-                    case AmbContext(lhs, rhs) => {
+                    case AmbContext(lhs, rhs, _) => {
                         lhs.setExp(body)
                         rhs.setExp(body)
                         now_tree = new_tree
@@ -559,7 +610,7 @@ object PegPackratParser{
             case ParserContext(_pos, _, _, _) => {
                 pos = _pos
             }
-            case AmbContext(lhs, rhs) => {
+            case AmbContext(lhs, rhs, _) => {
                 return isEqualPos(lhs, rhs)
             }
         }
@@ -567,7 +618,7 @@ object PegPackratParser{
             case ParserContext(_pos, _, _, _) => {
                 return pos == _pos
             }
-            case AmbContext(lhs, rhs) => {
+            case AmbContext(lhs, rhs, _) => {
                 return isEqualPos(lhs, rhs)
             }
         }
@@ -610,8 +661,8 @@ object PegPackratParser{
                             }
                         }
                     }
-                    case AmbContext(_, _) => {
-                        p.hash_table += ((memo_info) -> new Memo(new_p, new_tree))
+                    case AmbContext(_, _, _) => {
+                        //p.hash_table += ((memo_info) -> new Memo(new_p, new_tree))
                     }
                 }
                 

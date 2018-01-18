@@ -18,10 +18,10 @@ case class Node(name: Symbol, next: List[Tree]) extends Tree{
         sb.toString
     }
 }
-case class AmbNode(name: Symbol, lhs: List[Tree], rhs: List[Tree]) extends Tree{
+case class AmbNode(id: Int, lhs: List[Tree], rhs: List[Tree]) extends Tree{
     override def toString: String = {
         val sb = new StringBuilder
-        sb.append("[" + name + " ")
+        sb.append("[amb<" +id + "> ")
         sb.append("[lhs ")
         for (_lhs <- lhs){
             sb.append(_lhs)

@@ -1,6 +1,5 @@
-[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegPackratParser.scala:117:36: type mismatch;[0m
-[0m[[0m[31merror[0m] [0m[0m found   : List[Object][0m
-[0m[[0m[31merror[0m] [0m[0m required: List[Tree][0m
-[0m[[0m[31merror[0m] [0m[0m                case _ => tree.init:+disambiguity(next, isLeft)[0m
-[0m[[0m[31merror[0m] [0m[0m                                   ^[0m
-[0m[[0m[31merror[0m] [0m[0mone error found[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:64:107: match may not be exhaustive.[0m
+[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following input: ~(_, Nil)[0m
+[0m[[0m[33mwarn[0m] [0m[0m        lazy val CLASS: Parser[Exp] = (loc <~ chr('[')) ~ (not(chr(']')) ~> Range).* <~ ']' ~> Spacing ^^ {[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                                                                                          ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m
