@@ -47,7 +47,8 @@ object RemoveLeftRecursion {
             }
             
             case pexp: PIf => {
-                r.new_rules = r.new_rules :+ ((rule._1, remove_if(pexp, nonterm, r)))
+                val (new_pexp, new_r) = remove_if(pexp, nonterm, r)
+                new_r.new_rules = new_r.new_rules :+ ((rule._1, new_pexp))
             }
             
             case pexp: PUnion => {
@@ -58,16 +59,16 @@ object RemoveLeftRecursion {
             }
             
             case pexp: PNot => {
-                val new_pexp = remove_body(pexp.body, nonterm, r)
-                r.new_rules = r.new_rules :+ ((rule._1, PNot(new_pexp, pexp.next)))
+                val (new_pexp, new_r) = remove_body(pexp.body, nonterm, r)
+                new_r.new_rules = new_r.new_rules :+ ((rule._1, PNot(new_pexp, pexp.next)))
             }
             case pexp: PAnd => {
-                val new_pexp = remove_body(pexp.body, nonterm, r)
-                r.new_rules = r.new_rules :+ ((rule._1, PAnd(new_pexp, pexp.next)))
+                val (new_pexp, new_r) = remove_body(pexp.body, nonterm, r)
+                new_r.new_rules = new_r.new_rules :+ ((rule._1, PAnd(new_pexp, pexp.next)))
             }
             case pexp: PMany => {
-                val new_pexp = remove_body(pexp.body, nonterm, r)
-                r.new_rules = r.new_rules :+ ((rule._1, PMany(new_pexp, pexp.next)))
+                val (new_pexp, new_r) = remove_body(pexp.body, nonterm, r)
+                new_r.new_rules = new_r.new_rules :+ ((rule._1, PMany(new_pexp, pexp.next)))
             }
             
             case _ => {
@@ -76,7 +77,7 @@ object RemoveLeftRecursion {
         }
     }
 
-    def remove_body(body: PExp, nonterm: Symbol, r: RLRContext): PExp = {
+    def remove_body(body: PExp, nonterm: Symbol, r: RLRContext): (PExp, RLRContext) = {
         body match {
             case pexp: PCall => {
                 if (pexp.name == nonterm){
@@ -86,7 +87,7 @@ object RemoveLeftRecursion {
                         case Some(_pexp) => {
                             remove((pexp.name,_pexp), nonterm, r)
                             r.keys = r.keys - pexp.name
-                            body
+                            (body, r)
                         }
                         case None => throw new RuntimeException("Rules Error: Don't find rule of symbol " + pexp.name)
                     }
@@ -98,8 +99,7 @@ object RemoveLeftRecursion {
             }
             
             case pexp: PUnion => {
-                val (new_pexp, new_r) = remove_union(pexp, nonterm, r)
-                new_pexp
+                remove_union(pexp, nonterm, r)
             }
             
             case pexp: PNot => {
@@ -113,12 +113,12 @@ object RemoveLeftRecursion {
             }
             
             case _ => {
-                body
+                (body, r)
             }
         }
     }
 
-    def remove_if(pexp: PIf, nonterm: Symbol, r: RLRContext): PIf = {
+    def remove_if(pexp: PIf, nonterm: Symbol, r: RLRContext): (PIf, RLRContext) = {
         pexp.lhs match {
             case lhs_pexp: PCall => {
                 if (lhs_pexp.name == nonterm){
@@ -131,7 +131,7 @@ object RemoveLeftRecursion {
                                     case Some(_pexp) => {
                                         remove((rhs_pexp.name,_pexp), nonterm, r)
                                         r.keys = r.keys - rhs_pexp.name
-                                        PIf(PCall(rhs_pexp.name , lhs_pexp.next), rhs_pexp, pexp.next)
+                                        (PIf(PCall(rhs_pexp.name , lhs_pexp.next), rhs_pexp, pexp.next), r)
                                     }
                                     case None => throw new RuntimeException("Rules Error: Don't find rule of symbol " + rhs_pexp.name)
                                 }
@@ -140,31 +140,35 @@ object RemoveLeftRecursion {
 
                         case rhs_pexp: PIf => {
                             val new_symbol = Symbol(lhs_pexp.name.name + "'")
-                            r.new_rules = r.new_rules :+ ((new_symbol, remove_if(isPIf(setSym(rhs_pexp, nonterm ,new_symbol)), new_symbol, r)))
-                            PIf(PCall(new_symbol, lhs_pexp.next), PCall(new_symbol, PSucc()), pexp.next)
+                            val (new_pexp, new_r) = remove_if(isPIf(setSym(rhs_pexp, nonterm ,new_symbol)), new_symbol, r)
+                            new_r.new_rules = new_r.new_rules :+ ((new_symbol, new_pexp))
+                            (PIf(PCall(new_symbol, lhs_pexp.next), PCall(new_symbol, PSucc()), pexp.next), r)
                         }
 
                         case rhs_pexp: PUnion => {
                             val new_symbol = Symbol(lhs_pexp.name.name + "'")
                             val (new_pexp, new_r) = remove_union(isPUnion(setSym(rhs_pexp, nonterm ,new_symbol)), new_symbol, r)
                             new_r.new_rules = new_r.new_rules :+ ((new_symbol, new_pexp))
-                            PIf(PCall(new_symbol, lhs_pexp.next), PCall(new_symbol, PSucc()), pexp.next)
+                            (PIf(PCall(new_symbol, lhs_pexp.next), PCall(new_symbol, PSucc()), pexp.next), new_r)
                         }
 
                         case rhs_pexp: PNot => {
-                            PIf(PNot(remove_body(rhs_pexp.body, nonterm, r), rhs_pexp.next.set_next(lhs_pexp.next)), PNot(remove_body(rhs_pexp.body, nonterm, r), rhs_pexp.next), pexp.next)
+                            val (new_pexp, new_r) = remove_body(rhs_pexp.body, nonterm, r)
+                            (PIf(PNot(new_pexp, rhs_pexp.next.set_next(lhs_pexp.next)), PNot(new_pexp, rhs_pexp.next), pexp.next), new_r)
                         }
 
                         case rhs_pexp: PAnd => {
-                            PIf(PAnd(remove_body(rhs_pexp.body, nonterm, r), rhs_pexp.next.set_next(lhs_pexp.next)), PAnd(remove_body(rhs_pexp.body, nonterm, r), rhs_pexp.next), pexp.next)
+                            val (new_pexp, new_r) = remove_body(rhs_pexp.body, nonterm, r)
+                            (PIf(PAnd(new_pexp, rhs_pexp.next.set_next(lhs_pexp.next)), PAnd(new_pexp, rhs_pexp.next), pexp.next), new_r)
                         }
 
                         case rhs_pexp: PMany => {
-                            PIf(PMany(remove_body(rhs_pexp.body, nonterm, r), rhs_pexp.next.set_next(lhs_pexp.next)), PMany(remove_body(rhs_pexp.body, nonterm, r), rhs_pexp.next), pexp.next)
+                            val (new_pexp, new_r) = remove_body(rhs_pexp.body, nonterm, r)
+                            (PIf(PMany(new_pexp, rhs_pexp.next.set_next(lhs_pexp.next)), PMany(new_pexp, rhs_pexp.next), pexp.next), new_r)
                         }
 
                         case _ => {
-                            PIf(pexp.rhs.set_next(lhs_pexp.next), pexp.rhs, pexp.next)
+                            (PIf(pexp.rhs.set_next(lhs_pexp.next), pexp.rhs, pexp.next), r)
                         }
                     }
                 }else {
@@ -172,7 +176,7 @@ object RemoveLeftRecursion {
                         case Some(_pexp) => {
                             remove((lhs_pexp.name,_pexp), nonterm, r)
                             r.keys = r.keys - lhs_pexp.name
-                            pexp
+                            (pexp, r)
                         }
                         case None => throw new RuntimeException("Rules Error: Don't find rule of symbol " + lhs_pexp.name)
                     }
@@ -180,26 +184,30 @@ object RemoveLeftRecursion {
             }
             
             case lhs_pexp: PIf => {
-                PIf(remove_if(lhs_pexp, nonterm, r), pexp.rhs, pexp.next)
+                val (new_pexp, new_r) = remove_if(lhs_pexp, nonterm, r)
+                (PIf(new_pexp, pexp.rhs, pexp.next), new_r)
             }
             
             case lhs_pexp: PUnion => {
                 val (new_pexp, new_r) = remove_union(lhs_pexp, nonterm, r)
-                PIf(new_pexp, pexp.rhs, pexp.next)
+                (PIf(new_pexp, pexp.rhs, pexp.next), new_r)
             }
             
             case lhs_pexp: PNot => {
-                PIf(remove_body(lhs_pexp.body, nonterm, r), pexp.rhs, pexp.next)
+                val (new_pexp, new_r) = remove_body(lhs_pexp.body, nonterm, r)
+                (PIf(new_pexp, pexp.rhs, pexp.next), new_r)
             }
             case lhs_pexp: PAnd => {
-                PIf(remove_body(lhs_pexp.body, nonterm, r), pexp.rhs, pexp.next)
+                val (new_pexp, new_r) = remove_body(lhs_pexp.body, nonterm, r)
+                (PIf(new_pexp, pexp.rhs, pexp.next), new_r)
             }
             case lhs_pexp: PMany => {
-                PIf(remove_body(lhs_pexp.body, nonterm, r), pexp.rhs, pexp.next)
+                val (new_pexp, new_r) = remove_body(lhs_pexp.body, nonterm, r)
+                (PIf(new_pexp, pexp.rhs, pexp.next), new_r)
             }
             
             case _ => {
-                pexp
+                (pexp, r)
             }
         }
     }
@@ -226,8 +234,9 @@ object RemoveLeftRecursion {
 
                         case rhs_pexp: PIf => {
                             val new_symbol = Symbol(lhs_pexp.name.name + "'")
-                            r.new_rules = r.new_rules :+ ((new_symbol, remove_if(isPIf(setSym(rhs_pexp, nonterm ,new_symbol)), new_symbol, r)))
-                            (PUnion(PCall(new_symbol, lhs_pexp.next), PCall(new_symbol, PSucc())), r)
+                            val (new_pexp, new_r) = remove_if(isPIf(setSym(rhs_pexp, nonterm ,new_symbol)), new_symbol, r)
+                            new_r.new_rules = new_r.new_rules :+ ((new_symbol, new_pexp))
+                            (PUnion(PCall(new_symbol, lhs_pexp.next), PCall(new_symbol, PSucc())), new_r)
                         }
 
                         case rhs_pexp: PUnion => {
@@ -239,15 +248,18 @@ object RemoveLeftRecursion {
                         }
 
                         case rhs_pexp: PNot => {
-                            (PUnion(PNot(remove_body(rhs_pexp.body, nonterm, r), rhs_pexp.next.set_next(lhs_pexp.next)), PNot(remove_body(rhs_pexp.body, nonterm, r), rhs_pexp.next)), r)
+                            val (new_pexp, new_r) = remove_body(rhs_pexp.body, nonterm, r)
+                            (PUnion(PNot(new_pexp, rhs_pexp.next.set_next(lhs_pexp.next)), PNot(new_pexp, rhs_pexp.next)), new_r)
                         }
 
                         case rhs_pexp: PAnd => {
-                            (PUnion(PAnd(remove_body(rhs_pexp.body, nonterm, r), rhs_pexp.next.set_next(lhs_pexp.next)), PAnd(remove_body(rhs_pexp.body, nonterm, r), rhs_pexp.next)), r)
+                            val (new_pexp, new_r) = remove_body(rhs_pexp.body, nonterm, r)
+                            (PUnion(PAnd(new_pexp, rhs_pexp.next.set_next(lhs_pexp.next)), PAnd(new_pexp, rhs_pexp.next)), new_r)
                         }
 
                         case rhs_pexp: PMany => {
-                            (PUnion(PMany(remove_body(rhs_pexp.body, nonterm, r), rhs_pexp.next.set_next(lhs_pexp.next)), PMany(remove_body(rhs_pexp.body, nonterm, r), rhs_pexp.next)), r)
+                            val (new_pexp, new_r) = remove_body(rhs_pexp.body, nonterm, r)
+                            (PUnion(PMany(new_pexp, rhs_pexp.next.set_next(lhs_pexp.next)), PMany(new_pexp, rhs_pexp.next)), new_r)
                         }
 
                         case _ => {
@@ -267,7 +279,8 @@ object RemoveLeftRecursion {
             }
             
             case lhs_pexp: PIf => {
-                (PUnion(remove_if(lhs_pexp, nonterm, r), pexp.rhs), r)
+                val (new_pexp, new_r) = remove_if(lhs_pexp, nonterm, r)
+                (PUnion(new_pexp, pexp.rhs), new_r)
             }
             
             case lhs_pexp: PUnion => {
@@ -276,13 +289,16 @@ object RemoveLeftRecursion {
             }
             
             case lhs_pexp: PNot => {
-                (PUnion(remove_body(lhs_pexp.body, nonterm, r), pexp.rhs), r)
+                val (new_pexp, new_r) = remove_body(lhs_pexp.body, nonterm, r)
+                (PUnion(new_pexp, pexp.rhs), new_r)
             }
             case lhs_pexp: PAnd => {
-                (PUnion(remove_body(lhs_pexp.body, nonterm, r), pexp.rhs), r)
+                val (new_pexp, new_r) = remove_body(lhs_pexp.body, nonterm, r)
+                (PUnion(new_pexp, pexp.rhs), new_r)
             }
             case lhs_pexp: PMany => {
-                (PUnion(remove_body(lhs_pexp.body, nonterm, r), pexp.rhs), r)
+                val (new_pexp, new_r) = remove_body(lhs_pexp.body, nonterm, r)
+                (PUnion(new_pexp, pexp.rhs), new_r)
             }
             
             case _ => {
