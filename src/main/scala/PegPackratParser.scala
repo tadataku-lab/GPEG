@@ -26,6 +26,7 @@ object PegPackratParser{
     var rules: Map[Symbol, PExp] = Map.empty[Symbol, PExp]
     var input: Array[Byte] = Array.empty[Byte]
     var id: Int = 0
+    var map_id: Map[Int, Int] = Map.empty[Int, Int]
     var lrbs: Map[Int, LorRorB] = Map.empty[Int,LorRorB]
 
     def peg_parse(g: PGrammar, _input: String): Option[(Tree, ContextTree)] = {
@@ -784,7 +785,8 @@ object PegPackratParser{
                 //p.pos = memo.pos
                 //p.nonterm = memo.nonterm
                 //p.exp = memo.exp
-                (memo.tree, memo.context)
+                renew_id(memo.tree, memo.context)
+                //(memo.tree, memo.context)
             }
             case None => {
                 val memo_info = (p.nonterm, p.pos)
@@ -793,7 +795,7 @@ object PegPackratParser{
                     case ParserContext(_, exp, _, _, _) => {
                         exp match {
                             case PFail(_) => {
-                                //p.hash_table += ((memo_info) -> new Memo(new_p.pos, new_p.exp, new_p.nonterm, new_tree))
+                                //p.hash_table += ((memo_info) -> new Memo(new_p, new_tree))
                             }
                             case _ => {
                                 p.hash_table += ((memo_info) -> new Memo(new_p, new_tree))
@@ -801,13 +803,55 @@ object PegPackratParser{
                         }
                     }
                     case AmbContext(_, _, _) => {
-                        //p.hash_table += ((memo_info) -> new Memo(new_p, new_tree))
+                        p.hash_table += ((memo_info) -> new Memo(new_p, new_tree))
                     }
                 }
                 
                 //p.hash_table += ((memo_info) -> new Memo(new_p.pos, new_p.exp, new_p.nonterm, new_tree))
                 //println(p.hash_table)
                 (new_tree, new_p)
+            }
+        }
+    }
+
+    def renew_id(trees: List[Tree], p: ContextTree): (List[Tree], ContextTree) = {
+        val renew_p = renew_id_p(p)
+        val renew_trees = renew_id_trees(trees)
+        (renew_trees, renew_p)
+    }
+
+    def renew_id_p(p: ContextTree): ContextTree = {
+        p match {
+            case p_c: ParserContext => p_c
+            case AmbContext(lhs, rhs, _id) => {
+                val new_id = id;
+                map_id = map_id + (_id -> new_id)
+                id = id + 1
+                AmbContext(renew_id_p(lhs), renew_id_p(rhs), new_id)
+            }
+        }
+    }
+
+    def renew_id_trees(trees: List[Tree]): List[Tree] = {
+        trees.map(tree => renew_id_tree(tree))
+    }
+
+    def renew_id_tree(tree: Tree): Tree = {
+        tree match {
+            case leaf: Leaf => leaf
+            case Node(name, next) => Node(name, renew_id_trees(next))
+            case AmbNode(_id, lhs, rhs) => {
+                map_id.get(_id) match {
+                    case Some(new_id) => {
+                        AmbNode(new_id, renew_id_trees(lhs), renew_id_trees(rhs))
+                    }
+                    case None => {
+                        val new_id = id
+                        map_id = map_id + (_id -> new_id)
+                        id += 1
+                        AmbNode(new_id, renew_id_trees(lhs), renew_id_trees(rhs))
+                    }
+                }
             }
         }
     }
