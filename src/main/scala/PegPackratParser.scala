@@ -1,25 +1,6 @@
 import AST._
 import scala.collection.mutable.{HashMap}
-
-/**
-sealed trait Tree
-case class Leaf(v: String) extends Tree{
-    override def toString: String = {
-      "[" + v + "]" 
-    }
-}
-case class Node(name: Symbol, next: List[Tree]) extends Tree{
-    override def toString: String = {
-        var sb = new StringBuilder
-        sb.append("[" + name + " ")
-        for (tree <- next){
-            sb.append(tree)
-        }
-        sb.append("]")
-        sb.toString
-    }
-}
-*/
+import Tree._
 
 object PegPackratParser{
 
@@ -40,6 +21,9 @@ object PegPackratParser{
         val parser_context = new ParserContext(0, start, new HashMap[(Symbol, Int),Memo], g.start, false)
         return exec(g.start, parser_context)
     }
+
+    case class ParseResult(tree: List[Tree], p: ParserContext)
+    case class AmbParseResult(tree: List[Tree], p: ContextTree)
 
     sealed trait LorRorB
 
@@ -568,8 +552,7 @@ object PegPackratParser{
                         amb_parse(new_tree, new_p.setExp(next))
                     }
 
-                    case PFold(name, body, rec, next) => {                        
-                        println(tree)
+                    case PFold(name, body, rec, next) => {
                         if(p.folding){
                             p.exp = PFold(name, body, rec, next)
                             (tree, p)
@@ -631,70 +614,9 @@ object PegPackratParser{
         
         (now_tree, now_p)
     }
-/**
-    def fold(name: Symbol, body: PExp, tree: List[Tree], p: ContextTree, folding: Boolean): (List[Tree], ContextTree) = {
-        
-        if(folding) {
-            println("test")       
-            val (new_tree, new_p) = amb_parse(List.empty[Tree],p.setExp(body).setFold(true).copy)
-            new_p match {
-                case p_c: ParserContext => {
-                    p_c.exp match {
-                        case PFail(_) => {
-                            println("test")
-                            (tree, p)
-                        }
-                        case _ => {
-                            println("test")
-                            (tree, p.setExp(body))
-                        }
-                    
-                    }
-                }
-                case AmbContext(_, _, _) => {
-                     (tree, p.setExp(body))
-                }
-            }
-        }else {
-            val (new_tree, new_p) = amb_parse(tree,p.setExp(body).setFold(true).copy)
-            println(new_tree)
-            println(new_p)
-            new_p match {
-                case p_c: ParserContext => {
-                    p_c.exp match {
-                        case PFail(_) => {
-                            p_c.folding = false
-                            (tree, p_c)
-                        }
-                        case _ => {
-                            
-                            rules.get(name) match {
-                                case Some(exp) => {
-                                    p_c.exp = exp
-                                    p_c.folding = false
-                                    println(p_c)
-                                    fold(name, body, tree:::new_tree, p_c, false)
-                                }
-                                case None => throw new RuntimeException(name + ": Rule can not be found")
-                            }
-                            
-                            p_c.folding = false
-                            println(p_c)
-                            fold(name, body, new_tree, p_c, false)
-                        }
-                    
-                    }
-                }
-                case AmbContext(_, _, _) => {
-                     amb_parse(tree:::new_tree, new_p)
-                }
-            }
-        }
-    }
-*/
+
     def fold(name: Symbol, body: PExp, rec: Symbol, tree: List[Tree], p: ContextTree): (List[Tree], ContextTree) = {
         val (body_tree, body_p) = amb_parse(tree, p.setExp(body))
-        println(body_p)
         body_p match {
                 case body_p_c: ParserContext => {
                     body_p_c.exp match {
@@ -744,6 +666,16 @@ object PegPackratParser{
         }
     }
 
+    def chain(result: AmbParseResult, succ: (AmbParseResult) => AmbParseResult, fail: (AmbParseResult) => AmbParseResult): AmbParseResult  = {
+        result.p match {
+            case p_c: ParserContext => p_c.exp match {
+                case PFail(_) => fail(result)
+                case PSucc() => succ(result)
+            }
+            case a_c: AmbContext => succ(result)
+        }
+    }
+
     def isEqualPos(lhs: ContextTree, rhs: ContextTree): Boolean = {
         var pos: Int = 0
         lhs match {
@@ -779,14 +711,7 @@ object PegPackratParser{
     def memorized(tree: List[Tree], p: ParserContext):(List[Tree], ContextTree) = {
         p.hash_table.get((p.nonterm,p.pos)) match {
             case Some(memo) => {
-                //println("memo: " + memo.tree)
-                //println(p.pos + " " + p.nonterm)
-                //println(memo.pos + " " + memo.nonterm + " " + memo.exp)
-                //p.pos = memo.pos
-                //p.nonterm = memo.nonterm
-                //p.exp = memo.exp
                 renew_id(memo.tree, memo.context)
-                //(memo.tree, memo.context)
             }
             case None => {
                 val memo_info = (p.nonterm, p.pos)
@@ -808,7 +733,6 @@ object PegPackratParser{
                 }
                 
                 //p.hash_table += ((memo_info) -> new Memo(new_p.pos, new_p.exp, new_p.nonterm, new_tree))
-                //println(p.hash_table)
                 (new_tree, new_p)
             }
         }
