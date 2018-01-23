@@ -1,8 +1,22 @@
 [0m[[0m[0mdebug[0m] [0m[0mThe PegPackratParser$ has the following regular definitions changed:[0m
-[0m[[0m[0mdebug[0m] [0m[0m	UsedName(Left,[Default]), UsedName(id,[Default]), UsedName(disambiguity,[Default]), UsedName(Both,[Default]), UsedName(lrbs,[Default]), UsedName(Right,[Default]), UsedName(LorRorB,[Default]), UsedName(disamb_node,[Default]).[0m
+[0m[[0m[0mdebug[0m] [0m[0m	UsedName(id,[Default]), UsedName(Left,[Default]), UsedName(disamb,[Default]), UsedName(disambiguity,[Default]), UsedName(Both,[Default]), UsedName(LorRorB,[Default]), UsedName(Right,[Default]), UsedName(lrbs,[Default]).[0m
 [0m[[0m[0mdebug[0m] [0m[0mAll member reference dependencies will be considered within this context.[0m
 [0m[[0m[0mdebug[0m] [0m[0mFiles invalidated by inheriting from (external) PegPackratParser$: Set(); now invalidating by inheritance (internally).[0m
 [0m[[0m[0mdebug[0m] [0m[0mGetting direct dependencies of all classes transitively invalidated by inheritance.[0m
 [0m[[0m[0mdebug[0m] [0m[0mGetting classes that directly depend on (external) PegPackratParser$.[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of TestParse. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mThe PegPackratParser$ContextTree has the following regular definitions changed:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	UsedName(setFold,[Default]).[0m
+[0m[[0m[0mdebug[0m] [0m[0mAll member reference dependencies will be considered within this context.[0m
+[0m[[0m[0mdebug[0m] [0m[0mFiles invalidated by inheriting from (external) PegPackratParser$ContextTree: Set(); now invalidating by inheritance (internally).[0m
+[0m[[0m[0mdebug[0m] [0m[0mGetting direct dependencies of all classes transitively invalidated by inheritance.[0m
+[0m[[0m[0mdebug[0m] [0m[0mGetting classes that directly depend on (external) PegPackratParser$ContextTree.[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of TestParse. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mThe AST$ has the following regular definitions changed:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	UsedName(Caputure,[Default]), UsedName(FoldMany,[Default]), UsedName(PFold,[Default]), UsedName(LinkTree,[Default]).[0m
+[0m[[0m[0mdebug[0m] [0m[0mAll member reference dependencies will be considered within this context.[0m
+[0m[[0m[0mdebug[0m] [0m[0mFiles invalidated by inheriting from (external) AST$: Set(); now invalidating by inheritance (internally).[0m
+[0m[[0m[0mdebug[0m] [0m[0mGetting direct dependencies of all classes transitively invalidated by inheritance.[0m
+[0m[[0m[0mdebug[0m] [0m[0mGetting classes that directly depend on (external) AST$.[0m
 [0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of TestParse. This dependency is not being considered for invalidation.[0m
 [0m[[0m[0mdebug[0m] [0m[0mNo changes[0m

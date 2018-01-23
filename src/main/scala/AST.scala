@@ -14,21 +14,31 @@ object AST {
   case class Many(body: Exp) extends Exp 
   case class Not(body: Exp) extends Exp 
   case class And(body: Exp) extends Exp
-  case class Caputure(label: Symbol, body: Exp) extends Exp
-  case class FoldMany(label: Symbol, lhs: Exp, rhs: Exp) extends Exp 
-  case class LinkTree(label: Symbol, body: Exp) extends Exp
+  //case class Caputure(label: Symbol, body: Exp) extends Exp
+  //case class FoldMany(label: Symbol, lhs: Exp, rhs: Exp) extends Exp 
+  //case class LinkTree(label: Symbol, body: Exp) extends Exp
 
   case class PGrammar(start: Symbol, rules: Map[Symbol,PExp])
+
   sealed trait PExp{
     def copy(): PExp
     def set_next(new_next: PExp): PExp
   }
-  case class PEmpty(next: PExp) extends PExp{
+
+  sealed trait HasNext{
+    val next: PExp
+    def assign_next(new_next: PExp): PExp
+  }
+
+  case class PEmpty(next: PExp) extends PExp with HasNext{
     def copy(): PEmpty = {
       PEmpty(next.copy)
     }
     def set_next(new_next: PExp): PEmpty = {
       PEmpty(next.set_next(new_next))
+    }
+    def assign_next(new_next: PExp): PEmpty = {
+      PEmpty(new_next)
     }
   }
   case class PSucc() extends PExp{
@@ -47,7 +57,7 @@ object AST {
       PFail(msg)
     }
   }
-  case class PMatch(bytes: Array[Byte], next: PExp) extends PExp{
+  case class PMatch(bytes: Array[Byte], next: PExp) extends PExp with HasNext{
     override def toString: String = {
       "PMatch(" + (bytes.map(_.toChar)).mkString + "," + next.toString +")"
     }
@@ -57,32 +67,44 @@ object AST {
     def set_next(new_next: PExp): PMatch = {
       PMatch(bytes, next.set_next(new_next))
     }
+    def assign_next(new_next: PExp): PMatch = {
+      PMatch(bytes, new_next)
+    }
   }
-  case class PAny(next: PExp) extends PExp{
+  case class PAny(next: PExp) extends PExp with HasNext{
     def copy(): PAny = {
       PAny(next.copy)
     }
     def set_next(new_next: PExp): PAny = {
       PAny(next.set_next(new_next))
     }
+    def assign_next(new_next: PExp): PAny = {
+      PAny(new_next)
+    }
   }
-  case class PCall(name: Symbol, next: PExp) extends PExp{
+  case class PCall(name: Symbol, next: PExp) extends PExp with HasNext{
     def copy(): PCall = {
       PCall(name, next.copy)
     }
     def set_next(new_next: PExp): PCall = {
       PCall(name, next.set_next(new_next))
     }
+    def assign_next(new_next: PExp): PCall = {
+      PCall(name, new_next)
+    }
   }
-  case class PIf(lhs: PExp, rhs: PExp, next: PExp) extends PExp{
+  case class PIf(lhs: PExp, rhs: PExp, next: PExp) extends PExp with HasNext{
     def copy(): PIf = {
       PIf(lhs.copy, rhs.copy, next.copy)
     }
     def set_next(new_next: PExp): PIf = {
       PIf(lhs.copy, rhs.copy, next.set_next(new_next))
     }
+    def assign_next(new_next: PExp): PIf = {
+      PIf(lhs.copy, rhs.copy, new_next)
+    }
   }
-  case class PUnion(lhs: PExp, rhs: PExp) extends PExp{
+  case class PUnion(lhs: PExp, rhs: PExp) extends PExp {
     def copy(): PUnion = {
       PUnion(lhs.copy, rhs.copy)
     }
@@ -90,34 +112,52 @@ object AST {
       PUnion(lhs.set_next(new_next), rhs.set_next(new_next))
     }
   }
-  case class PNot(body: PExp, next: PExp) extends PExp{
+  case class PNot(body: PExp, next: PExp) extends PExp with HasNext{
     def copy(): PNot = {
       PNot(body.copy, next.copy)
     }
     def set_next(new_next: PExp): PNot = {
       PNot(body.copy, next.set_next(new_next))
     }
+    def assign_next(new_next: PExp): PNot = {
+      PNot(body.copy, new_next)
+    }
   }
-  case class PAnd(body: PExp, next: PExp) extends PExp{
+  case class PAnd(body: PExp, next: PExp) extends PExp with HasNext{
     def copy(): PAnd = {
       PAnd(body.copy, next.copy)
     }
     def set_next(new_next: PExp): PAnd = {
       PAnd(body.copy, next.set_next(new_next))
     }
+    def assign_next(new_next: PExp): PAnd = {
+      PAnd(body.copy, new_next)
+    }
   }
-  case class PMany(body: PExp, next: PExp) extends PExp{
+  case class PMany(body: PExp, next: PExp) extends PExp with HasNext{
     def copy(): PMany = {
       PMany(body.copy, next.copy)
     }
     def set_next(new_next: PExp): PMany = {
       PMany(body.copy, next.set_next(new_next))
     }
+    def assign_next(new_next: PExp): PMany = {
+      PMany(body.copy, new_next)
+    }
   }
-  /**
-  case class PCons(name: Symbol, body: PExp, next: PExp) extends PExp
-  case class PFold(name: Symbol, body: PExp, rec: PExp, next: PExp) extends PExp
-  case class PLink(name: Symbol, body: PExp, next: PExp) extends PExp
-  */
+  
+  //case class PCons(name: Symbol, body: PExp, next: PExp) extends PExp
+  case class PFold(name: Symbol, body: PExp, rec: Symbol, next: PExp) extends PExp with HasNext{
+    def copy(): PFold = {
+      PFold(name, body.copy, rec, next.copy)
+    }
+    def set_next(new_next: PExp): PFold = {
+      PFold(name, body.copy, rec, next.set_next(new_next))
+    }
+    def assign_next(new_next: PExp): PFold = {
+      PFold(name, body.copy, rec, new_next)
+    }
+  }
+  //case class PLink(name: Symbol, body: PExp, next: PExp) extends PExp
 
 }
