@@ -128,6 +128,7 @@ object GpegParser{
             //val result = peg_parse(pg,"((((1))))");
             //val result = peg_parse(pg,"1*2+12");
             val result = peg_parse(pg2,"1-2-3");
+            //val result = peg_parse(pg2,"bb");
             //val result = peg_parse(pg,sb.toString);
             val time = System.currentTimeMillis - start
             result match {

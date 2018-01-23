@@ -704,7 +704,7 @@ object PegPackratParser{
                             rules.get(rec) match {
                                 case Some(exp) => {
                                     body_p_c.exp = exp
-                                    val (rec_tree, rec_p) = parse(body_tree, body_p_c)
+                                    val (rec_tree, rec_p) = parse(List.empty[Tree], body_p_c)
                                     rec_p match {
                                         case rec_p_c: ParserContext => {
                                             rec_p_c.exp match {
@@ -712,9 +712,12 @@ object PegPackratParser{
                                                     (tree, p)
                                                 }
                                                 case PSucc() => {
-                                                    fold(name, body, rec, List(Node(name, rec_tree)), rec_p_c)
+                                                    fold(name, body, rec, List(Node(name, body_tree:+Node(rec, rec_tree))), rec_p_c)
                                                 }
-                                                case _ => amb_parse(List(Node(name, rec_tree)), rec_p.setFold(false))
+                                                case _ => {
+                                                    val (new_tree, new_p) = amb_parse(List(Node(name, body_tree:+Node(rec, rec_tree))), rec_p.setFold(false))
+                                                    fold(name, body, rec, new_tree, new_p)
+                                                }
                                             }
                                         }
                                         case AmbContext(_, _, _) => {
