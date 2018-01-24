@@ -635,11 +635,33 @@ object PegPackratParser{
                                                     (tree, p)
                                                 }
                                                 case PSucc() => {
-                                                    fold(name, body, rec, List(Node(name, body_tree:+Node(rec, rec_tree))), rec_p_c)
+                                                    val (fold_tree, fold_p) = fold(name, body, rec, List(Node(name, body_tree:+Node(rec, rec_tree))), rec_p_c)
+                                                    fold_p match {
+                                                        case fold_p_c: ParserContext => {
+                                                            fold_p_c.exp match {
+                                                                case PFail(_) => (body_tree:+Node(rec, rec_tree), rec_p_c)
+                                                                case _ => (fold_tree, fold_p)
+                                                            }
+                                                        }
+                                                        case fold_a_c: AmbContext => {
+                                                            (fold_tree, fold_p)
+                                                        }
+                                                    }
                                                 }
                                                 case _ => {
                                                     val (new_tree, new_p) = amb_parse(List(Node(name, body_tree:+Node(rec, rec_tree))), rec_p.setFold(false))
-                                                    fold(name, body, rec, new_tree, new_p)
+                                                    val (fold_tree, fold_p) = fold(name, body, rec, new_tree, new_p)
+                                                    fold_p match {
+                                                        case fold_p_c: ParserContext => {
+                                                            fold_p_c.exp match {
+                                                                case PFail(_) => (new_tree, new_p)
+                                                                case _ => (fold_tree, fold_p)
+                                                            }
+                                                        }
+                                                        case fold_a_c: AmbContext => {
+                                                            (fold_tree, fold_p)
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
