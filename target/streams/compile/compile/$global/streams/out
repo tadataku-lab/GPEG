@@ -1,5 +1,5 @@
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PegPackratParser.scala:721:44: match may not be exhaustive.[0m
-[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following inputs: PAnd(_, _), PAny(_), PCall(_, _), PEmpty(_), PFold(_, _, _, _), PIf(_, _, _), PMany(_, _), PMatch(_, _), PNot(_, _), PUnion(_, _)[0m
-[0m[[0m[33mwarn[0m] [0m[0m            case p_c: ParserContext => p_c.exp match {[0m
-[0m[[0m[33mwarn[0m] [0m[0m                                           ^[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:64:107: match may not be exhaustive.[0m
+[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following input: ~(_, Nil)[0m
+[0m[[0m[33mwarn[0m] [0m[0m        lazy val CLASS: Parser[Exp] = (loc <~ chr('[')) ~ (not(chr(']')) ~> Range).* <~ ']' ~> Spacing ^^ {[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                                                                                          ^[0m
 [0m[[0m[33mwarn[0m] [0m[0mone warning found[0m

@@ -514,7 +514,7 @@ object PegPackratParser{
                             p.exp = PFold(name, body, rec, next)
                             (tree, p)
                         }else{
-                            val (new_tree, new_p) = body_parse(name, body, rec, tree, p.setFold(true))
+                            val (new_tree, new_p) = fold(name, body, rec, tree, p.setFold(true))
                             amb_parse(new_tree, new_p.setExp(next).setFold(false))
                         }
                     }
@@ -571,115 +571,40 @@ object PegPackratParser{
         
         (now_tree, now_p)
     }
-/**
+
     def fold(name: Symbol, body: PExp, rec: Symbol, tree: List[Tree], p: ContextTree): (List[Tree], ContextTree) = {
         val (body_tree, body_p) = amb_parse(tree, p.setExp(body))
-        body_p match {
-                case body_p_c: ParserContext => {
-                    body_p_c.exp match {
-                        case PFail(_) => {
-                            (tree, p)
-                        }
-                        case _ => {
-                            rules.get(rec) match {
-                                case Some(exp) => {
-                                    body_p_c.exp = exp
-                                    val (rec_tree, rec_p) = parse(List.empty[Tree], body_p_c)
-                                    rec_p match {
-                                        case rec_p_c: ParserContext => {
-                                            rec_p_c.exp match {
-                                                case PFail(_) => {
-                                                    (tree, p)
-                                                }
-                                                case PSucc() => {
-                                                    val (fold_tree, fold_p) = fold(name, body, rec, List(Node(name, body_tree:+Node(rec, rec_tree))), rec_p_c)
-                                                    fold_p match {
-                                                        case fold_p_c: ParserContext => {
-                                                            fold_p_c.exp match {
-                                                                case PFail(_) => (body_tree:+Node(rec, rec_tree), rec_p_c)
-                                                                case _ => (fold_tree, fold_p)
-                                                            }
-                                                        }
-                                                        case fold_a_c: AmbContext => {
-                                                            (fold_tree, fold_p)
-                                                        }
-                                                    }
-                                                }
-                                                case _ => {
-                                                    val (new_tree, new_p) = amb_parse(List(Node(name, body_tree:+Node(rec, rec_tree))), rec_p.setFold(false))
-                                                    val (fold_tree, fold_p) = fold(name, body, rec, new_tree, new_p)
-                                                    fold_p match {
-                                                        case fold_p_c: ParserContext => {
-                                                            fold_p_c.exp match {
-                                                                case PFail(_) => (new_tree, new_p)
-                                                                case _ => (fold_tree, fold_p)
-                                                            }
-                                                        }
-                                                        case fold_a_c: AmbContext => {
-                                                            (fold_tree, fold_p)
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        case AmbContext(_, _, _) => {
-                                            amb_parse(List(Node(name, rec_tree)), rec_p.setFold(false))
-                                        }
-                                    }
-                                }
-                                case None => throw new RuntimeException(rec + ": Rule can not be found")
-                            }
-                        }
-                    
-                    }
-                }
-                case AmbContext(_, _, _) => {
-                    rules.get(rec) match {
-                        case Some(exp) => {
-                            val (rec_tree, rec_p) = amb_parse(body_tree, body_p.setExp(exp))
-                            amb_parse(List(Node(name, rec_tree)), rec_p.setFold(false))
-                        }
-                        case None => throw new RuntimeException(rec + ": Rule can not be found")
-                    }
-                }
+        rules.get(rec) match {
+            case Some(exp) => body_parse(name, body, rec, body_tree, body_p, tree, p, exp)
+            case None => throw new RuntimeException(rec + ": Rule can not be found")
         }
     }
-*/
 
-    def body_parse(name: Symbol, body: PExp, rec: Symbol, tree: List[Tree], p: ContextTree): (List[Tree], ContextTree) = {
-        val (body_tree, body_p) = amb_parse(tree, p.setExp(body))
+    def body_parse(name: Symbol, body: PExp, rec: Symbol, body_tree: List[Tree], body_p: ContextTree, fail_tree: List[Tree], fail_p: ContextTree, exp: PExp): (List[Tree], ContextTree) = {
         body_p match {
-                case body_p_c: ParserContext => {
-                    body_p_c.exp match {
-                        case PFail(_) => {
-                            (tree, p)
-                        }
-                        case _ => {
-                            rules.get(rec) match {
-                                case Some(exp) => {
-                                    body_p_c.exp = exp
-                                    rec_parse(name, body, rec, body_tree, body_p, tree, p)
-                                }
-                                case None => throw new RuntimeException(rec + ": Rule can not be found")
-                            }
-                        }
-                    
+            case body_p_c: ParserContext => {
+                body_p_c.exp match {
+                    case PFail(_) => {
+                        (fail_tree, fail_p)
                     }
-                }
-                case AmbContext(_, _, _) => {
-                    rules.get(rec) match {
-                        case Some(exp) => {
-                            val (rec_tree, rec_p) = amb_parse(body_tree, body_p.setExp(exp))
-                            amb_parse(List(Node(name, rec_tree)), rec_p.setFold(false))
-                        }
-                        case None => throw new RuntimeException(rec + ": Rule can not be found")
+                    case _ => {
+                        body_p_c.exp = exp
+                        val (rec_tree, rec_p) = amb_parse(List.empty[Tree], body_p)
+                        rec_parse(name, body, rec, body_tree, rec_tree, rec_p, fail_tree, fail_p)
                     }
+                
                 }
+            }
+            case AmbContext(lhs, rhs, _id) => {
+                val (lhs_tree, lhs_p) = body_parse(name, body, rec, List.empty[Tree], lhs, fail_tree, fail_p, exp)
+                val (rhs_tree, rhs_p) = body_parse(name, body, rec, List.empty[Tree], rhs, fail_tree, fail_p, exp)
+                amb_match(body_tree, _id, lhs_tree, lhs_p, rhs_tree, rhs_p)
+            }
         }
     }
 
     def fold_parse(name: Symbol, body: PExp, rec: Symbol, rec_tree: List[Tree], rec_p: ContextTree, fail_tree: List[Tree], fail_p: ContextTree): (List[Tree], ContextTree) = {
-        val (fold_tree, fold_p) = body_parse(name, body, rec, rec_tree, rec_p)
+        val (fold_tree, fold_p) = fold(name, body, rec, rec_tree, rec_p)
         fold_p match {
             case fold_p_c: ParserContext => {
                 fold_p_c.exp match {
@@ -693,8 +618,7 @@ object PegPackratParser{
         }
     }
 
-    def rec_parse(name: Symbol, body: PExp, rec: Symbol, body_tree: List[Tree], body_p: ContextTree, fail_tree: List[Tree], fail_p: ContextTree): (List[Tree], ContextTree) = {
-        val (rec_tree, rec_p) = amb_parse(List.empty[Tree], body_p)
+    def rec_parse(name: Symbol, body: PExp, rec: Symbol, body_tree: List[Tree], rec_tree: List[Tree], rec_p: ContextTree, fail_tree: List[Tree], fail_p: ContextTree): (List[Tree], ContextTree) = {
         rec_p match {
             case rec_p_c: ParserContext => {
                 rec_p_c.exp match {
@@ -710,8 +634,10 @@ object PegPackratParser{
                     }
                 }
             }
-            case AmbContext(_, _, _) => {
-                amb_parse(List(Node(name, rec_tree)), rec_p.setFold(false))
+            case AmbContext(lhs, rhs, _id) => {
+                val (lhs_tree, lhs_p) = rec_parse(name, body, rec, rec_tree, List.empty[Tree], lhs, fail_tree, fail_p)
+                val (rhs_tree, rhs_p) = rec_parse(name, body, rec, rec_tree, List.empty[Tree], rhs, fail_tree, fail_p)
+                amb_match(body_tree, _id, lhs_tree, lhs_p, rhs_tree, rhs_p)
             }
         }
     }

@@ -305,7 +305,101 @@ object RemoveLeftRecursion {
             }
         }
     }
+/**
+    def remove_union(pexp: PUnion, nonterm: Symbol, r: RLRContext): (PExp, RLRContext) = {
+        pexp.lhs match {
+            case lhs_pexp: PCall => {
+                if (lhs_pexp.name == nonterm){
+                    pexp.rhs match {
+                        case rhs_pexp: PCall => {
+                            if (rhs_pexp.name == nonterm){
+                                throw new RuntimeException("SyntaxError: Don't remove left recursion")
+                            } else { 
+                                rules_map.get(rhs_pexp.name) match {
+                                    case Some(_pexp) => {
+                                        remove((rhs_pexp.name,_pexp), nonterm, r)
+                                        r.keys = r.keys - rhs_pexp.name
+                                        (PCall(rhs_pexp.name , PFold(nonterm, remCall(lhs_pexp.next, nonterm), rhs_pexp.name, PSucc())), r)
+                                    }
+                                    case None => throw new RuntimeException("Rules Error: Don't find rule of symbol " + rhs_pexp.name)
+                                }
+                            }
+                        }
 
+                        case rhs_pexp: PIf => {
+                            val new_symbol = Symbol(lhs_pexp.name.name + "'")
+                            val (new_pexp, new_r) = remove_if(isPIf(setSym(rhs_pexp, nonterm ,new_symbol)), new_symbol, r)
+                            new_r.new_rules = new_r.new_rules :+ ((new_symbol, new_pexp))
+                            (PCall(new_symbol, PFold(nonterm, remCall(lhs_pexp.next, nonterm), new_symbol, PSucc())), new_r)
+                        }
+
+                        case rhs_pexp: PUnion => {
+                            val new_symbol = Symbol(lhs_pexp.name.name + "'")
+                            val (new_pexp, new_r) = remove_union(isPUnion(setSym(rhs_pexp, nonterm ,new_symbol)), new_symbol, r)
+                            new_r.new_rules = new_r.new_rules :+ ((new_symbol, new_pexp))
+                            (PCall(new_symbol, PFold(nonterm, remCall(lhs_pexp.next, nonterm), new_symbol, PSucc())), new_r)
+                        }
+
+                        case rhs_pexp: PNot => {
+                            val (new_pexp, new_r) = remove_body(rhs_pexp.body, nonterm, r)
+                            (PNot(new_pexp, rhs_pexp.next.set_next(PFold(nonterm, remCall(lhs_pexp.next, nonterm), nonterm, PSucc()))), new_r)
+                        }
+
+                        case rhs_pexp: PAnd => {
+                            val (new_pexp, new_r) = remove_body(rhs_pexp.body, nonterm, r)
+                            (PAnd(new_pexp, rhs_pexp.next.set_next(PFold(nonterm, remCall(lhs_pexp.next, nonterm), nonterm, PSucc()))), new_r)
+                        }
+
+                        case rhs_pexp: PMany => {
+                            val (new_pexp, new_r) = remove_body(rhs_pexp.body, nonterm, r)
+                            (PMany(new_pexp, rhs_pexp.next.set_next(PFold(nonterm, remCall(lhs_pexp.next, nonterm), nonterm, PSucc()))), new_r)
+                        }
+
+                        case _ => {
+                            (pexp.rhs.set_next(PFold(nonterm, remCall(lhs_pexp.next, nonterm), nonterm, PSucc())), r)
+                        }
+                    }
+                }else {
+                    rules_map.get(lhs_pexp.name) match {
+                        case Some(_pexp) => {
+                            remove((lhs_pexp.name,_pexp), nonterm, r)
+                            r.keys = r.keys - lhs_pexp.name
+                            (pexp, r)
+                        }
+                        case None => throw new RuntimeException("Rules Error: Don't find rule of symbol " + lhs_pexp.name)
+                    }
+                }
+            }
+            
+            case lhs_pexp: PIf => {
+                val (new_pexp, new_r) = remove_if(lhs_pexp, nonterm, r)
+                (PUnion(new_pexp, pexp.rhs), new_r)
+            }
+            
+            case lhs_pexp: PUnion => {
+                val (new_pexp, new_r) = remove_union(lhs_pexp, nonterm, r)
+                (PUnion(new_pexp, pexp.rhs), new_r)
+            }
+            
+            case lhs_pexp: PNot => {
+                val (new_pexp, new_r) = remove_body(lhs_pexp.body, nonterm, r)
+                (PUnion(new_pexp, pexp.rhs), new_r)
+            }
+            case lhs_pexp: PAnd => {
+                val (new_pexp, new_r) = remove_body(lhs_pexp.body, nonterm, r)
+                (PUnion(new_pexp, pexp.rhs), new_r)
+            }
+            case lhs_pexp: PMany => {
+                val (new_pexp, new_r) = remove_body(lhs_pexp.body, nonterm, r)
+                (PUnion(new_pexp, pexp.rhs), new_r)
+            }
+            
+            case _ => {
+                (pexp, r)
+            }
+        }
+    }
+*/
 
     def remove_union(pexp: PUnion, nonterm: Symbol, r: RLRContext): (PUnion, RLRContext) = {
         pexp.lhs match {
@@ -401,6 +495,7 @@ object RemoveLeftRecursion {
             }
         }
     }
+
 
     def setSym(pexp: PExp, old_sym: Symbol, new_sym: Symbol): PExp = {
         pexp match {
