@@ -148,54 +148,7 @@ object PegPackratParser{
             case AmbContext(lhs, rhs, _id) => {
                 val (lhs_tree, lhs_p) = amb_parse(List.empty[Tree], lhs)
                 val (rhs_tree, rhs_p) = amb_parse(List.empty[Tree], rhs)
-                lhs_p match {
-                    case lhs_p_c: ParserContext => {
-                        lhs_p_c.exp match {
-                            case PFail(_) => rhs_p match {
-                                case rhs_p_c : ParserContext => {
-                                    rhs_p_c.exp match {
-                                        case PFail(_) => {
-                                            lrbs = lrbs + (_id -> Both())
-                                            (disambiguity(tree), rhs_p_c) // want to return fail
-                                        }
-                                        case _ => {
-                                            lrbs = lrbs + (_id -> Right())
-                                            (disambiguity(tree):::rhs_tree, rhs_p_c)
-                                        }
-                                    }
-                                }
-                                case AmbContext(_, _, _) => {
-                                    lrbs = lrbs + (_id -> Right())
-                                    (disambiguity(tree):::rhs_tree, rhs_p)
-                                }
-                            }
-                            case _ => rhs_p match {
-                                case rhs_p_c : ParserContext => {
-                                    rhs_p_c.exp match {
-                                        case PFail(_) => {
-                                            lrbs = lrbs + (_id -> Left())
-                                            (disambiguity(tree):::lhs_tree, lhs_p_c)
-                                        }
-                                        case _ => (tree:+AmbNode(_id, lhs_tree, rhs_tree), AmbContext(lhs_p_c.copy, rhs_p_c.copy, _id))
-                                    }
-                                }
-                                case AmbContext(_, _, _) => (tree:+AmbNode(_id , lhs_tree, rhs_tree), AmbContext(lhs_p_c.copy, rhs_p.copy, _id))
-                            }
-                        }
-                    }
-                    case AmbContext(_, _, _) => rhs_p match {
-                        case rhs_p_c : ParserContext => {
-                            rhs_p_c.exp match {
-                                case PFail(_) => {
-                                    lrbs = lrbs + (_id -> Left())
-                                    (disambiguity(tree):::lhs_tree, lhs_p)
-                                }
-                                case _ => (tree:+AmbNode(_id, lhs_tree, rhs_tree), AmbContext(lhs_p.copy, rhs_p_c.copy, _id))
-                            }
-                        }
-                        case AmbContext(_, _, _) => (tree:+AmbNode(_id, lhs_tree, rhs_tree), AmbContext(lhs_p.copy, rhs_p.copy, _id))
-                    }
-                }
+                amb_match(tree, _id, lhs_tree, lhs_p, rhs_tree, rhs_p)
             }
         }
     }
@@ -208,54 +161,58 @@ object PegPackratParser{
             case AmbContext(lhs, rhs, _id) => {
                 val (lhs_tree, lhs_p) = amb_memorized(List.empty[Tree], lhs)
                 val (rhs_tree, rhs_p) = amb_memorized(List.empty[Tree], rhs)
-                lhs_p match {
-                    case lhs_p_c: ParserContext => {
-                        lhs_p_c.exp match {
-                            case PFail(_) => rhs_p match {
-                                case rhs_p_c : ParserContext => {
-                                    rhs_p_c.exp match {
-                                        case PFail(_) => {
-                                            lrbs = lrbs + (_id -> Both())
-                                            (disambiguity(tree), rhs_p_c)
-                                        }
-                                        case _ => {
-                                            lrbs = lrbs + (_id -> Right())
-                                            (disambiguity(tree):::rhs_tree, rhs_p_c)
-                                        }
-                                    }
+                amb_match(tree, _id, lhs_tree, lhs_p, rhs_tree, rhs_p)
+            }
+        }
+    }
+
+    def amb_match(tree: List[Tree], _id: Int,  lhs_tree: List[Tree], lhs_p: ContextTree, rhs_tree: List[Tree], rhs_p: ContextTree):(List[Tree], ContextTree) = {
+        lhs_p match {
+            case lhs_p_c: ParserContext => {
+                lhs_p_c.exp match {
+                    case PFail(_) => rhs_p match {
+                        case rhs_p_c : ParserContext => {
+                            rhs_p_c.exp match {
+                                case PFail(_) => {
+                                    lrbs = lrbs + (_id -> Both())
+                                    (disambiguity(tree), rhs_p_c)
                                 }
-                                case AmbContext(_, _, _) => {
+                                case _ => {
                                     lrbs = lrbs + (_id -> Right())
-                                    (disambiguity(tree):::rhs_tree, rhs_p)
+                                    (disambiguity(tree):::rhs_tree, rhs_p_c)
                                 }
-                            }
-                            case _ => rhs_p match {
-                                case rhs_p_c : ParserContext => {
-                                    rhs_p_c.exp match {
-                                        case PFail(_) => {
-                                            lrbs = lrbs + (_id -> Left())
-                                            (disambiguity(tree):::lhs_tree, lhs_p_c)
-                                        }
-                                        case _ => (tree:+AmbNode( _id, lhs_tree, rhs_tree), AmbContext(lhs_p_c.copy, rhs_p_c.copy, _id))
-                                    }
-                                }
-                                case AmbContext(_, _, _) => (tree:+AmbNode( _id, lhs_tree, rhs_tree), AmbContext(lhs_p_c.copy, rhs_p.copy, _id))
                             }
                         }
+                        case AmbContext(_, _, _) => {
+                            lrbs = lrbs + (_id -> Right())
+                            (disambiguity(tree):::rhs_tree, rhs_p)
+                        }
                     }
-                    case AmbContext(_, _, _) => rhs_p match {
+                    case _ => rhs_p match {
                         case rhs_p_c : ParserContext => {
                             rhs_p_c.exp match {
                                 case PFail(_) => {
                                     lrbs = lrbs + (_id -> Left())
-                                    (disambiguity(tree):::lhs_tree, lhs_p)
+                                    (disambiguity(tree):::lhs_tree, lhs_p_c)
                                 }
-                                case _ => (tree:+AmbNode(_id, lhs_tree, rhs_tree), AmbContext(lhs_p.copy, rhs_p_c.copy, _id))
+                                case _ => (tree:+AmbNode( _id, lhs_tree, rhs_tree), AmbContext(lhs_p_c.copy, rhs_p_c.copy, _id))
                             }
                         }
-                        case AmbContext(_, _, _) => (tree:+AmbNode(_id, lhs_tree, rhs_tree), AmbContext(lhs_p.copy, rhs_p.copy, _id))
+                        case AmbContext(_, _, _) => (tree:+AmbNode( _id, lhs_tree, rhs_tree), AmbContext(lhs_p_c.copy, rhs_p.copy, _id))
                     }
                 }
+            }
+            case AmbContext(_, _, _) => rhs_p match {
+                case rhs_p_c : ParserContext => {
+                    rhs_p_c.exp match {
+                        case PFail(_) => {
+                            lrbs = lrbs + (_id -> Left())
+                            (disambiguity(tree):::lhs_tree, lhs_p)
+                        }
+                        case _ => (tree:+AmbNode(_id, lhs_tree, rhs_tree), AmbContext(lhs_p.copy, rhs_p_c.copy, _id))
+                    }
+                }
+                case AmbContext(_, _, _) => (tree:+AmbNode(_id, lhs_tree, rhs_tree), AmbContext(lhs_p.copy, rhs_p.copy, _id))
             }
         }
     }
