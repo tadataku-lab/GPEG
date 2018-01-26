@@ -1,4 +1,34 @@
-[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/test/scala/test.scala:27:25: value toContinuation is not a member of object GpegParser[0m
-[0m[[0m[31merror[0m] [0m[0m    val pg = GpegParser.toContinuation(g)[0m
-[0m[[0m[31merror[0m] [0m[0m                        ^[0m
-[0m[[0m[31merror[0m] [0m[0mone error found[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/test/scala/test.scala:9:89: not found: value file2string[0m
+[0m[[0m[31merror[0m] [0m[0m    assert(gpeg_parse(new FileReader("src/test/resources/GPEG/test1.gpeg")).toString == file2string("src/test/resources/GPEG/test1.result"))[0m
+[0m[[0m[31merror[0m] [0m[0m                                                                                        ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/test/scala/test.scala:13:89: not found: value file2string[0m
+[0m[[0m[31merror[0m] [0m[0m    assert(gpeg_parse(new FileReader("src/test/resources/GPEG/test2.gpeg")).toString == file2string("src/test/resources/GPEG/test2.result"))[0m
+[0m[[0m[31merror[0m] [0m[0m                                                                                        ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/test/scala/test.scala:17:89: not found: value file2string[0m
+[0m[[0m[31merror[0m] [0m[0m    assert(gpeg_parse(new FileReader("src/test/resources/GPEG/test3.gpeg")).toString == file2string("src/test/resources/GPEG/test3.result"))[0m
+[0m[[0m[31merror[0m] [0m[0m                                                                                        ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/test/scala/test.scala:21:89: not found: value file2string[0m
+[0m[[0m[31merror[0m] [0m[0m    assert(gpeg_parse(new FileReader("src/test/resources/GPEG/test4.gpeg")).toString == file2string("src/test/resources/GPEG/test4.result"))[0m
+[0m[[0m[31merror[0m] [0m[0m                                                                                        ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/test/scala/test.scala:26:26: not found: value file2string[0m
+[0m[[0m[31merror[0m] [0m[0m    assert(g.toString == file2string("src/test/resources/GPEG/math.result"))[0m
+[0m[[0m[31merror[0m] [0m[0m                         ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/test/scala/test.scala:30:53: not found: value file2string[0m
+[0m[[0m[31merror[0m] [0m[0m      case Some(body) => assert(body._1.toString == file2string("src/test/resources/AST/math1.ast"))[0m
+[0m[[0m[31merror[0m] [0m[0m                                                    ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/test/scala/test.scala:37:26: not found: value file2string[0m
+[0m[[0m[31merror[0m] [0m[0m    assert(g.toString == file2string("src/test/resources/GPEG/math.result"))[0m
+[0m[[0m[31merror[0m] [0m[0m                         ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/test/scala/test.scala:41:53: not found: value file2string[0m
+[0m[[0m[31merror[0m] [0m[0m      case Some(body) => assert(body._1.toString == file2string("src/test/resources/AST/math2.ast"))[0m
+[0m[[0m[31merror[0m] [0m[0m                                                    ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/test/scala/test.scala:48:26: not found: value file2string[0m
+[0m[[0m[31merror[0m] [0m[0m    assert(g.toString == file2string("src/test/resources/GPEG/math.result"))[0m
+[0m[[0m[31merror[0m] [0m[0m                         ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/test/scala/test.scala:52:53: not found: value file2string[0m
+[0m[[0m[31merror[0m] [0m[0m      case Some(body) => assert(body._1.toString == file2string("src/test/resources/AST/math3.ast"))[0m
+[0m[[0m[31merror[0m] [0m[0m                                                    ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/test/scala/test.scala:62:53: not found: value file2string[0m
+[0m[[0m[31merror[0m] [0m[0m      case Some(body) => assert(body._1.toString == file2string("src/test/resources/AST/memo1.ast"))[0m
+[0m[[0m[31merror[0m] [0m[0m                                                    ^[0m
+[0m[[0m[31merror[0m] [0m[0m11 errors found[0m

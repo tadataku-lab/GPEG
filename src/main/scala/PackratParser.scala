@@ -4,7 +4,7 @@ import ContextTree._
 import Memo._
 import scala.collection.mutable.{HashMap}
 
-object PegPackratParser{
+object PackratParser{
 
     var rules: Map[Symbol, PExp] = Map.empty[Symbol, PExp]
     var input: Array[Byte] = Array.empty[Byte]

@@ -1,28 +1,29 @@
 import org.scalatest._
 import java.io._
 import GpegParser._
-import PegPackratParser._
+import PackratParser._
+import Main._
 
 class TestParse extends FunSuite {
 
   test("test1") {
-    assert(GpegParser.parse(new FileReader("src/test/resources/GPEG/test1.gpeg")).toString == file2string("src/test/resources/GPEG/test1.result"))
+    assert(gpeg_parse(new FileReader("src/test/resources/GPEG/test1.gpeg")).toString == file2string("src/test/resources/GPEG/test1.result"))
   }
 
   test("test2") {
-    assert(GpegParser.parse(new FileReader("src/test/resources/GPEG/test2.gpeg")).toString == file2string("src/test/resources/GPEG/test2.result"))
+    assert(gpeg_parse(new FileReader("src/test/resources/GPEG/test2.gpeg")).toString == file2string("src/test/resources/GPEG/test2.result"))
   }
 
   test("test3") {
-    assert(GpegParser.parse(new FileReader("src/test/resources/GPEG/test3.gpeg")).toString == file2string("src/test/resources/GPEG/test3.result"))
+    assert(gpeg_parse(new FileReader("src/test/resources/GPEG/test3.gpeg")).toString == file2string("src/test/resources/GPEG/test3.result"))
   }
 
   test("test4") {
-    assert(GpegParser.parse(new FileReader("src/test/resources/GPEG/test4.gpeg")).toString == file2string("src/test/resources/GPEG/test4.result"))
+    assert(gpeg_parse(new FileReader("src/test/resources/GPEG/test4.gpeg")).toString == file2string("src/test/resources/GPEG/test4.result"))
   }
 
   test("math1") {
-    val g = GpegParser.parse(new FileReader("src/test/resources/GPEG/math.gpeg"))
+    val g = gpeg_parse(new FileReader("src/test/resources/GPEG/math.gpeg"))
     assert(g.toString == file2string("src/test/resources/GPEG/math.result"))
     val pg = CPS.toContinuation(g)
     val result = peg_parse(pg,"1*2+12");
@@ -33,7 +34,7 @@ class TestParse extends FunSuite {
   }
 
   test("math2") {
-    val g = GpegParser.parse(new FileReader("src/test/resources/GPEG/math.gpeg"))
+    val g = gpeg_parse(new FileReader("src/test/resources/GPEG/math.gpeg"))
     assert(g.toString == file2string("src/test/resources/GPEG/math.result"))
     val pg = CPS.toContinuation(g)
     val result = peg_parse(pg,"1+1");
@@ -44,7 +45,7 @@ class TestParse extends FunSuite {
   }
 
   test("math3.0") {
-    val g = GpegParser.parse(new FileReader("src/test/resources/GPEG/math.gpeg"))
+    val g = gpeg_parse(new FileReader("src/test/resources/GPEG/math.gpeg"))
     assert(g.toString == file2string("src/test/resources/GPEG/math.result"))
     val pg = CPS.toContinuation(g)
     val result = peg_parse(pg,"((((((((((((((1))))))))))))))");
@@ -55,7 +56,7 @@ class TestParse extends FunSuite {
   }
 
   test("memo3") {
-    val g = GpegParser.parse(new FileReader("src/test/resources/GPEG/memo.gpeg"))
+    val g = gpeg_parse(new FileReader("src/test/resources/GPEG/memo.gpeg"))
     val pg = CPS.toContinuation(g)
     val result = peg_parse(pg,"((((((((((((((1))))))))))))))");
     result match {
