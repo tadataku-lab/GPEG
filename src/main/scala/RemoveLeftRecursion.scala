@@ -400,7 +400,6 @@ object RemoveLeftRecursion {
         }
     }
 */
-
     def remove_union(pexp: PUnion, nonterm: Symbol, r: RLRContext): (PUnion, RLRContext) = {
         pexp.lhs match {
             case lhs_pexp: PCall => {

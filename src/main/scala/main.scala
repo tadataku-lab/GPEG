@@ -128,9 +128,11 @@ object GpegParser{
             //val result = peg_parse(pg,"((((1))))");
             //val result = peg_parse(pg,"1*2+12");
             //val result = peg_parse(pg2,"1/4-2-3");
-            val result = peg_parse(pg2,"bbb");
+            val ten_b = "bbbbbbbbbb"
+            val result = peg_parse(pg2, ten_b + "bb");
             //val result = peg_parse(pg,sb.toString);
             val time = System.currentTimeMillis - start
+            /**
             result match {
                 case Some(body) => {
                     println("tree: " + body._1)
@@ -138,6 +140,7 @@ object GpegParser{
                 }
                 case None => println("can't parse")
             }
+            */
             println(time + "ms")
         }else if(args.length == 1){
             val g = parse(new FileReader("src/main/resources/GPEG/rule.gpeg"))
