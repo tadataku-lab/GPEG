@@ -7,50 +7,50 @@ import Main._
 class TestParse extends FunSuite {
 
   test("test1") {
-    assert(gpeg_parse(new FileReader("src/test/resources/GPEG/test1.gpeg")).toString == file2string("src/test/resources/GPEG/test1.result"))
+    assert(gpeg_parse(new FileReader("src/test/resources/GPEG/test1.gpeg")).toString == file2string("src/test/resources/AST/Grammar/test1.ast"))
   }
 
   test("test2") {
-    assert(gpeg_parse(new FileReader("src/test/resources/GPEG/test2.gpeg")).toString == file2string("src/test/resources/GPEG/test2.result"))
+    assert(gpeg_parse(new FileReader("src/test/resources/GPEG/test2.gpeg")).toString == file2string("src/test/resources/AST/Grammar/test2.ast"))
   }
 
   test("test3") {
-    assert(gpeg_parse(new FileReader("src/test/resources/GPEG/test3.gpeg")).toString == file2string("src/test/resources/GPEG/test3.result"))
+    assert(gpeg_parse(new FileReader("src/test/resources/GPEG/test3.gpeg")).toString == file2string("src/test/resources/AST/Grammar/test3.ast"))
   }
 
   test("test4") {
-    assert(gpeg_parse(new FileReader("src/test/resources/GPEG/test4.gpeg")).toString == file2string("src/test/resources/GPEG/test4.result"))
+    assert(gpeg_parse(new FileReader("src/test/resources/GPEG/test4.gpeg")).toString == file2string("src/test/resources/AST/Grammar/test4.ast"))
   }
 
   test("math1") {
     val g = gpeg_parse(new FileReader("src/test/resources/GPEG/math.gpeg"))
-    assert(g.toString == file2string("src/test/resources/GPEG/math.result"))
+    assert(g.toString == file2string("src/test/resources/AST/Grammar/math.ast"))
     val pg = CPS.toContinuation(g)
     val result = peg_parse(pg,"1*2+12");
     result match {
-      case Some(body) => assert(body._1.toString == file2string("src/test/resources/AST/math1.ast"))
+      case Some(body) => assert(body._1.toString == file2string("src/test/resources/ParseResult/math1.result"))
       case None => println("can't parse")
     }
   }
 
   test("math2") {
     val g = gpeg_parse(new FileReader("src/test/resources/GPEG/math.gpeg"))
-    assert(g.toString == file2string("src/test/resources/GPEG/math.result"))
+    assert(g.toString == file2string("src/test/resources/AST/Grammar/math.ast"))
     val pg = CPS.toContinuation(g)
     val result = peg_parse(pg,"1+1");
     result match {
-      case Some(body) => assert(body._1.toString == file2string("src/test/resources/AST/math2.ast"))
+      case Some(body) => assert(body._1.toString == file2string("src/test/resources/ParseResult/math2.result"))
       case None => println("can't parse")
     }
   }
 
   test("math3.0") {
     val g = gpeg_parse(new FileReader("src/test/resources/GPEG/math.gpeg"))
-    assert(g.toString == file2string("src/test/resources/GPEG/math.result"))
+    assert(g.toString == file2string("src/test/resources/AST/Grammar/math.ast"))
     val pg = CPS.toContinuation(g)
     val result = peg_parse(pg,"((((((((((((((1))))))))))))))");
     result match {
-      case Some(body) => assert(body._1.toString == file2string("src/test/resources/AST/math3.ast"))
+      case Some(body) => assert(body._1.toString == file2string("src/test/resources/ParseResult/math3.result"))
       case None => println("can't parse")
     }
   }
@@ -60,7 +60,27 @@ class TestParse extends FunSuite {
     val pg = CPS.toContinuation(g)
     val result = peg_parse(pg,"((((((((((((((1))))))))))))))");
     result match {
-      case Some(body) => assert(body._1.toString == file2string("src/test/resources/AST/memo1.ast"))
+      case Some(body) => assert(body._1.toString == file2string("src/test/resources/ParseResult/memo1.result"))
+      case None => println("can't parse")
+    }
+  }
+
+  test("highly ambiguity [bb]") {
+    val g = gpeg_parse(new FileReader("src/test/resources/GPEG/high_amb.gpeg"))
+    val pg = CPS.toContinuation(g)
+    val result = peg_parse(pg,"bb");
+    result match {
+      case Some(body) => assert(body._1.toString == file2string("src/test/resources/ParseResult/b2.result"))
+      case None => println("can't parse")
+    }
+  }
+
+  test("highly ambiguity [bbbb]") {
+    val g = gpeg_parse(new FileReader("src/test/resources/GPEG/high_amb.gpeg"))
+    val pg = CPS.toContinuation(g)
+    val result = peg_parse(pg,"bbbb");
+    result match {
+      case Some(body) => assert(body._1.toString == file2string("src/test/resources/ParseResult/b4.result"))
       case None => println("can't parse")
     }
   }

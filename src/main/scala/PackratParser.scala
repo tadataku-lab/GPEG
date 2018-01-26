@@ -36,6 +36,7 @@ object PackratParser{
     def exec(start: Symbol, p: ParserContext): Option[(Tree, ContextTree)]={
         val (treeList, new_p) = parse(List.empty[Tree], p)
         println(lrbs)
+        id = 0
         //println(new_p.hash_table)
         //return Some((Node(start, treeList), (input.drop(new_p.head.pos)).map(_.toChar).mkString))
         return Some((Node(start, disambiguity(treeList)), new_p))
