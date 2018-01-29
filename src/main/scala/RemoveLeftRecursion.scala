@@ -52,10 +52,8 @@ object RemoveLeftRecursion {
             }
             
             case pexp: PUnion => {
-                println(r.new_rules)
                 val (new_pexp, new_r) = remove_union(pexp, nonterm, r)
                 new_r.new_rules = new_r.new_rules :+ ((rule._1, new_pexp))
-                println(new_r.new_rules)
             }
             
             case pexp: PNot => {
@@ -431,7 +429,6 @@ object RemoveLeftRecursion {
                             val new_symbol = Symbol(lhs_pexp.name.name + "'")
                             val (new_pexp, new_r) = remove_union(isPUnion(setSym(rhs_pexp, nonterm ,new_symbol)), new_symbol, r)
                             new_r.new_rules = new_r.new_rules :+ ((new_symbol, new_pexp))
-                            println(new_r.new_rules)
                             (PUnion(PCall(new_symbol, lhs_pexp.next), PCall(new_symbol, PSucc())), new_r)
                         }
 

@@ -4,7 +4,6 @@ import RemoveLeftRecursion._
 object CPS{
     def toContinuation(target: Grammar):PGrammar = {
         var rules = target.rules.map( rule => (rule._1, transform(rule._2, PSucc())))
-        println(rules)
         rules = rem_left_rec(rules)
         return PGrammar(target.start, rules.toMap)
     }
