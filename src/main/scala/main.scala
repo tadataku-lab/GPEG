@@ -25,7 +25,17 @@ object Main{
 
     def main(args: Array[String]):Unit = {
         exeCommand(getCommand(Array("-b", "src/main/resources/GPEG/rule.gpeg")))
-        exeCommand(getCommand(args))
+        //exeCommand(getCommand(args))
+        def fact : Long => Long = n => {
+            n match {
+                case 0 => 1
+                case n if n > 0 => n * fact(n - 1)
+            }
+        }
+        val N = (1 to 10).toList
+        val C = N.map( n => fact(2 * n) / ((n + 1) * fact(n) * fact(n)))
+        println(N)
+        println(C)
     }
 
     def isOpt(arg: String): Boolean = {
@@ -109,7 +119,7 @@ object Main{
             result match {
                 case Some(body) => {
                     option.save match {
-                        case None => println(body._1)
+                        case None => //println(body._1)
                         case Some(name) => save_and_show(body._1, name)
                     }
                 }

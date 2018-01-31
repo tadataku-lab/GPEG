@@ -18,7 +18,7 @@ object PackratParser{
             case Some(exp) => exp
             case None => throw new RuntimeException(g.start + ": Rule can not be found")
         }
-        val (treeList, new_p) = new PackratParser(g.rules, input.getBytes).disamb_parse(List.empty[Tree], new ParserContext(0, start, new HashMap[(Symbol, Int),Memo], g.start, false))
+        val (treeList, new_p) = new PackratParser(g.rules, input.getBytes).disamb_parse(List.empty[Tree], new ParserContext(0, start, g.start, false))
         return Some((Node(g.start, treeList), new_p))
     }
 
@@ -28,6 +28,7 @@ object PackratParser{
         private var ID: Int = 0
         private var MAPID: Map[Int, Int] = Map.empty[Int, Int]
         private var LRBs: Map[Int, LorRorB] = Map.empty[Int,LorRorB]
+        var HASHTABLE: HashMap[(Symbol, Int), Memo] = new HashMap[(Symbol, Int),Memo]
 
         def disambiguity(trees: List[Tree]): List[Tree] = {
             if(trees.isEmpty) return trees
@@ -545,7 +546,7 @@ object PackratParser{
         def isEqualPos(lhs: ContextTree, rhs: ContextTree): Boolean = {
             var pos: Int = 0
             lhs match {
-                case ParserContext(_pos, _, _, _, _) => {
+                case ParserContext(_pos, _, _, _) => {
                     pos = _pos
                 }
                 case AmbContext(lhs, rhs, _) => {
@@ -553,7 +554,7 @@ object PackratParser{
                 }
             }
             rhs match {
-                case ParserContext(_pos, _, _, _, _) => {
+                case ParserContext(_pos, _, _, _) => {
                     return pos == _pos
                 }
                 case AmbContext(lhs, rhs, _) => {
@@ -567,7 +568,7 @@ object PackratParser{
         }
 
         def memorized(tree: List[Tree], p: ParserContext):(List[Tree], ContextTree) = {
-            p.hash_table.get((p.nonterm,p.pos)) match {
+            HASHTABLE.get((p.nonterm,p.pos)) match {
                 case Some(memo) => {
                     renew_id(memo.tree, memo.context)
                 }
@@ -575,18 +576,18 @@ object PackratParser{
                     val memo_info = (p.nonterm, p.pos)
                     val (new_tree, new_p) = parse(tree, p)
                     new_p match {
-                        case ParserContext(_, exp, _, _, _) => {
+                        case ParserContext(_, exp, _, _) => {
                             exp match {
                                 case PFail(_) => {
-                                    p.hash_table += ((memo_info) -> new Memo(new_p, new_tree))
+                                    HASHTABLE += ((memo_info) -> new Memo(new_p, new_tree))
                                 }
                                 case _ => {
-                                    p.hash_table += ((memo_info) -> new Memo(new_p, new_tree))
+                                    HASHTABLE += ((memo_info) -> new Memo(new_p, new_tree))
                                 }
                             }
                         }
                         case AmbContext(_, _, _) => {
-                            p.hash_table += ((memo_info) -> new Memo(new_p, new_tree))
+                            HASHTABLE += ((memo_info) -> new Memo(new_p, new_tree))
                         }
                     }
                     

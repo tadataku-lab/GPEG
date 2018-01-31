@@ -1,4 +1,4 @@
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/Main.scala:55:17: local val ten_b in method main is never used[0m
-[0m[[0m[33mwarn[0m] [0m[0m            val ten_b = "bbbbbbbbbb"[0m
-[0m[[0m[33mwarn[0m] [0m[0m                ^[0m
-[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PackratParser.scala:191:47: reassignment to val[0m
+[0m[[0m[31merror[0m] [0m[0m                                    p.nonterm = symbol[0m
+[0m[[0m[31merror[0m] [0m[0m                                              ^[0m
+[0m[[0m[31merror[0m] [0m[0mone error found[0m

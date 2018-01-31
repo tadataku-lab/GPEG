@@ -1,6 +1,4 @@
 import AST._
-import scala.collection.mutable.{HashMap}
-import Memo._
 
 object ContextTree{
     sealed trait ContextTree {
@@ -36,10 +34,8 @@ object ContextTree{
         def toString() : String
     }
 
-    case class AmbContext(_lhs: ContextTree, _rhs: ContextTree, _id: Int) extends ContextTree{
-        val lhs = _lhs
-        val rhs = _rhs
-        val id = _id
+    case class AmbContext(lhs: ContextTree, rhs: ContextTree, id: Int) extends ContextTree{
+
         def copy(): AmbContext = {
             new AmbContext(lhs.copy, rhs.copy, id)
         }
@@ -50,15 +46,10 @@ object ContextTree{
         }
     }
 
-    case class ParserContext(_pos: Int, start: PExp, _hash_table: HashMap[(Symbol, Int),Memo], startN: Symbol, _folding: Boolean) extends ContextTree{
-        var pos = _pos
-        var exp = start
-        var hash_table = _hash_table
-        var nonterm = startN
-        var folding = _folding
+    case class ParserContext(var pos: Int, var exp: PExp, var nonterm: Symbol, var folding: Boolean) extends ContextTree{
 
         def copy(): ParserContext = {
-            new ParserContext(pos, exp.copy, hash_table, nonterm, folding)
+            new ParserContext(pos, exp.copy, nonterm, folding)
         }
 
         override def toString: String = {
