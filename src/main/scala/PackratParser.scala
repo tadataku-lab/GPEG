@@ -30,6 +30,23 @@ object PackratParser{
         private var LRBs: Map[Int, LorRorB] = Map.empty[Int,LorRorB]
         var HASHTABLE: HashMap[(Symbol, Int), Memo] = new HashMap[(Symbol, Int),Memo]
 
+        def disamb_context(context: ContextTree): ContextTree = {
+            context match{
+                case p_c: ParserContext => p_c
+                case AmbContext(lhs, rhs, ambid) => {
+                    LRBs.get(ambid) match {
+                        case Some(lrb) => lrb match {
+                            case Left() => disamb_context(lhs)
+                            case Right() => disamb_context(rhs)
+                            case Both() => null
+                        }
+                        case None => AmbContext(disamb_context(lhs), disamb_context(rhs), ambid)
+                    }
+                }
+                case null => null
+            }
+        }
+
         def disambiguity(trees: List[Tree]): List[Tree] = {
             if(trees.isEmpty) return trees
             var new_trees = List.empty[Tree]
@@ -91,17 +108,17 @@ object PackratParser{
                                 rhs_p_c.exp match {
                                     case PFail(_) => {
                                         LRBs += (_id -> Both())
-                                        (disambiguity(tree), rhs_p_c)
+                                        (disambiguity(tree), disamb_context(rhs_p_c))
                                     }
                                     case _ => {
                                         LRBs += (_id -> Right())
-                                        (disambiguity(tree):::rhs_tree, rhs_p_c)
+                                        (disambiguity(tree):::rhs_tree, disamb_context(rhs_p_c))
                                     }
                                 }
                             }
                             case AmbContext(_, _, _) => {
                                 LRBs += (_id -> Right())
-                                (disambiguity(tree):::rhs_tree, rhs_p)
+                                (disambiguity(tree):::rhs_tree, disamb_context(rhs_p))
                             }
                         }
                         case _ => rhs_p match {
@@ -109,7 +126,7 @@ object PackratParser{
                                 rhs_p_c.exp match {
                                     case PFail(_) => {
                                         LRBs += (_id -> Left())
-                                        (disambiguity(tree):::lhs_tree, lhs_p_c)
+                                        (disambiguity(tree):::lhs_tree, disamb_context(lhs_p_c))
                                     }
                                     case _ => (tree:+AmbNode( _id, lhs_tree, rhs_tree), AmbContext(lhs_p_c.copy, rhs_p_c.copy, _id))
                                 }
@@ -123,7 +140,7 @@ object PackratParser{
                         rhs_p_c.exp match {
                             case PFail(_) => {
                                 LRBs += (_id -> Left())
-                                (disambiguity(tree):::lhs_tree, lhs_p)
+                                (disambiguity(tree):::lhs_tree, disamb_context(lhs_p))
                             }
                             case _ => (tree:+AmbNode(_id, lhs_tree, rhs_tree), AmbContext(lhs_p.copy, rhs_p_c.copy, _id))
                         }
