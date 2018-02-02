@@ -26,6 +26,7 @@ object Main{
     def main(args: Array[String]):Unit = {
         exeCommand(getCommand(Array("-b", "src/main/resources/GPEG/rule.gpeg")))
         //exeCommand(getCommand(args))
+        /**
         def fact : Long => Long = n => {
             n match {
                 case 0 => 1
@@ -36,6 +37,7 @@ object Main{
         val C = N.map( n => fact(2 * n) / ((n + 1) * fact(n) * fact(n)))
         println(N)
         println(C)
+        */
     }
 
     def isOpt(arg: String): Boolean = {
