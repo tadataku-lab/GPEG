@@ -31,6 +31,7 @@ object PackratParser{
         var HASHTABLE: HashMap[(Symbol, Int), Memo] = new HashMap[(Symbol, Int),Memo]
 
         def disamb_context(context: ContextTree): ContextTree = {
+            
             context match{
                 case p_c: ParserContext => p_c
                 case AmbContext(lhs, rhs, ambid) => {
@@ -45,15 +46,18 @@ object PackratParser{
                 }
                 case null => null
             }
+            
         }
 
         def disambiguity(trees: List[Tree]): List[Tree] = {
+            
             if(trees.isEmpty) return trees
             var new_trees = List.empty[Tree]
             for(tree <- trees){
                 new_trees = new_trees:::disamb(tree)
             }
             new_trees
+            
         }
 
         def disamb(tree: Tree): List[Tree] = {
@@ -128,10 +132,10 @@ object PackratParser{
                                         LRBs += (_id -> Left())
                                         (disambiguity(tree):::lhs_tree, disamb_context(lhs_p_c))
                                     }
-                                    case _ => (tree:+AmbNode( _id, lhs_tree, rhs_tree), AmbContext(lhs_p_c.copy, rhs_p_c.copy, _id))
+                                    case _ => (tree:+AmbNode( _id, lhs_tree, rhs_tree), disamb_context(AmbContext(lhs_p_c.copy, rhs_p_c.copy, _id)))
                                 }
                             }
-                            case AmbContext(_, _, _) => (tree:+AmbNode( _id, lhs_tree, rhs_tree), AmbContext(lhs_p_c.copy, rhs_p.copy, _id))
+                            case AmbContext(_, _, _) => (tree:+AmbNode( _id, lhs_tree, rhs_tree), disamb_context(AmbContext(lhs_p_c.copy, rhs_p.copy, _id)))
                         }
                     }
                 }
@@ -142,16 +146,18 @@ object PackratParser{
                                 LRBs += (_id -> Left())
                                 (disambiguity(tree):::lhs_tree, disamb_context(lhs_p))
                             }
-                            case _ => (tree:+AmbNode(_id, lhs_tree, rhs_tree), AmbContext(lhs_p.copy, rhs_p_c.copy, _id))
+                            case _ => (tree:+AmbNode(_id, lhs_tree, rhs_tree), disamb_context(AmbContext(lhs_p.copy, rhs_p_c.copy, _id)))
                         }
                     }
-                    case AmbContext(_, _, _) => (tree:+AmbNode(_id, lhs_tree, rhs_tree), AmbContext(lhs_p.copy, rhs_p.copy, _id))
+                    case AmbContext(_, _, _) => (tree:+AmbNode(_id, lhs_tree, rhs_tree), disamb_context(AmbContext(lhs_p.copy, rhs_p.copy, _id)))
                 }
             }
         }
 
         def disamb_parse(tree: List[Tree], p: ParserContext):(List[Tree], ContextTree) = {
             val (new_tree, new_p) = parse(tree, p)
+            //println(HASHTABLE)
+            //println(LRBs)
             (disambiguity(new_tree), new_p)
         }
 
@@ -201,47 +207,84 @@ object PackratParser{
                             parse(new_tree, p)        
                         }
                         case PCall(symbol, next) => {
-                            RULES.get(symbol) match {
-                        
-                                case Some(exp) => {
-                                    p.exp = exp
-                                    p.nonterm = symbol
-                                    
-                                        val (child_tree, new_p) = amb_memorized(List.empty[Tree], p.copy)
-                                        var new_tree = List.empty[Tree]
-                                        //println(child_tree)
-                                        new_p match {
-                                            case p_c: ParserContext => {
-                                                p_c.exp match {
-                                                    case PFail(_) => {
-                                                        p.exp = p_c.exp
-                                                        (tree, p)
-                                                    }
-                                                    case PEmpty(next) => {
-                                                        p_c.exp = next 
-                                                        parse(new_tree, p_c.copy)
-                                                    }
-                                                    case _ => {
-                                                        p_c.exp = next
-                                                        new_tree = tree:+Node(symbol,child_tree)
-                                                        parse(new_tree, p_c.copy)
-                                                    }
-                                                } 
-                                            }
-                                            case AmbContext(_, _, _) => {
-                                                new_tree = tree:+Node(symbol,child_tree)
-                                                next match {
-                                                    case PSucc() => (new_tree, new_p)
-                                                    case _ => {
-                                                        amb_parse(new_tree, new_p.setExp(next))
-                                                    }
-                                                }
+                            HASHTABLE.get((symbol, p.pos)) match {
+                                case Some(memo) => {
+                                    memo.v match {
+                                        case Some(succ) => {
+                                            val (next_tree, next_p) = renew_id(List(Node(symbol,succ._1)), succ._2.copy)
+                                            next match {
+                                                case PSucc() => (next_tree, next_p.setExp(next))
+                                                case _ => amb_parse(next_tree, next_p.setExp(next))
                                             }
                                         }
+                                        case None => {
+                                            p.exp = PFail("")
+                                            (tree, p)
+                                        }
+                                    }
                                 }
-                            
-                                case None => throw new RuntimeException(symbol + ": Rule can not be found")
+                                case None => {
+                                    RULES.get(symbol) match {
+                                        case Some(exp) => {
+                                            p.exp = exp
+                                            p.nonterm = symbol
+                                            val memo_info = (symbol, p.pos)
+                                                val (child_tree, new_p) = parse(List.empty[Tree], p.copy)
+                                                var new_tree = List.empty[Tree]
+                                                //println(child_tree + " context: " + new_p)
+                                                new_p match {
+                                                    case p_c: ParserContext => {
+                                                        p_c.exp match {
+                                                            case PFail(_) => {
+                                                                p.exp = p_c.exp
+                                                                HASHTABLE += ((memo_info) -> new Memo(None))
+                                                                (tree, p)
+                                                            }
+                                                            case PEmpty(next) => {
+                                                                p_c.exp = next
+                                                                //HASHTABLE += ((memo_info) -> new Memo(Some((child_tree, new_p))))
+                                                                parse(new_tree, p_c.copy)
+                                                            }
+                                                            /**
+                                                            case PSucc() => {
+                                                                new_tree = tree:+Node(symbol,child_tree)
+                                                                HASHTABLE += ((memo_info) -> new Memo(Some((new_tree, new_p))))
+                                                                (new_tree, new_p)
+                                                            }
+                                                            */
+                                                            case _ => {
+                                                                HASHTABLE += ((memo_info) -> new Memo(Some((child_tree, p_c.copy))))
+                                                                p_c.exp = next
+                                                                new_tree = tree:+Node(symbol,child_tree)
+                                                                //println("new: "+ new_tree + " next: " + p_c)
+                                                                next match {
+                                                                    case PSucc() => (new_tree, p_c)
+                                                                    case _ => parse(new_tree, p_c)
+                                                                }
+                                                            }
+                                                        } 
+                                                    }
+                                                    case AmbContext(_, _, _) => {
+                                                        HASHTABLE += ((memo_info) -> new Memo(Some((child_tree, new_p.copy))))
+                                                        new_tree = tree:+Node(symbol,child_tree)
+                                                        //println("new: "+ new_tree + " next: " + next)
+                                                        next match {
+                                                            case PSucc() => {
+                                                                (new_tree, new_p)
+                                                            }
+                                                            case _ => {
+                                                                amb_parse(new_tree, new_p.setExp(next))
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                        }
+                                    
+                                        case None => throw new RuntimeException(symbol + ": Rule can not be found")
+                                    }
+                                }
                             }
+                            
                         }
                     
                 
@@ -587,7 +630,13 @@ object PackratParser{
         def memorized(tree: List[Tree], p: ParserContext):(List[Tree], ContextTree) = {
             HASHTABLE.get((p.nonterm,p.pos)) match {
                 case Some(memo) => {
-                    renew_id(memo.tree, memo.context)
+                    memo.v match {
+                        case Some(succ) => renew_id(succ._1, succ._2)
+                        case None => {
+                            p.exp = PFail("")
+                            (tree, p)
+                        }
+                    }
                 }
                 case None => {
                     val memo_info = (p.nonterm, p.pos)
@@ -596,15 +645,15 @@ object PackratParser{
                         case ParserContext(_, exp, _, _) => {
                             exp match {
                                 case PFail(_) => {
-                                    HASHTABLE += ((memo_info) -> new Memo(new_p, new_tree))
+                                    HASHTABLE += ((memo_info) -> new Memo(None))
                                 }
                                 case _ => {
-                                    HASHTABLE += ((memo_info) -> new Memo(new_p, new_tree))
+                                    HASHTABLE += ((memo_info) -> new Memo(Some((new_tree, new_p))))
                                 }
                             }
                         }
                         case AmbContext(_, _, _) => {
-                            HASHTABLE += ((memo_info) -> new Memo(new_p, new_tree))
+                            HASHTABLE += ((memo_info) -> new Memo(Some((new_tree, new_p))))
                         }
                     }
                     
@@ -618,6 +667,7 @@ object PackratParser{
             val renew_p = renew_id_p(p)
             val renew_trees = renew_id_trees(trees)
             (renew_trees, renew_p)
+            (trees, p)
         }
 
         def renew_id_p(p: ContextTree): ContextTree = {

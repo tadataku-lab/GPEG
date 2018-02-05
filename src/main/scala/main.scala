@@ -24,8 +24,11 @@ object Main{
     case class Opt(bench: Boolean, usage: Boolean, debug: Boolean, file: Option[String], save: Option[String])
 
     def main(args: Array[String]):Unit = {
-        exeCommand(getCommand(Array("-b", "src/main/resources/GPEG/rule.gpeg")))
+        var b = ""
+        for(i <- 1 to 20) b += "b"
+        exeCommand(getCommand(Array("-b", "src/main/resources/GPEG/rule.gpeg", b)))
         //exeCommand(getCommand(args))
+        
         /**
         def fact : Long => Long = n => {
             n match {
@@ -33,11 +36,13 @@ object Main{
                 case n if n > 0 => n * fact(n - 1)
             }
         }
-        val N = (1 to 10).toList
+        val N = (1 to 15).toList
         val C = N.map( n => fact(2 * n) / ((n + 1) * fact(n) * fact(n)))
         println(N)
         println(C)
         */
+        
+        
     }
 
     def isOpt(arg: String): Boolean = {
