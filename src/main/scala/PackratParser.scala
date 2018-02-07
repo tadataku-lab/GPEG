@@ -4,9 +4,9 @@ import ParserContext._
 import Memo._
 
 object PackratParser{  
-    def peg_parse(g: PGrammar, input: String): Option[(Forest, ParserContext)] = {
-        val new_p = new PackratParser().packrat_parse(new ParserContext(PCall(g.start, PSucc()) , g.rules, input.getBytes, g.start)).save_top
-        return Some((new_p.forest, new_p))
+    def peg_parse(g: PGrammar, input: String): Option[(Tree, ParserContext)] = {
+        val new_p = new PackratParser().packrat_parse(new ParserContext(g.rules(g.start) , g.rules, input.getBytes))
+        return Some((new_p.newAmbNode(g.start), new_p))
     }
 
     class PackratParser(){
@@ -17,31 +17,6 @@ object PackratParser{
         def map_match(p: ParserContext, bytes: Array[Byte]): List[State] = {
             p.states = p.states.flatMap(state => p.match_bytes(state, bytes))
             p.states
-        }
-
-        def map_call(p: ParserContext, symbol: Symbol): List[State] = {
-            p.states = p.states.flatMap(state => call_symbol(p, state, symbol))
-            p.states
-        }
-
-        def call_symbol(p: ParserContext, state: State, symbol: Symbol): List[State] = {
-            parse(p.set_exp(p.lookUpRules(symbol)).set_states(List(state.new_state))).save_node(symbol, state).states
-        }
-
-        def map_union(p: ParserContext, lhs: PExp, rhs: PExp): List[State] = {
-            p.states = p.states.flatMap(state => parse_union(p, lhs, rhs, state))
-            p.states
-        }
-
-        def parse_union(p: ParserContext, lhs: PExp, rhs: PExp, state: State): List[State] = {
-            val lhs_result = parse(p.set_exp(lhs).set_states(List(state.new_state))).get_result
-            val rhs_result = parse(p.set_exp(rhs).set_states(List(state.new_state))).get_result
-            (lhs_result._2, rhs_result._2) match {
-                case (PFail(_), PFail(_)) => List()
-                case (_, PFail(_)) => p.add_either(lhs_result._1, state)
-                case (PFail(_), _) => p.add_either(rhs_result._1, state)
-                case (_, _) =>  p.add_both(lhs_result._1, rhs_result._1, state)
-            }
         }
 
         def parse(p: ParserContext): ParserContext = {
@@ -70,7 +45,7 @@ object PackratParser{
                 }
                 */
 
-                case PCall(symbol, next) => if(map_call(p, symbol).isEmpty) p.set_exp(PFail("")) else parse(p.set_exp(next))
+                //case PCall(symbol, next) => if(map_call(p, symbol).isEmpty) p.set_exp(PFail("")) else parse(p.set_exp(next))
 
                 /**
                 case PCall(symbol, next) => {
@@ -191,7 +166,7 @@ object PackratParser{
                 }
                 */
                 
-                case PUnion(lhs, rhs) => if(map_union(p, lhs, rhs).isEmpty) p.set_exp(PFail("")) else p
+                //case PUnion(lhs, rhs) => if(map_union(p, lhs, rhs).isEmpty) p.set_exp(PFail("")) else p
                 
                 /**
                 case PUnion(lhs, rhs) => {         

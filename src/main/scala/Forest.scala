@@ -7,9 +7,19 @@ object Forest{
             "[" + v + "]"
         }
     }
-    case class Node(name: Symbol, next: List[Tree]) extends Tree
-    case class AmbTree() extends Tree
-    case class AmbNode(lhs: Tree, rhs: Tree) extends Tree
+    case class Node(name: Symbol, next: List[Tree]) extends Tree{
+        override def toString: String = {
+            val sb = new StringBuilder
+            sb.append("[" + name + " ")
+            for (tree <- next){
+                sb.append(tree.toString)
+            }
+            sb.append("]")
+            sb.toString
+        }
+    }
+
+    /**
 
     class Forest(){
         var table: Map[Long, Tree] = Map.empty[Long, Tree]
@@ -76,4 +86,5 @@ object Forest{
             jump_table = jump_table + (state.id -> id)
         }
     }
+    */
 }

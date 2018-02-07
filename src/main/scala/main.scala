@@ -25,7 +25,7 @@ object Main{
 
     def main(args: Array[String]):Unit = {
 
-        var b = "ab"
+        var b = "a"
         //for(i <- 1 to 20) b += "b"
         exeCommand(getCommand(Array("-d", "src/main/resources/GPEG/rule.gpeg", b)))
         //exeCommand(getCommand(args))
@@ -159,10 +159,10 @@ object Main{
         }
     }
 
-    def save_and_show(forest: Forest, filename: String):Unit = {
-        println(forest)
+    def save_and_show(tree: Tree, filename: String):Unit = {
+        println(tree)
         val file = new PrintWriter("src/test/resources/ParseResult/" + filename)
-        file.write(forest.toString())
+        file.write(tree.toString())
         file.close()
     }
 

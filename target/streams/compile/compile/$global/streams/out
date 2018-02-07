@@ -1,4 +1,7 @@
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:28:13: local var b in method main is never set: consider using immutable val[0m
-[0m[[0m[33mwarn[0m] [0m[0m        var b = "ab"[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/ParserContext.scala:2:13: Unused import[0m
+[0m[[0m[33mwarn[0m] [0m[0mimport Memo._[0m
 [0m[[0m[33mwarn[0m] [0m[0m            ^[0m
-[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/ParserContext.scala:5:22: Unused import[0m
+[0m[[0m[33mwarn[0m] [0m[0mimport ParserContext._[0m
+[0m[[0m[33mwarn[0m] [0m[0m                     ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mtwo warnings found[0m
