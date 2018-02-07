@@ -29,8 +29,8 @@ object PackratParser{
         private var MAPID: Map[Int, Int] = Map.empty[Int, Int]
         private var LRBs: Map[Int, LorRorB] = Map.empty[Int,LorRorB]
         var HASHTABLE: HashMap[(Symbol, Int), Memo] = new HashMap[(Symbol, Int),Memo]
-        private var BENCH: Array[Long] = Array(0,0,0,0)
-        private var BENCHTIME: Array[Long] = Array(0,0,0,0)
+        var BENCH: Array[Long] = Array(0,0,0,0)
+        var BENCHTIME: Array[Long] = Array(0,0,0,0)
 
         def disamb_context(context: ContextTree): ContextTree = {
             val start = System.currentTimeMillis
@@ -178,8 +178,9 @@ object PackratParser{
             //println(LRBs)
             println("disamb_context: " + BENCH(0) + "回 " + BENCHTIME(0) + "[ms]")
             println("disamb: " + BENCH(1) + "回 " + BENCHTIME(1) + "[ms]")
-            println("renew_id_p: " + BENCH(2) + "回 " + BENCHTIME(2) + "[ms]")
-            println("renew_id_tree: " + BENCH(3) + "回 " + BENCHTIME(3) + "[ms]")
+            println("renew_id_p: " + BENCH(2) + "回 " )
+            println("renew_id_tree: " + BENCH(3) + "回 ")
+            println("renew_id: " + BENCHTIME(2) + "[ms]")
             result
         }
 
@@ -686,14 +687,11 @@ object PackratParser{
         }
 
         def renew_id(trees: List[Tree], p: ContextTree): (List[Tree], ContextTree) = {
-            val start1 = System.currentTimeMillis
+            val start = System.currentTimeMillis
             val renew_p = renew_id_p(p)
-            val time1 = System.currentTimeMillis - start1
-            BENCHTIME(2) += time1
-            val start2 = System.currentTimeMillis
             val renew_trees = renew_id_trees(trees)
-            val time2 = System.currentTimeMillis - start2
-            BENCHTIME(3) += time2
+            val time = System.currentTimeMillis - start
+            BENCHTIME(2) += time
             (renew_trees, renew_p)
         }
 
