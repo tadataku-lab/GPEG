@@ -667,7 +667,6 @@ object PackratParser{
             val renew_p = renew_id_p(p)
             val renew_trees = renew_id_trees(trees)
             (renew_trees, renew_p)
-            (trees, p)
         }
 
         def renew_id_p(p: ContextTree): ContextTree = {
