@@ -29,48 +29,65 @@ object PackratParser{
         private var MAPID: Map[Int, Int] = Map.empty[Int, Int]
         private var LRBs: Map[Int, LorRorB] = Map.empty[Int,LorRorB]
         var HASHTABLE: HashMap[(Symbol, Int), Memo] = new HashMap[(Symbol, Int),Memo]
+        private var BENCH: Array[Long] = Array(0,0,0,0)
+        private var BENCHTIME: Array[Long] = Array(0,0,0,0)
 
         def disamb_context(context: ContextTree): ContextTree = {
-            
+            val start = System.currentTimeMillis
+            val _context = bench_disamb_context(context)
+            val time = System.currentTimeMillis - start
+            BENCHTIME(0) += time
+            _context
+        }
+
+        def bench_disamb_context(context: ContextTree): ContextTree = {
+            BENCH(0) += 1
             context match{
                 case p_c: ParserContext => p_c
                 case AmbContext(lhs, rhs, ambid) => {
                     LRBs.get(ambid) match {
                         case Some(lrb) => lrb match {
-                            case Left() => disamb_context(lhs)
-                            case Right() => disamb_context(rhs)
+                            case Left() => bench_disamb_context(lhs)
+                            case Right() => bench_disamb_context(rhs)
                             case Both() => null
                         }
-                        case None => AmbContext(disamb_context(lhs), disamb_context(rhs), ambid)
+                        case None => AmbContext(bench_disamb_context(lhs), bench_disamb_context(rhs), ambid)
                     }
                 }
                 case null => null
             }
-            
         }
 
         def disambiguity(trees: List[Tree]): List[Tree] = {
+            val start = System.currentTimeMillis
+            val new_trees = bench_disambiguity(trees)
+            val time = System.currentTimeMillis - start
+            BENCHTIME(1) += time
+            new_trees
             
+        }
+
+        def bench_disambiguity(trees: List[Tree]): List[Tree] = {
             if(trees.isEmpty) return trees
             var new_trees = List.empty[Tree]
             for(tree <- trees){
                 new_trees = new_trees:::disamb(tree)
             }
             new_trees
-            
         }
 
         def disamb(tree: Tree): List[Tree] = {
+            BENCH(1) += 1
             tree match {
-                case Node(name, nexts) => List(Node(name, disambiguity(nexts)))
+                case Node(name, nexts) => List(Node(name, bench_disambiguity(nexts)))
                 case AmbNode(ambid, lhs, rhs) => {
                     LRBs.get(ambid) match {
                         case Some(lrb) => lrb match {
-                            case Left() => disambiguity(lhs)
-                            case Right() => disambiguity(rhs)
+                            case Left() => bench_disambiguity(lhs)
+                            case Right() => bench_disambiguity(rhs)
                             case Both() => List()
                         }
-                        case None => List(AmbNode(ambid, disambiguity(lhs), disambiguity(rhs)))
+                        case None => List(AmbNode(ambid, bench_disambiguity(lhs), bench_disambiguity(rhs)))
                     }
                 }
                 case _ => List(tree) //throw new RuntimeException("error 1: can't do disambiguity")
@@ -156,9 +173,14 @@ object PackratParser{
 
         def disamb_parse(tree: List[Tree], p: ParserContext):(List[Tree], ContextTree) = {
             val (new_tree, new_p) = parse(tree, p)
+            val result = (disambiguity(new_tree), new_p)
             //println(HASHTABLE)
             //println(LRBs)
-            (disambiguity(new_tree), new_p)
+            println("disamb_context: " + BENCH(0) + "回 " + BENCHTIME(0) + "[ms]")
+            println("disamb: " + BENCH(1) + "回 " + BENCHTIME(1) + "[ms]")
+            println("renew_id_p: " + BENCH(2) + "回 " + BENCHTIME(2) + "[ms]")
+            println("renew_id_tree: " + BENCH(3) + "回 " + BENCHTIME(3) + "[ms]")
+            result
         }
 
         def parse(tree: List[Tree], p: ParserContext):(List[Tree], ContextTree) = {
@@ -664,12 +686,19 @@ object PackratParser{
         }
 
         def renew_id(trees: List[Tree], p: ContextTree): (List[Tree], ContextTree) = {
+            val start1 = System.currentTimeMillis
             val renew_p = renew_id_p(p)
+            val time1 = System.currentTimeMillis - start1
+            BENCHTIME(2) += time1
+            val start2 = System.currentTimeMillis
             val renew_trees = renew_id_trees(trees)
+            val time2 = System.currentTimeMillis - start2
+            BENCHTIME(3) += time2
             (renew_trees, renew_p)
         }
 
         def renew_id_p(p: ContextTree): ContextTree = {
+            BENCH(2) += 1
             p match {
                 case p_c: ParserContext => p_c
                 case AmbContext(lhs, rhs, _id) => {
@@ -682,10 +711,12 @@ object PackratParser{
         }
 
         def renew_id_trees(trees: List[Tree]): List[Tree] = {
-            trees.map(tree => renew_id_tree(tree))
+            val _trees = trees.map(tree => renew_id_tree(tree))
+            _trees
         }
 
         def renew_id_tree(tree: Tree): Tree = {
+            BENCH(3) += 1
             tree match {
                 case leaf: Leaf => leaf
                 case Node(name, next) => Node(name, renew_id_trees(next))

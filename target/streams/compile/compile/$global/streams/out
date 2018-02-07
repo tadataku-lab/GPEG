@@ -1,7 +1,7 @@
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PackratParser.scala:240:107: Adapting argument list by creating a 2-tuple: this may not be what you want.[0m
-[0m[[0m[33mwarn[0m] [0m[0m        signature: Some.apply[A](value: A): Some[A][0m
-[0m[[0m[33mwarn[0m] [0m[0m  given arguments: child_tree, p_c.copy[0m
-[0m[[0m[33mwarn[0m] [0m[0m after adaptation: Some((child_tree, p_c.copy): (List[Tree.Tree], ContextTree.ParserContext))[0m
-[0m[[0m[33mwarn[0m] [0m[0m                                                                HASHTABLE += ((memo_info) -> new Memo(Some(child_tree, p_c.copy)))[0m
-[0m[[0m[33mwarn[0m] [0m[0m                                                                                                          ^[0m
-[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PackratParser.scala:32:21: private setter of BENCH in class PackratParser is never used[0m
+[0m[[0m[33mwarn[0m] [0m[0m        private var BENCH: Array[Long] = Array(0,0,0,0)[0m
+[0m[[0m[33mwarn[0m] [0m[0m                    ^[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PackratParser.scala:33:21: private setter of BENCHTIME in class PackratParser is never used[0m
+[0m[[0m[33mwarn[0m] [0m[0m        private var BENCHTIME: Array[Long] = Array(0,0,0,0)[0m
+[0m[[0m[33mwarn[0m] [0m[0m                    ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mtwo warnings found[0m
