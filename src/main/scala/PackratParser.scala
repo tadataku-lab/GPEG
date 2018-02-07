@@ -18,6 +18,15 @@ object PackratParser{
             p.states
         }
 
+        def map_call(p: ParserContext, symbol: Symbol): List[State] = {
+            p.states = p.states.flatMap(state => call_symbol(p, symbol, state))
+            p.states
+        }
+
+        def call_symbol(p: ParserContext, symbol: Symbol, state: State): List[State] = {
+            parse(p.set_exp(p.rules(symbol)).set_states(List(state.newState))).states.map(s => s.update(symbol, state))
+        }
+
         def parse(p: ParserContext): ParserContext = {
             p.exp match {
                 case PSucc() => {
@@ -44,7 +53,7 @@ object PackratParser{
                 }
                 */
 
-                //case PCall(symbol, next) => if(map_call(p, symbol).isEmpty) p.set_exp(PFail("")) else parse(p.set_exp(next))
+                case PCall(symbol, next) => if(map_call(p, symbol).isEmpty) p.set_exp(PFail("")) else parse(p.set_exp(next))
 
                 /**
                 case PCall(symbol, next) => {

@@ -1,24 +1,23 @@
 [0m[[0m[0mdebug[0m] [0m[0m[0m
 [0m[[0m[0mdebug[0m] [0m[0mInitial source changes: [0m
-[0m[[0m[0mdebug[0m] [0m[0m	removed:Set(/Users/shonanking/lab/GPEG/src/main/scala/Memo.scala, /Users/shonanking/lab/GPEG/src/main/scala/Forest.scala)[0m
-[0m[[0m[0mdebug[0m] [0m[0m	added: Set(/Users/shonanking/lab/GPEG/src/main/scala/Tree.scala)[0m
-[0m[[0m[0mdebug[0m] [0m[0m	modified: Set(/Users/shonanking/lab/GPEG/src/main/scala/PackratParser.scala, /Users/shonanking/lab/GPEG/src/main/scala/ParserContext.scala, /Users/shonanking/lab/GPEG/src/main/scala/main.scala)[0m
+[0m[[0m[0mdebug[0m] [0m[0m	removed:Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0m	added: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0m	modified: Set(/Users/shonanking/lab/GPEG/src/main/scala/ParserContext.scala)[0m
 [0m[[0m[0mdebug[0m] [0m[0mInvalidated products: Set()[0m
 [0m[[0m[0mdebug[0m] [0m[0mExternal API changes: API Changes: Set()[0m
 [0m[[0m[0mdebug[0m] [0m[0mModified binary dependencies: Set()[0m
-[0m[[0m[0mdebug[0m] [0m[0mInitial directly invalidated classes: Set(Forest.Tree, Forest.Node, ParserContext.Left, Memo.Memo, ParserContext.ParserContext, PackratParser, ParserContext.State, ParserContext.Right, ParserContext.LRB, Main.Command, PackratParser.PackratParser, ParserContext, Main.Opt, Main, Memo, ParserContext.Position, ParserContext.Both, Forest.Leaf, Forest)[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial directly invalidated classes: Set(ParserContext.Left, ParserContext.ParserContext, ParserContext.State, ParserContext.Right, ParserContext.LRB, ParserContext, ParserContext.Position, ParserContext.Both)[0m
 [0m[[0m[0mdebug[0m] [0m[0m[0m
 [0m[[0m[0mdebug[0m] [0m[0mSources indirectly invalidated by:[0m
 [0m[[0m[0mdebug[0m] [0m[0m	product: Set()[0m
 [0m[[0m[0mdebug[0m] [0m[0m	binary dep: Set()[0m
 [0m[[0m[0mdebug[0m] [0m[0m	external source: Set()[0m
-[0m[[0m[0mdebug[0m] [0m[0mAll initially invalidated classes: Set(Forest.Tree, Forest.Node, ParserContext.Left, Memo.Memo, ParserContext.ParserContext, PackratParser, ParserContext.State, ParserContext.Right, ParserContext.LRB, Main.Command, PackratParser.PackratParser, ParserContext, Main.Opt, Main, Memo, ParserContext.Position, ParserContext.Both, Forest.Leaf, Forest)[0m
-[0m[[0m[0mdebug[0m] [0m[0mAll initially invalidated sources:Set(/Users/shonanking/lab/GPEG/src/main/scala/Tree.scala, /Users/shonanking/lab/GPEG/src/main/scala/PackratParser.scala, /Users/shonanking/lab/GPEG/src/main/scala/ParserContext.scala, /Users/shonanking/lab/GPEG/src/main/scala/main.scala)[0m
-[0m[[0m[0mdebug[0m] [0m[0mRecompiling all 9 sources: invalidated sources (6) exceeded 50.0% of all sources[0m
-[0m[[0m[0minfo[0m] [0m[0mCompiling 9 Scala sources to /Users/shonanking/lab/GPEG/target/scala-2.12/classes ...[0m
+[0m[[0m[0mdebug[0m] [0m[0mAll initially invalidated classes: Set(ParserContext.Left, ParserContext.ParserContext, ParserContext.State, ParserContext.Right, ParserContext.LRB, ParserContext, ParserContext.Position, ParserContext.Both)[0m
+[0m[[0m[0mdebug[0m] [0m[0mAll initially invalidated sources:Set(/Users/shonanking/lab/GPEG/src/main/scala/ParserContext.scala)[0m
+[0m[[0m[0minfo[0m] [0m[0mCompiling 1 Scala source to /Users/shonanking/lab/GPEG/target/scala-2.12/classes ...[0m
 [0m[[0m[0mdebug[0m] [0m[0mGetting org.scala-sbt:compiler-bridge_2.12:1.0.5:compile for Scala 2.12.4[0m
 [0m[[0m[0mdebug[0m] [0m[0mGetting org.scala-sbt:compiler-bridge_2.12:1.0.5:compile for Scala 2.12.4[0m
-[0m[[0m[0mdebug[0m] [0m[0m[zinc] Running cached compiler 5513ccea for Scala compiler version 2.12.4[0m
+[0m[[0m[0mdebug[0m] [0m[0m[zinc] Running cached compiler 7aa61569 for Scala compiler version 2.12.4[0m
 [0m[[0m[0mdebug[0m] [0m[0m[zinc] The Scala compiler is invoked with:[0m
 [0m[[0m[0mdebug[0m] [0m[0m	-deprecation[0m
 [0m[[0m[0mdebug[0m] [0m[0m	-feature[0m
@@ -28,166 +27,11 @@
 [0m[[0m[0mdebug[0m] [0m[0m	/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/resources.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/rt.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/sunrsasign.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/jsse.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/jce.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/charsets.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/jfr.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/classes:/Users/shonanking/.sbt/boot/scala-2.12.4/lib/scala-library.jar[0m
 [0m[[0m[0mdebug[0m] [0m[0m	-classpath[0m
 [0m[[0m[0mdebug[0m] [0m[0m	/Users/shonanking/lab/GPEG/target/scala-2.12/classes:/Users/shonanking/.ivy2/cache/org.scalactic/scalactic_2.12/bundles/scalactic_2.12-3.0.4.jar:/Users/shonanking/.sbt/boot/scala-2.12.4/lib/scala-reflect.jar:/Users/shonanking/.ivy2/cache/org.scala-lang.modules/scala-parser-combinators_2.12/bundles/scala-parser-combinators_2.12-1.0.6.jar[0m
-[0m[[0m[0mdebug[0m] [0m[0mScala compilation took 4.423435386 s[0m
+[0m[[0m[0mdebug[0m] [0m[0mScala compilation took 2.476914151 s[0m
 [0m[[0m[0minfo[0m] [0m[0mDone compiling.[0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from Memo.Memo...[0m
-[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(Memo.Memo)[0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(Memo.Memo)[0m
-[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(Memo.Memo,ModifiedNames(changes = UsedName(toString,[Default]), UsedName(getClass,[Default]), UsedName($isInstanceOf,[Default]), UsedName($init$,[Default]), UsedName(notifyAll,[Default]), UsedName(eq,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(synchronized,[Default]), UsedName(unapply,[Default]), UsedName(equals,[Default]), UsedName(finalize,[Default]), UsedName(copy,[Default]), UsedName(v,[Default]), UsedName(productIterator,[Default]), UsedName(notify,[Default]), UsedName(clone,[Default]), UsedName(productArity,[Default]), UsedName(asInstanceOf,[Default]), UsedName(compose,[Default]), UsedName(andThen,[Default]), UsedName(productPrefix,[Default]), UsedName(ne,[Default]), UsedName(copy$default$1,[Default]), UsedName(Memo;Memo;init;,[Default]), UsedName(!=,[Default]), UsedName(Memo,[Default]), UsedName(==,[Default]), UsedName(apply,[Default]), UsedName(isInstanceOf,[Default]), UsedName(canEqual,[Default]), UsedName(productElement,[Default]), UsedName(##,[Default]), UsedName(wait,[Default]))) invalidates 1 classes due to The Memo.Memo has the following regular definitions changed:[0m
-[0m[[0m[0mdebug[0m] [0m[0m	UsedName(toString,[Default]), UsedName(getClass,[Default]), UsedName($isInstanceOf,[Default]), UsedName($init$,[Default]), UsedName(notifyAll,[Default]), UsedName(eq,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(synchronized,[Default]), UsedName(unapply,[Default]), UsedName(equals,[Default]), UsedName(finalize,[Default]), UsedName(copy,[Default]), UsedName(v,[Default]), UsedName(productIterator,[Default]), UsedName(notify,[Default]), UsedName(clone,[Default]), UsedName(productArity,[Default]), UsedName(asInstanceOf,[Default]), UsedName(compose,[Default]), UsedName(andThen,[Default]), UsedName(productPrefix,[Default]), UsedName(ne,[Default]), UsedName(copy$default$1,[Default]), UsedName(Memo;Memo;init;,[Default]), UsedName(!=,[Default]), UsedName(Memo,[Default]), UsedName(==,[Default]), UsedName(apply,[Default]), UsedName(isInstanceOf,[Default]), UsedName(canEqual,[Default]), UsedName(productElement,[Default]), UsedName(##,[Default]), UsedName(wait,[Default]).[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> by transitive inheritance: Set(Memo.Memo)[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> [0m
-[0m[[0m[0mdebug[0m] [0m[0m	> [0m
-[0m[[0m[0mdebug[0m] [0m[0m        [0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from Memo...[0m
-[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(Memo)[0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(Memo)[0m
-[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(Memo,ModifiedNames(changes = UsedName(toString,[Default]), UsedName(getClass,[Default]), UsedName($isInstanceOf,[Default]), UsedName(notifyAll,[Default]), UsedName(eq,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(synchronized,[Default]), UsedName(equals,[Default]), UsedName(finalize,[Default]), UsedName(notify,[Default]), UsedName(clone,[Default]), UsedName(asInstanceOf,[Default]), UsedName(ne,[Default]), UsedName(!=,[Default]), UsedName(Memo,[Default]), UsedName(==,[Default]), UsedName(isInstanceOf,[Default]), UsedName(##,[Default]), UsedName(wait,[Default]))) invalidates 1 classes due to The Memo has the following regular definitions changed:[0m
-[0m[[0m[0mdebug[0m] [0m[0m	UsedName(toString,[Default]), UsedName(getClass,[Default]), UsedName($isInstanceOf,[Default]), UsedName(notifyAll,[Default]), UsedName(eq,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(synchronized,[Default]), UsedName(equals,[Default]), UsedName(finalize,[Default]), UsedName(notify,[Default]), UsedName(clone,[Default]), UsedName(asInstanceOf,[Default]), UsedName(ne,[Default]), UsedName(!=,[Default]), UsedName(Memo,[Default]), UsedName(==,[Default]), UsedName(isInstanceOf,[Default]), UsedName(##,[Default]), UsedName(wait,[Default]).[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> by transitive inheritance: Set(Memo)[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> [0m
-[0m[[0m[0mdebug[0m] [0m[0m	> [0m
-[0m[[0m[0mdebug[0m] [0m[0m        [0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from Forest.Tree...[0m
-[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(Forest.Tree)[0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(Forest.Tree)[0m
-[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(Forest.Tree,ModifiedNames(changes = UsedName(toString,[Default]), UsedName(getClass,[Default]), UsedName($isInstanceOf,[Default]), UsedName(notifyAll,[Default]), UsedName(eq,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(synchronized,[Default]), UsedName(equals,[Default]), UsedName(finalize,[Default]), UsedName(notify,[Default]), UsedName(clone,[Default]), UsedName(Tree,[Default]), UsedName(asInstanceOf,[Default]), UsedName(ne,[Default]), UsedName(!=,[Default]), UsedName(==,[Default]), UsedName(isInstanceOf,[Default]), UsedName(##,[Default]), UsedName(wait,[Default]))) invalidates 1 classes due to The Forest.Tree has the following regular definitions changed:[0m
-[0m[[0m[0mdebug[0m] [0m[0m	UsedName(toString,[Default]), UsedName(getClass,[Default]), UsedName($isInstanceOf,[Default]), UsedName(notifyAll,[Default]), UsedName(eq,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(synchronized,[Default]), UsedName(equals,[Default]), UsedName(finalize,[Default]), UsedName(notify,[Default]), UsedName(clone,[Default]), UsedName(Tree,[Default]), UsedName(asInstanceOf,[Default]), UsedName(ne,[Default]), UsedName(!=,[Default]), UsedName(==,[Default]), UsedName(isInstanceOf,[Default]), UsedName(##,[Default]), UsedName(wait,[Default]).[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> by transitive inheritance: Set(Forest.Tree)[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> [0m
-[0m[[0m[0mdebug[0m] [0m[0m	> [0m
-[0m[[0m[0mdebug[0m] [0m[0m        [0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from Tree...[0m
-[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(Tree)[0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(Tree)[0m
-[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of ParserContext.ParserContext: Set(UsedName(Tree,[Default]), UsedName(Node,[Default]), UsedName(==,[Default]))[0m
-[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of PackratParser: Set(UsedName(Tree,[Default]), UsedName(Node,[Default]))[0m
-[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of ParserContext.State: Set(UsedName(toString,[Default]), UsedName(Leaf,[Default]), UsedName($isInstanceOf,[Default]), UsedName(eq,[Default]), UsedName(Tree,[Default]), UsedName(asInstanceOf,[Default]), UsedName(Node,[Default]), UsedName(==,[Default]), UsedName(isInstanceOf,[Default]))[0m
-[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of ParserContext: Set(UsedName(Tree,[Default]))[0m
-[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of Main: Set(UsedName(toString,[Default]), UsedName(Tree,[Default]), UsedName(asInstanceOf,[Default]), UsedName(ne,[Default]), UsedName(==,[Default]), UsedName(isInstanceOf,[Default]), UsedName(Tree,[Default, PatMatTarget]))[0m
-[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(Tree,ModifiedNames(changes = UsedName(toString,[Default]), UsedName(getClass,[Default]), UsedName(Leaf,[Default]), UsedName($isInstanceOf,[Default]), UsedName(notifyAll,[Default]), UsedName(eq,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(synchronized,[Default]), UsedName(equals,[Default]), UsedName(finalize,[Default]), UsedName(notify,[Default]), UsedName(clone,[Default]), UsedName(Tree,[Default]), UsedName(asInstanceOf,[Default]), UsedName(Node,[Default]), UsedName(ne,[Default]), UsedName(!=,[Default]), UsedName(==,[Default]), UsedName(isInstanceOf,[Default]), UsedName(##,[Default]), UsedName(wait,[Default]))) invalidates 6 classes due to The Tree has the following regular definitions changed:[0m
-[0m[[0m[0mdebug[0m] [0m[0m	UsedName(toString,[Default]), UsedName(getClass,[Default]), UsedName(Leaf,[Default]), UsedName($isInstanceOf,[Default]), UsedName(notifyAll,[Default]), UsedName(eq,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(synchronized,[Default]), UsedName(equals,[Default]), UsedName(finalize,[Default]), UsedName(notify,[Default]), UsedName(clone,[Default]), UsedName(Tree,[Default]), UsedName(asInstanceOf,[Default]), UsedName(Node,[Default]), UsedName(ne,[Default]), UsedName(!=,[Default]), UsedName(==,[Default]), UsedName(isInstanceOf,[Default]), UsedName(##,[Default]), UsedName(wait,[Default]).[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> by transitive inheritance: Set(Tree)[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> [0m
-[0m[[0m[0mdebug[0m] [0m[0m	> by member reference: Set(ParserContext.ParserContext, PackratParser, ParserContext.State, ParserContext, Main)[0m
-[0m[[0m[0mdebug[0m] [0m[0m        [0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from Forest.Node...[0m
-[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(Forest.Node)[0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(Forest.Node)[0m
-[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(Forest.Node,ModifiedNames(changes = UsedName(toString,[Default]), UsedName(next,[Default]), UsedName(getClass,[Default]), UsedName($isInstanceOf,[Default]), UsedName($init$,[Default]), UsedName(notifyAll,[Default]), UsedName(eq,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(synchronized,[Default]), UsedName(unapply,[Default]), UsedName(equals,[Default]), UsedName(name,[Default]), UsedName(tupled,[Default]), UsedName(finalize,[Default]), UsedName(copy,[Default]), UsedName(productIterator,[Default]), UsedName(curried,[Default]), UsedName(notify,[Default]), UsedName(clone,[Default]), UsedName(productArity,[Default]), UsedName(Forest;Node;init;,[Default]), UsedName(asInstanceOf,[Default]), UsedName(Node,[Default]), UsedName(productPrefix,[Default]), UsedName(ne,[Default]), UsedName(copy$default$1,[Default]), UsedName(!=,[Default]), UsedName(copy$default$2,[Default]), UsedName(==,[Default]), UsedName(apply,[Default]), UsedName(isInstanceOf,[Default]), UsedName(canEqual,[Default]), UsedName(productElement,[Default]), UsedName(##,[Default]), UsedName(wait,[Default]))) invalidates 1 classes due to The Forest.Node has the following regular definitions changed:[0m
-[0m[[0m[0mdebug[0m] [0m[0m	UsedName(toString,[Default]), UsedName(next,[Default]), UsedName(getClass,[Default]), UsedName($isInstanceOf,[Default]), UsedName($init$,[Default]), UsedName(notifyAll,[Default]), UsedName(eq,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(synchronized,[Default]), UsedName(unapply,[Default]), UsedName(equals,[Default]), UsedName(name,[Default]), UsedName(tupled,[Default]), UsedName(finalize,[Default]), UsedName(copy,[Default]), UsedName(productIterator,[Default]), UsedName(curried,[Default]), UsedName(notify,[Default]), UsedName(clone,[Default]), UsedName(productArity,[Default]), UsedName(Forest;Node;init;,[Default]), UsedName(asInstanceOf,[Default]), UsedName(Node,[Default]), UsedName(productPrefix,[Default]), UsedName(ne,[Default]), UsedName(copy$default$1,[Default]), UsedName(!=,[Default]), UsedName(copy$default$2,[Default]), UsedName(==,[Default]), UsedName(apply,[Default]), UsedName(isInstanceOf,[Default]), UsedName(canEqual,[Default]), UsedName(productElement,[Default]), UsedName(##,[Default]), UsedName(wait,[Default]).[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> by transitive inheritance: Set(Forest.Node)[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> [0m
-[0m[[0m[0mdebug[0m] [0m[0m	> [0m
-[0m[[0m[0mdebug[0m] [0m[0m        [0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from Tree.Leaf...[0m
-[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(Tree.Leaf)[0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(Tree.Leaf)[0m
-[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of ParserContext.State: Set(UsedName(toString,[Default]), UsedName(Leaf,[Default]), UsedName($isInstanceOf,[Default]), UsedName(eq,[Default]), UsedName(v,[Default]), UsedName(asInstanceOf,[Default]), UsedName(==,[Default]), UsedName(apply,[Default]), UsedName(isInstanceOf,[Default]), UsedName(canEqual,[Default]))[0m
-[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(Tree.Leaf,ModifiedNames(changes = UsedName(toString,[Default]), UsedName(getClass,[Default]), UsedName(Leaf,[Default]), UsedName($isInstanceOf,[Default]), UsedName($init$,[Default]), UsedName(notifyAll,[Default]), UsedName(eq,[Default]), UsedName(Tree;Leaf;init;,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(synchronized,[Default]), UsedName(unapply,[Default]), UsedName(equals,[Default]), UsedName(finalize,[Default]), UsedName(copy,[Default]), UsedName(v,[Default]), UsedName(productIterator,[Default]), UsedName(notify,[Default]), UsedName(clone,[Default]), UsedName(productArity,[Default]), UsedName(asInstanceOf,[Default]), UsedName(compose,[Default]), UsedName(andThen,[Default]), UsedName(productPrefix,[Default]), UsedName(ne,[Default]), UsedName(copy$default$1,[Default]), UsedName(!=,[Default]), UsedName(==,[Default]), UsedName(apply,[Default]), UsedName(isInstanceOf,[Default]), UsedName(canEqual,[Default]), UsedName(productElement,[Default]), UsedName(##,[Default]), UsedName(wait,[Default]))) invalidates 2 classes due to The Tree.Leaf has the following regular definitions changed:[0m
-[0m[[0m[0mdebug[0m] [0m[0m	UsedName(toString,[Default]), UsedName(getClass,[Default]), UsedName(Leaf,[Default]), UsedName($isInstanceOf,[Default]), UsedName($init$,[Default]), UsedName(notifyAll,[Default]), UsedName(eq,[Default]), UsedName(Tree;Leaf;init;,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(synchronized,[Default]), UsedName(unapply,[Default]), UsedName(equals,[Default]), UsedName(finalize,[Default]), UsedName(copy,[Default]), UsedName(v,[Default]), UsedName(productIterator,[Default]), UsedName(notify,[Default]), UsedName(clone,[Default]), UsedName(productArity,[Default]), UsedName(asInstanceOf,[Default]), UsedName(compose,[Default]), UsedName(andThen,[Default]), UsedName(productPrefix,[Default]), UsedName(ne,[Default]), UsedName(copy$default$1,[Default]), UsedName(!=,[Default]), UsedName(==,[Default]), UsedName(apply,[Default]), UsedName(isInstanceOf,[Default]), UsedName(canEqual,[Default]), UsedName(productElement,[Default]), UsedName(##,[Default]), UsedName(wait,[Default]).[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> by transitive inheritance: Set(Tree.Leaf)[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> [0m
-[0m[[0m[0mdebug[0m] [0m[0m	> by member reference: Set(ParserContext.State)[0m
-[0m[[0m[0mdebug[0m] [0m[0m        [0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from ParserContext.ParserContext...[0m
-[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(ParserContext.ParserContext)[0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(ParserContext.ParserContext)[0m
-[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of PackratParser.PackratParser. This dependency is not being considered for invalidation.[0m
-[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of PackratParser: Set(UsedName(newAmbNode,[Default]))[0m
-[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of Main. This dependency is not being considered for invalidation.[0m
-[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(ParserContext.ParserContext,ModifiedNames(changes = UsedName(newAmbNode,[Default]))) invalidates 2 classes due to The ParserContext.ParserContext has the following regular definitions changed:[0m
-[0m[[0m[0mdebug[0m] [0m[0m	UsedName(newAmbNode,[Default]).[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> by transitive inheritance: Set(ParserContext.ParserContext)[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> [0m
-[0m[[0m[0mdebug[0m] [0m[0m	> by member reference: Set(PackratParser)[0m
-[0m[[0m[0mdebug[0m] [0m[0m        [0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from Tree.Node...[0m
-[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(Tree.Node)[0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(Tree.Node)[0m
-[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of PackratParser: Set(UsedName(Node,[Default]), UsedName(apply,[Default]))[0m
-[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of ParserContext.ParserContext: Set(UsedName(name,[Default]), UsedName(Node,[Default]), UsedName(==,[Default]), UsedName(apply,[Default]))[0m
-[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of ParserContext.State: Set(UsedName(toString,[Default]), UsedName(next,[Default]), UsedName($isInstanceOf,[Default]), UsedName(eq,[Default]), UsedName(name,[Default]), UsedName(asInstanceOf,[Default]), UsedName(Node,[Default]), UsedName(==,[Default]), UsedName(apply,[Default]), UsedName(isInstanceOf,[Default]), UsedName(canEqual,[Default]))[0m
-[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(Tree.Node,ModifiedNames(changes = UsedName(toString,[Default]), UsedName(Tree;Node;init;,[Default]), UsedName(next,[Default]), UsedName(getClass,[Default]), UsedName($isInstanceOf,[Default]), UsedName($init$,[Default]), UsedName(notifyAll,[Default]), UsedName(eq,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(synchronized,[Default]), UsedName(unapply,[Default]), UsedName(equals,[Default]), UsedName(name,[Default]), UsedName(tupled,[Default]), UsedName(finalize,[Default]), UsedName(copy,[Default]), UsedName(productIterator,[Default]), UsedName(curried,[Default]), UsedName(notify,[Default]), UsedName(clone,[Default]), UsedName(productArity,[Default]), UsedName(asInstanceOf,[Default]), UsedName(Node,[Default]), UsedName(productPrefix,[Default]), UsedName(ne,[Default]), UsedName(copy$default$1,[Default]), UsedName(!=,[Default]), UsedName(copy$default$2,[Default]), UsedName(==,[Default]), UsedName(apply,[Default]), UsedName(isInstanceOf,[Default]), UsedName(canEqual,[Default]), UsedName(productElement,[Default]), UsedName(##,[Default]), UsedName(wait,[Default]))) invalidates 4 classes due to The Tree.Node has the following regular definitions changed:[0m
-[0m[[0m[0mdebug[0m] [0m[0m	UsedName(toString,[Default]), UsedName(Tree;Node;init;,[Default]), UsedName(next,[Default]), UsedName(getClass,[Default]), UsedName($isInstanceOf,[Default]), UsedName($init$,[Default]), UsedName(notifyAll,[Default]), UsedName(eq,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(synchronized,[Default]), UsedName(unapply,[Default]), UsedName(equals,[Default]), UsedName(name,[Default]), UsedName(tupled,[Default]), UsedName(finalize,[Default]), UsedName(copy,[Default]), UsedName(productIterator,[Default]), UsedName(curried,[Default]), UsedName(notify,[Default]), UsedName(clone,[Default]), UsedName(productArity,[Default]), UsedName(asInstanceOf,[Default]), UsedName(Node,[Default]), UsedName(productPrefix,[Default]), UsedName(ne,[Default]), UsedName(copy$default$1,[Default]), UsedName(!=,[Default]), UsedName(copy$default$2,[Default]), UsedName(==,[Default]), UsedName(apply,[Default]), UsedName(isInstanceOf,[Default]), UsedName(canEqual,[Default]), UsedName(productElement,[Default]), UsedName(##,[Default]), UsedName(wait,[Default]).[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> by transitive inheritance: Set(Tree.Node)[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> [0m
-[0m[[0m[0mdebug[0m] [0m[0m	> by member reference: Set(PackratParser, ParserContext.ParserContext, ParserContext.State)[0m
-[0m[[0m[0mdebug[0m] [0m[0m        [0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from Forest.Leaf...[0m
-[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(Forest.Leaf)[0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(Forest.Leaf)[0m
-[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(Forest.Leaf,ModifiedNames(changes = UsedName(toString,[Default]), UsedName(getClass,[Default]), UsedName(Leaf,[Default]), UsedName($isInstanceOf,[Default]), UsedName($init$,[Default]), UsedName(notifyAll,[Default]), UsedName(eq,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(synchronized,[Default]), UsedName(Forest;Leaf;init;,[Default]), UsedName(unapply,[Default]), UsedName(equals,[Default]), UsedName(finalize,[Default]), UsedName(copy,[Default]), UsedName(v,[Default]), UsedName(productIterator,[Default]), UsedName(notify,[Default]), UsedName(clone,[Default]), UsedName(productArity,[Default]), UsedName(asInstanceOf,[Default]), UsedName(compose,[Default]), UsedName(andThen,[Default]), UsedName(productPrefix,[Default]), UsedName(ne,[Default]), UsedName(copy$default$1,[Default]), UsedName(!=,[Default]), UsedName(==,[Default]), UsedName(apply,[Default]), UsedName(isInstanceOf,[Default]), UsedName(canEqual,[Default]), UsedName(productElement,[Default]), UsedName(##,[Default]), UsedName(wait,[Default]))) invalidates 1 classes due to The Forest.Leaf has the following regular definitions changed:[0m
-[0m[[0m[0mdebug[0m] [0m[0m	UsedName(toString,[Default]), UsedName(getClass,[Default]), UsedName(Leaf,[Default]), UsedName($isInstanceOf,[Default]), UsedName($init$,[Default]), UsedName(notifyAll,[Default]), UsedName(eq,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(synchronized,[Default]), UsedName(Forest;Leaf;init;,[Default]), UsedName(unapply,[Default]), UsedName(equals,[Default]), UsedName(finalize,[Default]), UsedName(copy,[Default]), UsedName(v,[Default]), UsedName(productIterator,[Default]), UsedName(notify,[Default]), UsedName(clone,[Default]), UsedName(productArity,[Default]), UsedName(asInstanceOf,[Default]), UsedName(compose,[Default]), UsedName(andThen,[Default]), UsedName(productPrefix,[Default]), UsedName(ne,[Default]), UsedName(copy$default$1,[Default]), UsedName(!=,[Default]), UsedName(==,[Default]), UsedName(apply,[Default]), UsedName(isInstanceOf,[Default]), UsedName(canEqual,[Default]), UsedName(productElement,[Default]), UsedName(##,[Default]), UsedName(wait,[Default]).[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> by transitive inheritance: Set(Forest.Leaf)[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> [0m
-[0m[[0m[0mdebug[0m] [0m[0m	> [0m
-[0m[[0m[0mdebug[0m] [0m[0m        [0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from Main...[0m
-[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(Main)[0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(Main)[0m
-[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(Main,ModifiedNames(changes = UsedName(save_and_show,[Default]))) invalidates 1 classes due to The Main has the following regular definitions changed:[0m
-[0m[[0m[0mdebug[0m] [0m[0m	UsedName(save_and_show,[Default]).[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> by transitive inheritance: Set(Main)[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> [0m
-[0m[[0m[0mdebug[0m] [0m[0m	> [0m
-[0m[[0m[0mdebug[0m] [0m[0m        [0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from PackratParser...[0m
-[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(PackratParser)[0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(PackratParser)[0m
-[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of Main: Set(UsedName(peg_parse,[Default]))[0m
-[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(PackratParser,ModifiedNames(changes = UsedName(peg_parse,[Default]))) invalidates 2 classes due to The PackratParser has the following regular definitions changed:[0m
-[0m[[0m[0mdebug[0m] [0m[0m	UsedName(peg_parse,[Default]).[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> by transitive inheritance: Set(PackratParser)[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> [0m
-[0m[[0m[0mdebug[0m] [0m[0m	> by member reference: Set(Main)[0m
-[0m[[0m[0mdebug[0m] [0m[0m        [0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from Tree.Tree...[0m
-[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(Tree.Tree)[0m
-[0m[[0m[0mdebug[0m] [0m[0mIncluding Tree.Leaf by Tree.Tree[0m
-[0m[[0m[0mdebug[0m] [0m[0mIncluding Tree.Node by Tree.Tree[0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(Tree.Leaf, Tree.Node, Tree.Tree)[0m
-[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of ParserContext.State: Set(UsedName(toString,[Default]), UsedName($isInstanceOf,[Default]), UsedName(eq,[Default]), UsedName(Tree,[Default]), UsedName(asInstanceOf,[Default]), UsedName(==,[Default]), UsedName(isInstanceOf,[Default]))[0m
-[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of PackratParser: Set(UsedName(Tree,[Default]))[0m
-[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of ParserContext.ParserContext: Set(UsedName(Tree,[Default]), UsedName(==,[Default]))[0m
-[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of ParserContext.State: Set(UsedName(toString,[Default]), UsedName($isInstanceOf,[Default]), UsedName(eq,[Default]), UsedName(Tree,[Default]), UsedName(asInstanceOf,[Default]), UsedName(==,[Default]), UsedName(isInstanceOf,[Default]))[0m
-[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of PackratParser: Set(UsedName(Tree,[Default]))[0m
-[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of ParserContext.State: Set(UsedName(toString,[Default]), UsedName($isInstanceOf,[Default]), UsedName(eq,[Default]), UsedName(Tree,[Default]), UsedName(asInstanceOf,[Default]), UsedName(==,[Default]), UsedName(isInstanceOf,[Default]))[0m
-[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of ParserContext.ParserContext: Set(UsedName(Tree,[Default]), UsedName(==,[Default]))[0m
-[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of Main: Set(UsedName(toString,[Default]), UsedName(Tree,[Default]), UsedName(asInstanceOf,[Default]), UsedName(ne,[Default]), UsedName(==,[Default]), UsedName(isInstanceOf,[Default]), UsedName(Tree,[Default, PatMatTarget]))[0m
-[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(Tree.Tree,ModifiedNames(changes = UsedName(toString,[Default]), UsedName(getClass,[Default]), UsedName($isInstanceOf,[Default]), UsedName(notifyAll,[Default]), UsedName(eq,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(synchronized,[Default]), UsedName(equals,[Default]), UsedName(finalize,[Default]), UsedName(notify,[Default]), UsedName(clone,[Default]), UsedName(Tree,[Default]), UsedName(asInstanceOf,[Default]), UsedName(ne,[Default]), UsedName(!=,[Default]), UsedName(==,[Default]), UsedName(isInstanceOf,[Default]), UsedName(##,[Default]), UsedName(wait,[Default]))) invalidates 7 classes due to The Tree.Tree has the following regular definitions changed:[0m
-[0m[[0m[0mdebug[0m] [0m[0m	UsedName(toString,[Default]), UsedName(getClass,[Default]), UsedName($isInstanceOf,[Default]), UsedName(notifyAll,[Default]), UsedName(eq,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(synchronized,[Default]), UsedName(equals,[Default]), UsedName(finalize,[Default]), UsedName(notify,[Default]), UsedName(clone,[Default]), UsedName(Tree,[Default]), UsedName(asInstanceOf,[Default]), UsedName(ne,[Default]), UsedName(!=,[Default]), UsedName(==,[Default]), UsedName(isInstanceOf,[Default]), UsedName(##,[Default]), UsedName(wait,[Default]).[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> by transitive inheritance: Set(Tree.Leaf, Tree.Node, Tree.Tree)[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> [0m
-[0m[[0m[0mdebug[0m] [0m[0m	> by member reference: Set(ParserContext.State, PackratParser, ParserContext.ParserContext, Main)[0m
-[0m[[0m[0mdebug[0m] [0m[0m        [0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from ParserContext.State...[0m
-[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(ParserContext.State)[0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(ParserContext.State)[0m
-[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of PackratParser.PackratParser: Set(UsedName(State,[Default]), UsedName(apply,[Default]))[0m
-[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(ParserContext.State,ModifiedNames(changes = UsedName(State,[Default]), UsedName(ParserContext;State;init;,[Default]), UsedName(unapply,[Default]), UsedName(tupled,[Default]), UsedName(copy,[Default]), UsedName(newNode,[Default]), UsedName(trees,[Default]), UsedName(curried,[Default]), UsedName(addNode,[Default]), UsedName(copy$default$2,[Default]), UsedName(apply,[Default]))) invalidates 2 classes due to The ParserContext.State has the following regular definitions changed:[0m
-[0m[[0m[0mdebug[0m] [0m[0m	UsedName(State,[Default]), UsedName(ParserContext;State;init;,[Default]), UsedName(unapply,[Default]), UsedName(tupled,[Default]), UsedName(copy,[Default]), UsedName(newNode,[Default]), UsedName(trees,[Default]), UsedName(curried,[Default]), UsedName(addNode,[Default]), UsedName(copy$default$2,[Default]), UsedName(apply,[Default]).[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> by transitive inheritance: Set(ParserContext.State)[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> [0m
-[0m[[0m[0mdebug[0m] [0m[0m	> by member reference: Set(PackratParser.PackratParser)[0m
-[0m[[0m[0mdebug[0m] [0m[0m        [0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from Forest...[0m
-[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(Forest)[0m
-[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(Forest)[0m
-[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(Forest,ModifiedNames(changes = UsedName(toString,[Default]), UsedName(getClass,[Default]), UsedName(Leaf,[Default]), UsedName($isInstanceOf,[Default]), UsedName(notifyAll,[Default]), UsedName(eq,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(Forest,[Default]), UsedName(synchronized,[Default]), UsedName(equals,[Default]), UsedName(finalize,[Default]), UsedName(notify,[Default]), UsedName(clone,[Default]), UsedName(Tree,[Default]), UsedName(asInstanceOf,[Default]), UsedName(Node,[Default]), UsedName(ne,[Default]), UsedName(!=,[Default]), UsedName(==,[Default]), UsedName(isInstanceOf,[Default]), UsedName(##,[Default]), UsedName(wait,[Default]))) invalidates 1 classes due to The Forest has the following regular definitions changed:[0m
-[0m[[0m[0mdebug[0m] [0m[0m	UsedName(toString,[Default]), UsedName(getClass,[Default]), UsedName(Leaf,[Default]), UsedName($isInstanceOf,[Default]), UsedName(notifyAll,[Default]), UsedName(eq,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(Forest,[Default]), UsedName(synchronized,[Default]), UsedName(equals,[Default]), UsedName(finalize,[Default]), UsedName(notify,[Default]), UsedName(clone,[Default]), UsedName(Tree,[Default]), UsedName(asInstanceOf,[Default]), UsedName(Node,[Default]), UsedName(ne,[Default]), UsedName(!=,[Default]), UsedName(==,[Default]), UsedName(isInstanceOf,[Default]), UsedName(##,[Default]), UsedName(wait,[Default]).[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> by transitive inheritance: Set(Forest)[0m
-[0m[[0m[0mdebug[0m] [0m[0m	> [0m
-[0m[[0m[0mdebug[0m] [0m[0m	> [0m
-[0m[[0m[0mdebug[0m] [0m[0m        [0m
 [0m[[0m[0mdebug[0m] [0m[0mNew invalidations:[0m
-[0m[[0m[0mdebug[0m] [0m[0m	Set(PackratParser.PackratParser, ParserContext)[0m
-[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(PackratParser.PackratParser, ParserContext)[0m
-[0m[[0m[0mdebug[0m] [0m[0mIncluding PackratParser by ParserContext[0m
-[0m[[0m[0mdebug[0m] [0m[0mIncluding Main by PackratParser[0m
-[0m[[0m[0mdebug[0m] [0m[0mIncluding Tree by ParserContext[0m
-[0m[[0m[0mdebug[0m] [0m[0mIncluding ParserContext.ParserContext by Tree[0m
-[0m[[0m[0mdebug[0m] [0m[0mIncluding ParserContext.State by Tree[0m
+[0m[[0m[0mdebug[0m] [0m[0m	Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set()[0m
 [0m[[0m[0mdebug[0m] [0m[0mPreviously invalidated, but (transitively) depend on new invalidations:[0m
-[0m[[0m[0mdebug[0m] [0m[0m	Set(Tree, ParserContext.ParserContext, PackratParser, ParserContext.State, Main)[0m
+[0m[[0m[0mdebug[0m] [0m[0m	Set()[0m
 [0m[[0m[0mdebug[0m] [0m[0mAll newly invalidated classes after taking into account (previously) recompiled classes:Set()[0m

@@ -30,16 +30,24 @@ object ParserContext {
         }
 
         def newAmbNode(name: Symbol): Node = {
-            if(states.isEmpty) return Node(Symbol("fail"), List())
-            if(states.length == 1) states.head.newNode(name) else Node(Symbol("ambiguity"), states.flatMap(state => List(state.newNode(name))))
+            states.length match{
+                case 0 => Node(Symbol("fail"), List())
+                case 1 => states.head.newNode(name)
+                case _ => Node(Symbol("ambiguity"), states.flatMap(state => List(state.newNode(name))))
+            }
         }
 
     }
     
 
     case class State(var pos: Int, var trees: List[Tree]){
-        def new_state(): State = {
+        def newState(): State = {
             State(pos, List())
+        }
+
+        def update(name: Symbol, state: State): State = {
+            trees = state.trees:+Node(name, trees)
+            this
         }
 
         def newLeaf(v: String): State = {
