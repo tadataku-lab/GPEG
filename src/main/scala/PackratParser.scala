@@ -1,7 +1,6 @@
 import AST._
-import Forest._
+import Tree._
 import ParserContext._
-import Memo._
 
 object PackratParser{  
     def peg_parse(g: PGrammar, input: String): Option[(Tree, ParserContext)] = {

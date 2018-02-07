@@ -3,7 +3,7 @@ import PackratParser._
 import scala.io.Source
 import CPS._
 import AST._
-import Forest._
+import Tree._
 import GpegParser._
 
 object Main{

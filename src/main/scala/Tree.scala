@@ -1,6 +1,6 @@
 import ParserContext._
 
-object Forest{
+object Tree{
     sealed trait Tree
     case class Leaf(v: String) extends Tree{
         override def toString: String = {

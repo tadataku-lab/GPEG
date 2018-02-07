@@ -1,6 +1,5 @@
 import AST._
-import Memo._
-import Forest._
+import Tree._
 import scala.collection.mutable.{HashMap}
 import ParserContext._
 object ParserContext {
