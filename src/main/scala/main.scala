@@ -3,7 +3,7 @@ import PackratParser._
 import scala.io.Source
 import CPS._
 import AST._
-import Tree._
+import Forest._
 import GpegParser._
 
 object Main{
@@ -24,9 +24,10 @@ object Main{
     case class Opt(bench: Boolean, usage: Boolean, debug: Boolean, file: Option[String], save: Option[String])
 
     def main(args: Array[String]):Unit = {
-        var b = ""
-        for(i <- 1 to 20) b += "b"
-        exeCommand(getCommand(Array("-b", "src/main/resources/GPEG/rule.gpeg", b)))
+
+        var b = "ab"
+        //for(i <- 1 to 20) b += "b"
+        exeCommand(getCommand(Array("-d", "src/main/resources/GPEG/rule.gpeg", b)))
         //exeCommand(getCommand(args))
         
         /**
@@ -126,7 +127,7 @@ object Main{
             result match {
                 case Some(body) => {
                     option.save match {
-                        case None => //println(body._1)
+                        case None => println(body._1)
                         case Some(name) => save_and_show(body._1, name)
                     }
                 }
@@ -158,10 +159,10 @@ object Main{
         }
     }
 
-    def save_and_show(tree: Tree, filename: String):Unit = {
-        println(tree)
+    def save_and_show(forest: Forest, filename: String):Unit = {
+        println(forest)
         val file = new PrintWriter("src/test/resources/ParseResult/" + filename)
-        file.write(tree.toString())
+        file.write(forest.toString())
         file.close()
     }
 
