@@ -27,6 +27,15 @@ object PackratParser{
             parse(p.set_exp(p.rules(symbol)).set_states(List(state.newState))).states.map(s => s.update(symbol, state))
         }
 
+        def map_union(p: ParserContext, lhs: PExp, rhs: PExp): List[State] = {
+            p.states = p.states.flatMap(state => union(p, lhs, rhs, state))
+            p.states
+        }
+
+        def union(p: ParserContext, lhs: PExp, rhs: PExp, state: State): List[State] = {
+            parse(p.set_exp(lhs).set_states(List(state.copy))).states:::parse(p.set_exp(rhs).set_states(List(state.copy))).states
+        }
+
         def parse(p: ParserContext): ParserContext = {
             p.exp match {
                 case PSucc() => {
@@ -174,7 +183,7 @@ object PackratParser{
                 }
                 */
                 
-                //case PUnion(lhs, rhs) => if(map_union(p, lhs, rhs).isEmpty) p.set_exp(PFail("")) else p
+                case PUnion(lhs, rhs) => if(map_union(p, lhs, rhs).isEmpty) p.set_exp(PFail("")) else p
                 
                 /**
                 case PUnion(lhs, rhs) => {         

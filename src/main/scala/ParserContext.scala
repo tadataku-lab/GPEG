@@ -41,6 +41,10 @@ object ParserContext {
     
 
     case class State(var pos: Int, var trees: List[Tree]){
+        def copy(): State = {
+            State(pos, trees)
+        }
+        
         def newState(): State = {
             State(pos, List())
         }
