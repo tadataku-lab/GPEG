@@ -156,7 +156,7 @@ object PackratParser{
 
         def disamb_parse(tree: List[Tree], p: ParserContext):(List[Tree], ContextTree) = {
             val (new_tree, new_p) = parse(tree, p)
-            //println(HASHTABLE)
+            println(HASHTABLE)
             //println(LRBs)
             (disambiguity(new_tree), new_p)
         }
@@ -667,7 +667,6 @@ object PackratParser{
             val renew_p = renew_id_p(p)
             val renew_trees = renew_id_trees(trees)
             (renew_trees, renew_p)
-            (trees, p)
         }
 
         def renew_id_p(p: ContextTree): ContextTree = {

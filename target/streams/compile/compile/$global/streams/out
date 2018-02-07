@@ -1,7 +1,5 @@
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PackratParser.scala:240:107: Adapting argument list by creating a 2-tuple: this may not be what you want.[0m
-[0m[[0m[33mwarn[0m] [0m[0m        signature: Some.apply[A](value: A): Some[A][0m
-[0m[[0m[33mwarn[0m] [0m[0m  given arguments: child_tree, p_c.copy[0m
-[0m[[0m[33mwarn[0m] [0m[0m after adaptation: Some((child_tree, p_c.copy): (List[Tree.Tree], ContextTree.ParserContext))[0m
-[0m[[0m[33mwarn[0m] [0m[0m                                                                HASHTABLE += ((memo_info) -> new Memo(Some(child_tree, p_c.copy)))[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/GpegParser.scala:59:107: match may not be exhaustive.[0m
+[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following input: ~(_, Nil)[0m
+[0m[[0m[33mwarn[0m] [0m[0m        lazy val CLASS: Parser[Exp] = (loc <~ chr('[')) ~ (not(chr(']')) ~> Range).* <~ ']' ~> Spacing ^^ {[0m
 [0m[[0m[33mwarn[0m] [0m[0m                                                                                                          ^[0m
 [0m[[0m[33mwarn[0m] [0m[0mone warning found[0m
