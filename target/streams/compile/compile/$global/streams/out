@@ -1,4 +1,5 @@
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:28:13: local var b in method main is never set: consider using immutable val[0m
-[0m[[0m[33mwarn[0m] [0m[0m        var b = "abb"[0m
-[0m[[0m[33mwarn[0m] [0m[0m            ^[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PackratParser.scala:50:15: match may not be exhaustive.[0m
+[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following inputs: PAnd(_, _), PAny(_), PFold(_, _, _, _), PIf(_, _, _), PMany(_, _), PNot(_, _)[0m
+[0m[[0m[33mwarn[0m] [0m[0m            p.exp match {[0m
+[0m[[0m[33mwarn[0m] [0m[0m              ^[0m
 [0m[[0m[33mwarn[0m] [0m[0mone warning found[0m

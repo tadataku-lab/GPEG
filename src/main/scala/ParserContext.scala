@@ -1,7 +1,7 @@
 import AST._
 import Tree._
 import scala.collection.mutable.{HashMap}
-import ParserContext._
+
 object ParserContext {
     class ParserContext(_exp: PExp, _rules: Map[Symbol, PExp], _input: Array[Byte]){
         var states = List(State(0, List()))
@@ -9,7 +9,22 @@ object ParserContext {
         var folding = false
         val rules: Map[Symbol, PExp] = _rules
         val input: Array[Byte] = _input
-        var memo: HashMap[(Symbol, Int), State] = new HashMap[(Symbol, Int),State]
+        var memo: HashMap[(Symbol, Int), List[State]] = new HashMap[(Symbol, Int),List[State]]
+
+        def dump_memo(): ParserContext = {
+            println("memo: " + memo)
+            this
+        }
+
+        def dump_states(): ParserContext = {
+            println("states: " + states)
+            this
+        }
+
+        def dump_exp(): ParserContext = {
+            println("exp: " + exp)
+            this
+        }
 
         def set_exp(e: PExp): ParserContext = {
             exp = e
@@ -37,6 +52,35 @@ object ParserContext {
             }
         }
 
+        def lookup(symbol: Symbol, pos: Int): Option[List[State]] = {
+            memo.get((symbol, pos))
+        }
+
+        def memo(symbol: Symbol, pos: Int): List[State] = {
+            println("symbol: " + symbol + " pos: " + pos + " _states: " + states )
+            memo += ((symbol, pos) -> states.map(state => state.copy))
+            states
+        }
+
+        def merge(_states: List[State]):List[State] = {
+            var s = _states
+            s.length match{
+                case 0 => List.empty[State]
+                case 1 => s
+                case _ => {
+                    var new_states = List.empty[State]
+                    for(state <- s){
+                        val (eq, notEq) = s.partition(ss => ss.posEq(state))
+                        if(eq.nonEmpty){
+                            s = eq
+                            new_states = new_states:+state.merge(eq)
+                        }
+                    }
+                    s:::new_states
+                }
+            }
+        }
+
     }
     
 
@@ -44,7 +88,7 @@ object ParserContext {
         def copy(): State = {
             State(pos, trees)
         }
-        
+
         def newState(): State = {
             State(pos, List())
         }
@@ -72,12 +116,14 @@ object ParserContext {
             pos = pos + len
             this
         }
+
+        def merge(states: List[State]): State = {
+            trees = trees:+Node(Symbol("ambiguity"), states.flatMap(state => state.trees))
+            this
+        }
+
+        def posEq(state: State): Boolean = {
+            pos == state.pos
+        }
     }
-
-    case class Position(pos: Long, id: Long, lrb: LRB)
-
-    sealed trait LRB
-    case class Left() extends LRB
-    case class Right() extends LRB
-    case class Both() extends LRB
 }
