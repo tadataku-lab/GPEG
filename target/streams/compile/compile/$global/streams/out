@@ -1,5 +1,8 @@
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PackratParser.scala:50:15: match may not be exhaustive.[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/Tree.scala:1:22: Unused import[0m
+[0m[[0m[33mwarn[0m] [0m[0mimport ParserContext._[0m
+[0m[[0m[33mwarn[0m] [0m[0m                     ^[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PackratParser.scala:49:15: match may not be exhaustive.[0m
 [0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following inputs: PAnd(_, _), PAny(_), PFold(_, _, _, _), PIf(_, _, _), PMany(_, _), PNot(_, _)[0m
 [0m[[0m[33mwarn[0m] [0m[0m            p.exp match {[0m
 [0m[[0m[33mwarn[0m] [0m[0m              ^[0m
-[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m
+[0m[[0m[33mwarn[0m] [0m[0mtwo warnings found[0m

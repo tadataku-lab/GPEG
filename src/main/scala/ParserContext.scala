@@ -1,15 +1,15 @@
 import AST._
 import Tree._
-import scala.collection.mutable.{HashMap}
+import scala.collection.mutable.{HashMap,ArrayBuffer}
 
 object ParserContext {
     class ParserContext(_exp: PExp, _rules: Map[Symbol, PExp], _input: Array[Byte]){
-        var states = List(State(0, List()))
+        var states = ArrayBuffer(State(0, ArrayBuffer()))
         var exp = _exp
         var folding = false
         val rules: Map[Symbol, PExp] = _rules
         val input: Array[Byte] = _input
-        var memo: HashMap[(Symbol, Int), List[State]] = new HashMap[(Symbol, Int),List[State]]
+        var memo: HashMap[(Symbol, Int), ArrayBuffer[State]] = new HashMap[(Symbol, Int),ArrayBuffer[State]]
 
         def dump_memo(): ParserContext = {
             println("memo: " + memo)
@@ -31,13 +31,13 @@ object ParserContext {
             this
         }
 
-        def set_states(s: List[State]): ParserContext = {
+        def set_states(s: ArrayBuffer[State]): ParserContext = {
             states = s
             this
         }
 
-        def match_bytes(state: State, bytes: Array[Byte]): List[State] = {
-            if(bytesEq(bytes, state.pos, bytes.length)) List(state.newLeaf((bytes.map(_.toChar)).mkString).newPos(bytes.length)) else List()
+        def match_bytes(state: State, bytes: Array[Byte]): ArrayBuffer[State] = {
+            if(bytesEq(bytes, state.pos, bytes.length)) ArrayBuffer(state.newLeaf((bytes.map(_.toChar)).mkString).newPos(bytes.length)) else ArrayBuffer()
         }
 
         def bytesEq(bytes: Array[Byte], pos: Int, length: Int): Boolean = {
@@ -46,51 +46,54 @@ object ParserContext {
 
         def newAmbNode(name: Symbol): Node = {
             states.length match{
-                case 0 => Node(Symbol("fail"), List())
+                case 0 => Node(Symbol("fail"), ArrayBuffer())
                 case 1 => states.head.newNode(name)
-                case _ => Node(Symbol("ambiguity"), states.flatMap(state => List(state.newNode(name))))
+                case _ => Node(Symbol("ambiguity"), states.flatMap(state => ArrayBuffer(state.newNode(name))))
             }
         }
 
-        def lookup(symbol: Symbol, pos: Int): Option[List[State]] = {
+        def lookup(symbol: Symbol, pos: Int): Option[ArrayBuffer[State]] = {
             memo.get((symbol, pos))
         }
 
-        def memo(symbol: Symbol, pos: Int): List[State] = {
-            println("symbol: " + symbol + " pos: " + pos + " _states: " + states )
+        def memo(symbol: Symbol, pos: Int): ArrayBuffer[State] = {
             memo += ((symbol, pos) -> states.map(state => state.copy))
             states
         }
 
-        def merge(_states: List[State]):List[State] = {
-            var s = _states
+        def merge():ParserContext = {
+            var s = states
             s.length match{
-                case 0 => List.empty[State]
-                case 1 => s
+                case 0 => 
+                case 1 => 
                 case _ => {
-                    var new_states = List.empty[State]
-                    for(state <- s){
+                    var new_states = ArrayBuffer.empty[State]
+                    while(s.nonEmpty){
+                        val state = s.head
+                        s = s.tail
                         val (eq, notEq) = s.partition(ss => ss.posEq(state))
+                        s = notEq
+                        new_states = new_states:+state
                         if(eq.nonEmpty){
-                            s = eq
                             new_states = new_states:+state.merge(eq)
                         }
                     }
-                    s:::new_states
+                    states = new_states
                 }
             }
+            this
         }
 
     }
     
 
-    case class State(var pos: Int, var trees: List[Tree]){
+    case class State(var pos: Int, var trees: ArrayBuffer[Tree]){
         def copy(): State = {
             State(pos, trees)
         }
 
         def newState(): State = {
-            State(pos, List())
+            State(pos, ArrayBuffer())
         }
 
         def update(name: Symbol, state: State): State = {
@@ -103,7 +106,7 @@ object ParserContext {
             this
         }
 
-        def addNode(name: Symbol, next: List[Tree]): State = {
+        def addNode(name: Symbol, next: ArrayBuffer[Tree]): State = {
             trees = trees:+Node(name, next)
             this
         }
@@ -117,7 +120,7 @@ object ParserContext {
             this
         }
 
-        def merge(states: List[State]): State = {
+        def merge(states: ArrayBuffer[State]): State = {
             trees = trees:+Node(Symbol("ambiguity"), states.flatMap(state => state.trees))
             this
         }

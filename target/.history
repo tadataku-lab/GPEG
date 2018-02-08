@@ -476,3 +476,5 @@ test
 run
 2A
 run
+compile
+run

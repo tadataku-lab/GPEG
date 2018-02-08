@@ -1,6 +1,7 @@
 import AST._
 import Tree._
 import ParserContext._
+import scala.collection.mutable.{ArrayBuffer}
 
 object PackratParser{  
     def peg_parse(g: PGrammar, input: String): Option[(Tree, ParserContext)] = {
@@ -10,40 +11,38 @@ object PackratParser{
 
     class PackratParser(){
         def packrat_parse(p: ParserContext): ParserContext = {
-            parse(p).dump_memo()
+            parse(p)
         }
 
-        def map_match(p: ParserContext, bytes: Array[Byte]): List[State] = {
+        def map_match(p: ParserContext, bytes: Array[Byte]): ArrayBuffer[State] = {
             p.states = p.states.flatMap(state => p.match_bytes(state, bytes))
             p.states
         }
 
-        def map_call(p: ParserContext, symbol: Symbol): List[State] = {
+        def map_call(p: ParserContext, symbol: Symbol): ArrayBuffer[State] = {
             val s = p.states
             p.states = s.flatMap(state => lookup(p, symbol, state))
             p.states
         }
 
-        def lookup(p: ParserContext, symbol: Symbol, state: State): List[State] = {
+        def lookup(p: ParserContext, symbol: Symbol, state: State): ArrayBuffer[State] = {
             p.lookup(symbol, state.pos) match{
                 case Some(states) => states.map(s => s.copy().update(symbol, state))
                 case None => call_symbol(p, symbol, state)
             }
         }
 
-        def call_symbol(p: ParserContext, symbol: Symbol, state: State): List[State] = {
-            parse(p.set_exp(p.rules(symbol)).set_states(List(state.newState)).dump_exp.dump_states).memo(symbol, state.pos).map(s => s.update(symbol, state))
+        def call_symbol(p: ParserContext, symbol: Symbol, state: State): ArrayBuffer[State] = {
+            parse(p.set_exp(p.rules(symbol)).set_states(ArrayBuffer(state.newState))).merge.memo(symbol, state.pos).map(s => s.update(symbol, state))
         }
 
-        def map_union(p: ParserContext, lhs: PExp, rhs: PExp): List[State] = {
+        def map_union(p: ParserContext, lhs: PExp, rhs: PExp): ArrayBuffer[State] = {
             p.states = p.states.flatMap(state => union(p, lhs, rhs, state))
             p.states
         }
 
-        def union(p: ParserContext, lhs: PExp, rhs: PExp, state: State): List[State] = {
-            val lhs_states = parse(p.set_exp(lhs).set_states(List(state.copy))).states
-            val rhs_states = parse(p.set_exp(rhs).set_states(List(state.copy))).states
-            lhs_states:::rhs_states
+        def union(p: ParserContext, lhs: PExp, rhs: PExp, state: State): ArrayBuffer[State] = {
+            parse(p.set_exp(lhs).set_states(ArrayBuffer(state.copy))).states++parse(p.set_exp(rhs).set_states(ArrayBuffer(state.copy))).states
         }
 
         def parse(p: ParserContext): ParserContext = {

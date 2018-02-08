@@ -26,7 +26,7 @@ object Main{
     def main(args: Array[String]):Unit = {
 
         var b = ""
-        for(i <- 1 to 3) b += "b"
+        for(i <- 1 to 50) b += "b"
         exeCommand(getCommand(Array("-b", "src/main/resources/GPEG/rule.gpeg", b)))
         //exeCommand(getCommand(args))
         
@@ -127,7 +127,7 @@ object Main{
             result match {
                 case Some(body) => {
                     option.save match {
-                        case None => println(body._1)
+                        case None => //println(body._1)
                         case Some(name) => save_and_show(body._1, name)
                     }
                 }

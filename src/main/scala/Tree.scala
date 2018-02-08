@@ -1,4 +1,5 @@
 import ParserContext._
+import scala.collection.mutable.{ArrayBuffer}
 
 object Tree{
     sealed trait Tree{
@@ -12,7 +13,7 @@ object Tree{
             Leaf(v)
         }
     }
-    case class Node(name: Symbol, next: List[Tree]) extends Tree{
+    case class Node(name: Symbol, next: ArrayBuffer[Tree]) extends Tree{
         override def toString: String = {
             val sb = new StringBuilder
             sb.append("[" + name + " ")
@@ -23,7 +24,7 @@ object Tree{
             sb.toString
         }
         def copy(): Node = {
-            Node(name, next.flatMap(n => List(n.copy)))
+            Node(name, next.flatMap(n => ArrayBuffer(n.copy)))
         }
     }
 }
