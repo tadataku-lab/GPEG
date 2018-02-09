@@ -6,7 +6,7 @@ import scala.collection.mutable.{ArrayBuffer}
 object PackratParser{  
     def peg_parse(g: PGrammar, input: String): Option[(Tree, ParserContext)] = {
         val new_p = new PackratParser().packrat_parse(new ParserContext(g.rules(g.start) , g.rules, input.getBytes))
-        return Some((new_p.merge.newAmbNode(g.start), new_p))
+        return Some((new_p.merge.dump_bench.newAmbNode(g.start), new_p))
     }
 
     class PackratParser(){

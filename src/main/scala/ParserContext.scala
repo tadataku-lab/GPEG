@@ -11,6 +11,7 @@ object ParserContext {
         val rules: Map[Symbol, PExp] = _rules
         val input: Array[Byte] = _input
         var memo: HashMap[(Symbol, Int), ArrayBuffer[State]] = new HashMap[(Symbol, Int),ArrayBuffer[State]]
+        var bench: Array[Long] = Array(0, 0, 0, 0, 0, 0)
 
         def dump_memo(): ParserContext = {
             println("memo: " + memo)
@@ -24,6 +25,13 @@ object ParserContext {
 
         def dump_exp(): ParserContext = {
             println("exp: " + exp)
+            this
+        }
+
+        def dump_bench(): ParserContext = {
+            println("bench: " + bench(0) + "回 " + bench(1) + "[ms]")
+            println("bench: " + bench(2) + "回 " + bench(3) + "[ms]")
+            println("bench: " + bench(4) + "回 " + bench(5) + "[ms]")
             this
         }
 
@@ -63,6 +71,8 @@ object ParserContext {
         }
 
         def merge():ParserContext = {
+            bench(0) += 1
+            val start = System.currentTimeMillis
             var s = states
             s.length match{
                 case 0 => 
@@ -72,16 +82,26 @@ object ParserContext {
                     while(s.nonEmpty){
                         val state = s.head
                         s = s.tail
+                        bench(2) += 1
+                        val start1 = System.currentTimeMillis
                         val (eq, notEq) = s.partition(ss => ss.posEq(state))
+                        val time1 = System.currentTimeMillis - start1
+                        bench(3) += time1
                         s = notEq
                         if(eq.nonEmpty){
+                            bench(4) += 1
+                            val start2 = System.currentTimeMillis
                             new_states = new_states:+state.merge(eq, ID)
+                            val time2 = System.currentTimeMillis - start2
+                            bench(5) += time2
                             ID += 1
                         }else new_states = new_states:+state
                     }
                     states = new_states
                 }
             }
+            val time = System.currentTimeMillis - start
+            bench(1) += time
             this
         }
 
