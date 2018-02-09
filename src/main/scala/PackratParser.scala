@@ -42,7 +42,7 @@ object PackratParser{
         }
 
         def union(p: ParserContext, lhs: PExp, rhs: PExp, state: State): ArrayBuffer[State] = {
-            parse(p.set_exp(lhs).set_states(ArrayBuffer(state.copy))).states++parse(p.set_exp(rhs).set_states(ArrayBuffer(state.copy))).states
+            parse(p.set_exp(lhs).set_states(ArrayBuffer(state.copy))).states++parse(p.set_exp(rhs).set_states(ArrayBuffer(state))).states
         }
 
         def parse(p: ParserContext): ParserContext = {
