@@ -73,10 +73,9 @@ object ParserContext {
                         s = s.tail
                         val (eq, notEq) = s.partition(ss => ss.posEq(state))
                         s = notEq
-                        new_states = new_states:+state
                         if(eq.nonEmpty){
                             new_states = new_states:+state.merge(eq)
-                        }
+                        }else new_states = new_states:+state
                     }
                     states = new_states
                 }
@@ -121,7 +120,7 @@ object ParserContext {
         }
 
         def merge(states: ArrayBuffer[State]): State = {
-            trees = trees:+Node(Symbol("ambiguity"), states.flatMap(state => state.trees))
+            trees = ArrayBuffer(Node(Symbol("ambiguity"), trees++states.flatMap(state => state.trees)))
             this
         }
 
