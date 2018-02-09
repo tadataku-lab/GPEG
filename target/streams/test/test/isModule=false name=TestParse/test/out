@@ -3,9 +3,6 @@
 [0m[[0m[0minfo[0m] [0m[0m[32m- test2[0m[0m
 [0m[[0m[0minfo[0m] [0m[0m[32m- test3[0m[0m
 [0m[[0m[0minfo[0m] [0m[0m[32m- test4[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[32m- math1[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[32m- math2[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[32m- math3.0[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[32m- memo3[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[32m- highly ambiguity [bb][0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[32m- highly ambiguity [bbbb][0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- highly ambiguity [b2][0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- highly ambiguity [b4][0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- highly ambiguity [b6][0m[0m
