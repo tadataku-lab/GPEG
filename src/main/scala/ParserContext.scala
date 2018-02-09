@@ -4,9 +4,10 @@ import scala.collection.mutable.{HashMap,ArrayBuffer}
 
 object ParserContext {
     class ParserContext(_exp: PExp, _rules: Map[Symbol, PExp], _input: Array[Byte]){
-        var states = ArrayBuffer(State(0, ArrayBuffer()))
-        var exp = _exp
-        var folding = false
+        var states: ArrayBuffer[State] = ArrayBuffer(State(0, ArrayBuffer()))
+        var exp: PExp = _exp
+        var folding: Boolean = false
+        var ID: Long = 0
         val rules: Map[Symbol, PExp] = _rules
         val input: Array[Byte] = _input
         var memo: HashMap[(Symbol, Int), ArrayBuffer[State]] = new HashMap[(Symbol, Int),ArrayBuffer[State]]
@@ -74,7 +75,8 @@ object ParserContext {
                         val (eq, notEq) = s.partition(ss => ss.posEq(state))
                         s = notEq
                         if(eq.nonEmpty){
-                            new_states = new_states:+state.merge(eq)
+                            new_states = new_states:+state.merge(eq, ID)
+                            ID += 1
                         }else new_states = new_states:+state
                     }
                     states = new_states
@@ -119,8 +121,9 @@ object ParserContext {
             this
         }
 
-        def merge(states: ArrayBuffer[State]): State = {
-            trees = ArrayBuffer(Node(Symbol("ambiguity"), trees++states.flatMap(state => state.trees)))
+        def merge(states: ArrayBuffer[State], id: Long): State = {
+            val sym = Symbol("amb<" + id + ">")
+            trees = ArrayBuffer(Node(sym,trees))++states.flatMap(state => ArrayBuffer(Node(sym, state.trees)))
             this
         }
 
