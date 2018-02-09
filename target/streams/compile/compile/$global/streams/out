@@ -1,7 +1,4 @@
-[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/ParserContext.scala:145:13: not found: value bench[0m
-[0m[[0m[31merror[0m] [0m[0m            bench(4) += 1[0m
-[0m[[0m[31merror[0m] [0m[0m            ^[0m
-[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/ParserContext.scala:150:13: not found: value bench[0m
-[0m[[0m[31merror[0m] [0m[0m            bench(5) += time2[0m
-[0m[[0m[31merror[0m] [0m[0m            ^[0m
-[0m[[0m[31merror[0m] [0m[0mtwo errors found[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:28:13: local var b in method main is never set: consider using immutable val[0m
+[0m[[0m[33mwarn[0m] [0m[0m        var b = "b"[0m
+[0m[[0m[33mwarn[0m] [0m[0m            ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m

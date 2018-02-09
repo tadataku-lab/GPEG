@@ -6,7 +6,7 @@ import scala.collection.mutable.{ArrayBuffer}
 object PackratParser{  
     def peg_parse(g: PGrammar, input: String): Option[(Tree, ParserContext)] = {
         val new_p = new PackratParser().packrat_parse(new ParserContext(g.rules(g.start) , g.rules, input.getBytes))
-        return Some((new_p.merge.dump_bench.newAmbNode(g.start), new_p))
+        return Some((new_p.makeAmbNode(g.start), new_p))
     }
 
     class PackratParser(){
@@ -14,37 +14,37 @@ object PackratParser{
             parse(p)
         }
 
-        def map_match(p: ParserContext, bytes: Array[Byte]): ArrayBuffer[State] = {
-            p.states = p.states.flatMap(state => p.match_bytes(state, bytes))
-            p.states
+        def exe_match(p: ParserContext, bytes: Array[Byte]): ArrayBuffer[Int] = {
+            p.result.pos = p.result.pos.flatMap(i => p.match_bytes(i, bytes))
+            p.result.pos
         }
-
-        def map_call(p: ParserContext, symbol: Symbol): ArrayBuffer[State] = {
+/**
+        def map_call(p: ParserContext, symbol: Symbol): ParserResult = {
             val s = p.states
             p.states = s.flatMap(state => lookup(p, symbol, state))
             p.states
         }
 
-        def lookup(p: ParserContext, symbol: Symbol, state: State): ArrayBuffer[State] = {
+        def lookup(p: ParserContext, symbol: Symbol, state: State): ParserResult = {
             p.lookup(symbol, state.pos) match{
                 case Some(states) => states.map(s => s.copy().update(symbol, state))
                 case None => call_symbol(p, symbol, state)
             }
         }
 
-        def call_symbol(p: ParserContext, symbol: Symbol, state: State): ArrayBuffer[State] = {
+        def call_symbol(p: ParserContext, symbol: Symbol, state: State): ParserResult = {
             parse(p.set_exp(p.rules(symbol)).set_states(ArrayBuffer(state.newState))).merge.memo(symbol, state.pos).map(s => s.update(symbol, state))
         }
 
-        def map_union(p: ParserContext, lhs: PExp, rhs: PExp): ArrayBuffer[State] = {
+        def map_union(p: ParserContext, lhs: PExp, rhs: PExp): ParserResult = {
             p.states = p.states.flatMap(state => union(p, lhs, rhs, state))
             p.states
         }
 
-        def union(p: ParserContext, lhs: PExp, rhs: PExp, state: State): ArrayBuffer[State] = {
+        def union(p: ParserContext, lhs: PExp, rhs: PExp, state: State): ParserResult = {
             parse(p.set_exp(lhs).set_states(ArrayBuffer(state.copy))).states++parse(p.set_exp(rhs).set_states(ArrayBuffer(state))).states
         }
-
+*/
         def parse(p: ParserContext): ParserContext = {
             p.exp match {
                 case PSucc() => {
@@ -56,7 +56,7 @@ object PackratParser{
                 }
                 case PFail(msg) => throw new RuntimeException(msg)
 
-                case PMatch(bytes, next) => if(map_match(p, bytes).isEmpty) p.set_exp(PFail("")) else parse(p.set_exp(next))
+                case PMatch(bytes, next) => if(exe_match(p, bytes).isEmpty) p.set_exp(PFail("")) else parse(p.set_exp(next))
         
                 /**
                 case PAny(next) => {
@@ -71,7 +71,7 @@ object PackratParser{
                 }
                 */
 
-                case PCall(symbol, next) => if(map_call(p, symbol).isEmpty) p.set_exp(PFail("")) else parse(p.set_exp(next))
+                //case PCall(symbol, next) => if(map_call(p, symbol).isEmpty) p.set_exp(PFail("")) else parse(p.set_exp(next))
             
                 /**
                 case PIf(lhs, rhs, next) => {
@@ -116,7 +116,7 @@ object PackratParser{
                 }
                 */
                 
-                case PUnion(lhs, rhs) => if(map_union(p, lhs, rhs).isEmpty) p.set_exp(PFail("")) else p
+                //case PUnion(lhs, rhs) => if(map_union(p, lhs, rhs).isEmpty) p.set_exp(PFail("")) else p
 
                 /**
                 case PNot(body, next) => {

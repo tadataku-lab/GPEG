@@ -4,13 +4,14 @@ import scala.collection.mutable.{HashMap,ArrayBuffer}
 
 object ParserContext {
     class ParserContext(_exp: PExp, _rules: Map[Symbol, PExp], _input: Array[Byte]){
-        var states: ArrayBuffer[State] = ArrayBuffer(State(0, ArrayBuffer()))
+        var result: ParserResult = ParserResult(ArrayBuffer(0), Array.fill(_input.length + 1)(ArrayBuffer.empty[Tree]))
         var exp: PExp = _exp
         var folding: Boolean = false
         var ID: Long = 0
         val rules: Map[Symbol, PExp] = _rules
         val input: Array[Byte] = _input
-        var memo: HashMap[(Symbol, Int), ArrayBuffer[State]] = new HashMap[(Symbol, Int),ArrayBuffer[State]]
+        val input_length: Int = _input.length
+        var memo: HashMap[(Symbol, Int), Array[ArrayBuffer[Tree]]] = new HashMap[(Symbol, Int),Array[ArrayBuffer[Tree]]]
         var bench: Array[Long] = Array(0, 0, 0, 0, 0, 0)
 
         def dump_memo(): ParserContext = {
@@ -18,8 +19,8 @@ object ParserContext {
             this
         }
 
-        def dump_states(): ParserContext = {
-            println("states: " + states)
+        def dump_result(): ParserContext = {
+            println("result: " + result)
             this
         }
 
@@ -28,39 +29,32 @@ object ParserContext {
             this
         }
 
-        def dump_bench(): ParserContext = {
-            println("bench: " + bench(0) + "回 " + bench(1) + "[ms]")
-            println("bench: " + bench(2) + "回 " + bench(3) + "[ms]")
-            println("bench: " + bench(4) + "回 " + bench(5) + "[ms]")
-            this
-        }
-
         def set_exp(e: PExp): ParserContext = {
             exp = e
             this
         }
 
-        def set_states(s: ArrayBuffer[State]): ParserContext = {
-            states = s
+        def set_result(r: ParserResult): ParserContext = {
+            result = r
             this
         }
 
-        def match_bytes(state: State, bytes: Array[Byte]): ArrayBuffer[State] = {
-            if(bytesEq(bytes, state.pos, bytes.length)) ArrayBuffer(state.newLeaf((bytes.map(_.toChar)).mkString).newPos(bytes.length)) else ArrayBuffer()
+        def match_bytes(pos: Int, bytes: Array[Byte]):ArrayBuffer[Int] = {
+            if(bytesEq(bytes, pos, bytes.length)) result.newLeaf(pos, bytes.length, (bytes.map(_.toChar)).mkString) else ArrayBuffer()
         }
 
         def bytesEq(bytes: Array[Byte], pos: Int, length: Int): Boolean = {
-            if((length + pos) > input.length) false else bytes.sameElements(input.slice(pos, pos + length))
+            if((length + pos) > input_length) false else bytes.sameElements(input.slice(pos, pos + length))
         }
 
-        def newAmbNode(name: Symbol): Node = {
-            states.length match{
+        def makeAmbNode(name: Symbol): Node = {
+            result.pos.length match{
                 case 0 => Node(Symbol("fail"), ArrayBuffer())
-                case 1 => states.head.newNode(name)
-                case _ => Node(Symbol("ambiguity"), states.flatMap(state => ArrayBuffer(state.newNode(name))))
+                case 1 => Node(name, result.getHead)
+                case _ => Node(name, result.makeAmb)
             }
         }
-
+/**
         def lookup(symbol: Symbol, pos: Int): Option[ArrayBuffer[State]] = {
             memo.get((symbol, pos))
         }
@@ -104,10 +98,25 @@ object ParserContext {
             bench(1) += time
             this
         }
+*/
+    }
 
+    case class ParserResult(var pos: ArrayBuffer[Int], var trees: Array[ArrayBuffer[Tree]]){
+        def getHead(): ArrayBuffer[Tree] = {
+            trees(pos.head)
+        }
+        def makeAmb(): ArrayBuffer[Tree] = {
+            pos.flatMap(i => ArrayBuffer(Node(Symbol("amb<" + i + ">"), trees(i))))
+        }
+        def newLeaf(pos: Int, len: Int, v: String): ArrayBuffer[Int] = {
+            val new_pos = pos + len
+            trees(new_pos) = trees(new_pos):+Leaf(v)
+            trees(pos) = ArrayBuffer.empty[Tree]
+            ArrayBuffer(new_pos)
+        }
     }
     
-
+/**
     case class State(var pos: Int, var trees: ArrayBuffer[Tree]){
         def copy(): State = {
             State(pos, trees)
@@ -151,4 +160,5 @@ object ParserContext {
             pos == state.pos
         }
     }
+    */
 }

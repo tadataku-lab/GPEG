@@ -12,12 +12,8 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Main$Command.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$Many$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$Many$.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	ParserContext$State.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/ParserContext$State.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	XML[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/XML[0m
-[0m[[0m[0mdebug[0m] [0m[0m	ParserContext$State$.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/ParserContext$State$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$PAnd$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$PAnd$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$Choice.class[0m
@@ -44,6 +40,8 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/ParserContext.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	ContextTree$ParserContext.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/ContextTree$ParserContext.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ParserContext$ParserResult.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/ParserContext$ParserResult.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$AnyChar.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$AnyChar.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$PCall$.class[0m
@@ -90,6 +88,8 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$Seq.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	GPEG[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/GPEG[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ParserContext$ParserResult$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/ParserContext$ParserResult$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	GpegParser$ParseException.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/GpegParser$ParseException.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	ContextTree$AmbContext.class[0m
