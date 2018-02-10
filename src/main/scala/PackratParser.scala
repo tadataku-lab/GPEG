@@ -1,7 +1,7 @@
 import AST._
 import Tree._
 import ParserContext._
-import scala.collection.mutable.{ArrayBuffer}
+import scala.collection.mutable.{ArrayBuffer, Set}
 
 object PackratParser{  
     def peg_parse(g: PGrammar, input: String): Option[(Tree, ParserContext)] = {
@@ -14,28 +14,28 @@ object PackratParser{
             parse(p)
         }
 
-        def exe_match(p: ParserContext, bytes: Array[Byte]): ArrayBuffer[Int] = {
-            p.result.pos = p.result.pos.flatMap(i => p.match_bytes(i, bytes))
-            p.result.pos
+        def exe_match(p: ParserContext, bytes: Array[Byte]): Set[Int] = {
+            p.map_pos(bytes).result.positions
         }
 /**
-        def map_call(p: ParserContext, symbol: Symbol): ParserResult = {
-            val s = p.states
-            p.states = s.flatMap(state => lookup(p, symbol, state))
-            p.states
+        def map_call(p: ParserContext, symbol: Symbol): ArrayBuffer[Int] = {
+            p.result.pos = p.result.pos.flatMap(i => lookup(p, symbol, i))
+            p.result.pos
         }
 
-        def lookup(p: ParserContext, symbol: Symbol, state: State): ParserResult = {
-            p.lookup(symbol, state.pos) match{
-                case Some(states) => states.map(s => s.copy().update(symbol, state))
-                case None => call_symbol(p, symbol, state)
+        def lookup(p: ParserContext, symbol: Symbol, pos: Int): ArrayBuffer[Int] = {
+            p.lookup(symbol, pos) match{
+                case Some(result) => p.set_result(result.copy).result.pos
+                case None => call_symbol(p, symbol, pos)
             }
         }
 
-        def call_symbol(p: ParserContext, symbol: Symbol, state: State): ParserResult = {
-            parse(p.set_exp(p.rules(symbol)).set_states(ArrayBuffer(state.newState))).merge.memo(symbol, state.pos).map(s => s.update(symbol, state))
+        def call_symbol(p: ParserContext, symbol: Symbol, pos: Int): ArrayBuffer[Int] = {
+            val prev_trees = p.result.trees.copy
+            parse(p.set_exp(p.rules(symbol)).set_result(p.new_result(pos))).update(symbol,prev).memo(symbol, pos)
         }
-
+*/
+/**
         def map_union(p: ParserContext, lhs: PExp, rhs: PExp): ParserResult = {
             p.states = p.states.flatMap(state => union(p, lhs, rhs, state))
             p.states

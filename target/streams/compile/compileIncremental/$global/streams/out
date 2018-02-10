@@ -2,22 +2,22 @@
 [0m[[0m[0mdebug[0m] [0m[0mInitial source changes: [0m
 [0m[[0m[0mdebug[0m] [0m[0m	removed:Set()[0m
 [0m[[0m[0mdebug[0m] [0m[0m	added: Set()[0m
-[0m[[0m[0mdebug[0m] [0m[0m	modified: Set(/Users/shonanking/lab/GPEG/src/main/scala/main.scala)[0m
+[0m[[0m[0mdebug[0m] [0m[0m	modified: Set(/Users/shonanking/lab/GPEG/src/main/scala/PackratParser.scala, /Users/shonanking/lab/GPEG/src/main/scala/ParserContext.scala)[0m
 [0m[[0m[0mdebug[0m] [0m[0mInvalidated products: Set()[0m
 [0m[[0m[0mdebug[0m] [0m[0mExternal API changes: API Changes: Set()[0m
 [0m[[0m[0mdebug[0m] [0m[0mModified binary dependencies: Set()[0m
-[0m[[0m[0mdebug[0m] [0m[0mInitial directly invalidated classes: Set(Main, Main.Command, Main.Opt)[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial directly invalidated classes: Set(ParserContext.ParserResult, ParserContext.ParserContext, PackratParser, PackratParser.PackratParser, ParserContext)[0m
 [0m[[0m[0mdebug[0m] [0m[0m[0m
 [0m[[0m[0mdebug[0m] [0m[0mSources indirectly invalidated by:[0m
 [0m[[0m[0mdebug[0m] [0m[0m	product: Set()[0m
 [0m[[0m[0mdebug[0m] [0m[0m	binary dep: Set()[0m
 [0m[[0m[0mdebug[0m] [0m[0m	external source: Set()[0m
-[0m[[0m[0mdebug[0m] [0m[0mAll initially invalidated classes: Set(Main, Main.Command, Main.Opt)[0m
-[0m[[0m[0mdebug[0m] [0m[0mAll initially invalidated sources:Set(/Users/shonanking/lab/GPEG/src/main/scala/main.scala)[0m
-[0m[[0m[0minfo[0m] [0m[0mCompiling 1 Scala source to /Users/shonanking/lab/GPEG/target/scala-2.12/classes ...[0m
+[0m[[0m[0mdebug[0m] [0m[0mAll initially invalidated classes: Set(ParserContext.ParserResult, ParserContext.ParserContext, PackratParser, PackratParser.PackratParser, ParserContext)[0m
+[0m[[0m[0mdebug[0m] [0m[0mAll initially invalidated sources:Set(/Users/shonanking/lab/GPEG/src/main/scala/PackratParser.scala, /Users/shonanking/lab/GPEG/src/main/scala/ParserContext.scala)[0m
+[0m[[0m[0minfo[0m] [0m[0mCompiling 2 Scala sources to /Users/shonanking/lab/GPEG/target/scala-2.12/classes ...[0m
 [0m[[0m[0mdebug[0m] [0m[0mGetting org.scala-sbt:compiler-bridge_2.12:1.0.5:compile for Scala 2.12.4[0m
 [0m[[0m[0mdebug[0m] [0m[0mGetting org.scala-sbt:compiler-bridge_2.12:1.0.5:compile for Scala 2.12.4[0m
-[0m[[0m[0mdebug[0m] [0m[0m[zinc] Running cached compiler 3220e1fd for Scala compiler version 2.12.4[0m
+[0m[[0m[0mdebug[0m] [0m[0m[zinc] Running cached compiler 43cf60ff for Scala compiler version 2.12.4[0m
 [0m[[0m[0mdebug[0m] [0m[0m[zinc] The Scala compiler is invoked with:[0m
 [0m[[0m[0mdebug[0m] [0m[0m	-deprecation[0m
 [0m[[0m[0mdebug[0m] [0m[0m	-feature[0m
@@ -27,8 +27,39 @@
 [0m[[0m[0mdebug[0m] [0m[0m	/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/resources.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/rt.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/sunrsasign.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/jsse.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/jce.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/charsets.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/jfr.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/classes:/Users/shonanking/.sbt/boot/scala-2.12.4/lib/scala-library.jar[0m
 [0m[[0m[0mdebug[0m] [0m[0m	-classpath[0m
 [0m[[0m[0mdebug[0m] [0m[0m	/Users/shonanking/lab/GPEG/target/scala-2.12/classes:/Users/shonanking/.ivy2/cache/org.scalactic/scalactic_2.12/bundles/scalactic_2.12-3.0.4.jar:/Users/shonanking/.sbt/boot/scala-2.12.4/lib/scala-reflect.jar:/Users/shonanking/.ivy2/cache/org.scala-lang.modules/scala-parser-combinators_2.12/bundles/scala-parser-combinators_2.12-1.0.6.jar[0m
-[0m[[0m[0mdebug[0m] [0m[0mScala compilation took 1.53145446 s[0m
+[0m[[0m[0mdebug[0m] [0m[0mScala compilation took 1.528950437 s[0m
 [0m[[0m[0minfo[0m] [0m[0mDone compiling.[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from ParserContext.ParserContext...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(ParserContext.ParserContext)[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(ParserContext.ParserContext)[0m
+[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of PackratParser.PackratParser: Set(UsedName(map_pos,[Default]))[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of PackratParser. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of Main. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(ParserContext.ParserContext,ModifiedNames(changes = UsedName(map_pos,[Default]), UsedName(memo,[Default]), UsedName(lookup,[Default]), UsedName(new_result,[Default]), UsedName(match_bytes,[Default]))) invalidates 2 classes due to The ParserContext.ParserContext has the following regular definitions changed:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	UsedName(map_pos,[Default]), UsedName(memo,[Default]), UsedName(lookup,[Default]), UsedName(new_result,[Default]), UsedName(match_bytes,[Default]).[0m
+[0m[[0m[0mdebug[0m] [0m[0m	> by transitive inheritance: Set(ParserContext.ParserContext)[0m
+[0m[[0m[0mdebug[0m] [0m[0m	> [0m
+[0m[[0m[0mdebug[0m] [0m[0m	> by member reference: Set(PackratParser.PackratParser)[0m
+[0m[[0m[0mdebug[0m] [0m[0m        [0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from ParserContext.ParserResult...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(ParserContext.ParserResult)[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(ParserContext.ParserResult)[0m
+[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of PackratParser.PackratParser: Set(UsedName(apply,[Default]), UsedName(positions,[Default]), UsedName(ParserResult,[Default]))[0m
+[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(ParserContext.ParserResult,ModifiedNames(changes = UsedName(apply,[Default]), UsedName(pos,[Default]), UsedName(positions,[Default]), UsedName(copy$default$1,[Default]), UsedName(ParserContext;ParserResult;init;,[Default]), UsedName(ParserResult,[Default]), UsedName(tupled,[Default]), UsedName(curried,[Default]), UsedName(copy$default$2,[Default]), UsedName(newLeaf,[Default]), UsedName(copy,[Default]), UsedName(unapply,[Default]))) invalidates 2 classes due to The ParserContext.ParserResult has the following regular definitions changed:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	UsedName(apply,[Default]), UsedName(pos,[Default]), UsedName(positions,[Default]), UsedName(copy$default$1,[Default]), UsedName(ParserContext;ParserResult;init;,[Default]), UsedName(ParserResult,[Default]), UsedName(tupled,[Default]), UsedName(curried,[Default]), UsedName(copy$default$2,[Default]), UsedName(newLeaf,[Default]), UsedName(copy,[Default]), UsedName(unapply,[Default]).[0m
+[0m[[0m[0mdebug[0m] [0m[0m	> by transitive inheritance: Set(ParserContext.ParserResult)[0m
+[0m[[0m[0mdebug[0m] [0m[0m	> [0m
+[0m[[0m[0mdebug[0m] [0m[0m	> by member reference: Set(PackratParser.PackratParser)[0m
+[0m[[0m[0mdebug[0m] [0m[0m        [0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from PackratParser.PackratParser...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(PackratParser.PackratParser)[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(PackratParser.PackratParser)[0m
+[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(PackratParser.PackratParser,ModifiedNames(changes = UsedName(exe_match,[Default]))) invalidates 1 classes due to The PackratParser.PackratParser has the following regular definitions changed:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	UsedName(exe_match,[Default]).[0m
+[0m[[0m[0mdebug[0m] [0m[0m	> by transitive inheritance: Set(PackratParser.PackratParser)[0m
+[0m[[0m[0mdebug[0m] [0m[0m	> [0m
+[0m[[0m[0mdebug[0m] [0m[0m	> [0m
+[0m[[0m[0mdebug[0m] [0m[0m        [0m
 [0m[[0m[0mdebug[0m] [0m[0mNew invalidations:[0m
 [0m[[0m[0mdebug[0m] [0m[0m	Set()[0m
 [0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set()[0m
