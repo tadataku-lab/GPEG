@@ -29,8 +29,8 @@ object ParserContext {
             this
         }
 
-        def new_result(pos: Int): ParserResult = {
-            ParserResult(Set(pos), Array.fill(_input.length + 1)(ArrayBuffer.empty[Tree]))
+        def new_result(new_positions: Set[Int]): ParserResult = {
+            ParserResult(new_positions, Array.fill(_input.length + 1)(ArrayBuffer.empty[Tree]))
         }
 
         def make_result(pos: Int, prev_trees: Array[ArrayBuffer[Tree]]): ParserResult = {
@@ -74,13 +74,13 @@ object ParserContext {
             memo.get((symbol, pos))
         }
 
-        def memo(symbol: Symbol, pos: Int): Set[Int] = {
+        def memo(symbol: Symbol, pos: Int): ParserContext = {
             memo += ((symbol, pos) -> result.copy)
-            result.positions
+            this
         }
 
-        def update(symbol: Symbol, prev: ArrayBuffer[Tree]): ParserContext = {
-            this.set_result(result.update(symbol, prev))
+        def update(symbol: Symbol, prev: ArrayBuffer[Tree]): Set[Int] = {
+            this.set_result(result.update(symbol, prev)).result.positions
         }
 
         def merge(lhs_result: ParserResult, rhs_result: ParserResult): ParserResult = {
@@ -89,6 +89,11 @@ object ParserContext {
     }
 
     case class ParserResult(var positions: Set[Int], var trees: Array[ArrayBuffer[Tree]]){
+        override def toString(): String = {
+            var sb = new StringBuilder()
+            positions.foreach(pos => sb = sb.append("{ pos<" + pos + "> tree: " + trees(pos) + "}"))
+            sb.toString
+        }
         def copy(): ParserResult = {
             ParserResult(positions.clone, trees.clone)
         }
