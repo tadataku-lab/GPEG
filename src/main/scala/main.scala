@@ -25,7 +25,7 @@ object Main{
 
     def main(args: Array[String]):Unit = {
 
-        var b = "b"
+        var b = "abb"
         //for(i <- 1 to 2) b += "b"
         exeCommand(getCommand(Array("-d", "src/main/resources/GPEG/rule.gpeg", b)))
         //exeCommand(getCommand(args))

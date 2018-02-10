@@ -1,8 +1,4 @@
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PackratParser.scala:4:34: Unused import[0m
-[0m[[0m[33mwarn[0m] [0m[0mimport scala.collection.mutable.{ArrayBuffer, Set}[0m
-[0m[[0m[33mwarn[0m] [0m[0m                                 ^[0m
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PackratParser.scala:49:15: match may not be exhaustive.[0m
-[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following inputs: PAnd(_, _), PAny(_), PFold(_, _, _, _), PIf(_, _, _), PMany(_, _), PNot(_, _), PUnion(_, _)[0m
-[0m[[0m[33mwarn[0m] [0m[0m            p.exp match {[0m
-[0m[[0m[33mwarn[0m] [0m[0m              ^[0m
-[0m[[0m[33mwarn[0m] [0m[0mtwo warnings found[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/ParserContext.scala:51:17: local var new_trees in method map_pos is never set: consider using immutable val[0m
+[0m[[0m[33mwarn[0m] [0m[0m            var new_trees = Array.fill(_input.length + 1)(ArrayBuffer.empty[Tree])[0m
+[0m[[0m[33mwarn[0m] [0m[0m                ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m

@@ -33,6 +33,10 @@ object ParserContext {
             ParserResult(Set(pos), Array.fill(_input.length + 1)(ArrayBuffer.empty[Tree]))
         }
 
+        def make_result(pos: Int, prev_trees: Array[ArrayBuffer[Tree]]): ParserResult = {
+            ParserResult(Set(pos), prev_trees)
+        }
+
         def set_exp(e: PExp): ParserContext = {
             exp = e
             this
@@ -44,12 +48,14 @@ object ParserContext {
         }
 
         def map_pos(bytes: Array[Byte]): ParserContext = {
-            result.positions = result.positions.flatMap(i => match_bytes(bytes, i))
+            val new_trees = Array.fill(_input.length + 1)(ArrayBuffer.empty[Tree])
+            result.positions = result.positions.flatMap(pos => match_bytes(bytes, pos, new_trees))
+            result.trees = new_trees
             this
         }
 
-        def match_bytes(bytes: Array[Byte], pos: Int): Set[Int] = {
-            if(bytesEq(bytes, pos, bytes.length)) result.newLeaf(pos, bytes.length, (bytes.map(_.toChar)).mkString) else Set()
+        def match_bytes(bytes: Array[Byte], pos: Int, new_trees: Array[ArrayBuffer[Tree]]): Set[Int] = {
+            if(bytesEq(bytes, pos, bytes.length)) result.newLeaf(pos, bytes.length, (bytes.map(_.toChar)).mkString, new_trees) else Set()
         }
 
         def bytesEq(bytes: Array[Byte], pos: Int, length: Int): Boolean = {
@@ -77,42 +83,9 @@ object ParserContext {
             this.set_result(result.update(symbol, prev))
         }
 
-/**
-        def merge():ParserContext = {
-            bench(0) += 1
-            val start = System.currentTimeMillis
-            var s = states
-            s.length match{
-                case 0 => 
-                case 1 => 
-                case _ => {
-                    var new_states = ArrayBuffer.empty[State]
-                    while(s.nonEmpty){
-                        val state = s.head
-                        s = s.tail
-                        bench(2) += 1
-                        val start1 = System.currentTimeMillis
-                        val (eq, notEq) = s.partition(ss => ss.posEq(state))
-                        val time1 = System.currentTimeMillis - start1
-                        bench(3) += time1
-                        s = notEq
-                        if(eq.nonEmpty){
-                            bench(4) += 1
-                            val start2 = System.currentTimeMillis
-                            new_states = new_states:+state.merge(eq, ID)
-                            val time2 = System.currentTimeMillis - start2
-                            bench(5) += time2
-                            ID += 1
-                        }else new_states = new_states:+state
-                    }
-                    states = new_states
-                }
-            }
-            val time = System.currentTimeMillis - start
-            bench(1) += time
-            this
+        def merge(lhs_result: ParserResult, rhs_result: ParserResult): ParserResult = {
+            this.set_result(lhs_result.merge(rhs_result)).result
         }
-*/
     }
 
     case class ParserResult(var positions: Set[Int], var trees: Array[ArrayBuffer[Tree]]){
@@ -122,6 +95,14 @@ object ParserContext {
         def update(symbol: Symbol, prev: ArrayBuffer[Tree]): ParserResult = {
             positions.foreach(i => newNode(prev, i, symbol))
             this
+        }
+        def merge(another: ParserResult): ParserResult = {
+            another.positions.foreach(pos => setTree(pos, another.trees(pos)))
+            positions = positions++another.positions
+            this
+        }
+        def setTree(pos: Int, tree: ArrayBuffer[Tree]): Unit = {
+            if(trees(pos).isEmpty) trees(pos) = tree else trees(pos) = ArrayBuffer(Node(Symbol("amb<" + pos + ">"), trees(pos)), Node(Symbol("amb<" + pos + ">"), tree))
         }
         def getHead(): ArrayBuffer[Tree] = {
             trees(positions.head)
@@ -133,10 +114,9 @@ object ParserContext {
             }
             ab
         }
-        def newLeaf(pos: Int, len: Int, v: String): Set[Int] = {
+        def newLeaf(pos: Int, len: Int, v: String, new_trees: Array[ArrayBuffer[Tree]]): Set[Int] = {
             val new_pos = pos + len
-            trees(new_pos) = trees(new_pos)++trees(pos):+Leaf(v)
-            trees(pos) = ArrayBuffer.empty[Tree]
+            new_trees(new_pos) = trees(pos):+Leaf(v)
             Set(new_pos)
         }
         def newNode(prev_tree: ArrayBuffer[Tree], new_pos: Int, symbol: Symbol): Unit = {

@@ -21,6 +21,8 @@
 [0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/GPEG/test5.gpeg,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/GPEG/test5.gpeg)[0m
 [0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/GPEG/test6.gpeg,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/GPEG/test6.gpeg)[0m
 [0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/GPEG/test7.gpeg,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/GPEG/test7.gpeg)[0m
+[0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/GPEG/unordered&nonterm.gpeg,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/GPEG/unordered&nonterm.gpeg)[0m
+[0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/GPEG/unorderedchoice.gpeg,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/GPEG/unorderedchoice.gpeg)[0m
 [0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/GPEG/xml.gpeg,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/GPEG/xml.gpeg)[0m
 [0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/ParseResult/b2.result,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/ParseResult/b2.result)[0m
 [0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/ParseResult/b4.result,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/ParseResult/b4.result)[0m
@@ -29,3 +31,5 @@
 [0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/ParseResult/math2.result,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/ParseResult/math2.result)[0m
 [0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/ParseResult/math3.result,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/ParseResult/math3.result)[0m
 [0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/ParseResult/memo1.result,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/ParseResult/memo1.result)[0m
+[0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/ParseResult/unordered&nonterm.result,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/ParseResult/unordered&nonterm.result)[0m
+[0m[[0m[0mdebug[0m] [0m[0m	(/Users/shonanking/lab/GPEG/src/test/resources/ParseResult/unorderedchoice.result,/Users/shonanking/lab/GPEG/target/scala-2.12/test-classes/ParseResult/unorderedchoice.result)[0m

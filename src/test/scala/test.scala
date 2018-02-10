@@ -65,7 +65,25 @@ class TestParse extends FunSuite {
     }
   }
   */
-
+  test("unordered choice") {
+    val g = gpeg_parse(new FileReader("src/test/resources/GPEG/unorderedchoice.gpeg"))
+    val pg = CPS.toContinuation(g)
+    val result = peg_parse(pg,"abb");
+    result match {
+      case Some(body) => assert(body._1.toString == file2string("src/test/resources/ParseResult/unorderedchoice.result"))
+      case None => println("can't parse")
+    }
+  }
+  test("unordered choice and nonterminal") {
+    val g = gpeg_parse(new FileReader("src/test/resources/GPEG/unordered&nonterm.gpeg"))
+    val pg = CPS.toContinuation(g)
+    val result = peg_parse(pg,"abb");
+    result match {
+      case Some(body) => assert(body._1.toString == file2string("src/test/resources/ParseResult/unordered&nonterm.result"))
+      case None => println("can't parse")
+    }
+  }
+/**
   test("highly ambiguity [b2]") {
     val g = gpeg_parse(new FileReader("src/test/resources/GPEG/high_amb.gpeg"))
     val pg = CPS.toContinuation(g)
@@ -95,5 +113,5 @@ class TestParse extends FunSuite {
       case None => println("can't parse")
     }
   }
-
+*/
 }

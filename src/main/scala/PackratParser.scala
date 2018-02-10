@@ -35,16 +35,24 @@ object PackratParser{
             parse(p.set_exp(p.rules(symbol)).set_result(p.new_result(pos))).update(symbol,prev_tree).memo(symbol, pos)
         }
 
-/**
-        def map_union(p: ParserContext, lhs: PExp, rhs: PExp): ParserResult = {
-            p.states = p.states.flatMap(state => union(p, lhs, rhs, state))
-            p.states
+        def map_union(p: ParserContext, lhs: PExp, rhs: PExp): Set[Int] = {
+            p.result.positions = p.result.positions.flatMap(pos => union(p, lhs, rhs, pos))
+            p.result.positions
         }
 
-        def union(p: ParserContext, lhs: PExp, rhs: PExp, state: State): ParserResult = {
-            parse(p.set_exp(lhs).set_states(ArrayBuffer(state.copy))).states++parse(p.set_exp(rhs).set_states(ArrayBuffer(state))).states
+        def union(p: ParserContext, lhs: PExp, rhs: PExp, pos: Int): Set[Int] = {
+            val prev_trees = p.result.trees.clone
+            merge(p, parse(p.set_exp(lhs).set_result(p.make_result(pos, p.result.trees))).result, parse(p.set_exp(rhs).set_result(p.make_result(pos, prev_trees))).result)
         }
-*/
+
+        def merge(p: ParserContext, lhs_result: ParserResult, rhs_result: ParserResult): Set[Int] = {
+            (lhs_result.positions.nonEmpty, rhs_result.positions.nonEmpty) match{
+                case (true, false) => p.set_result(lhs_result).result.positions
+                case (false, true) => p.set_result(rhs_result).result.positions
+                case (true, true) => p.merge(lhs_result, rhs_result).positions
+            }
+        }
+
         def parse(p: ParserContext): ParserContext = {
             p.exp match {
                 case PSucc() => {
@@ -116,7 +124,7 @@ object PackratParser{
                 }
                 */
                 
-                //case PUnion(lhs, rhs) => if(map_union(p, lhs, rhs).isEmpty) p.set_exp(PFail("")) else p
+                case PUnion(lhs, rhs) => if(map_union(p, lhs, rhs).isEmpty) p.set_exp(PFail("")) else p
 
                 /**
                 case PNot(body, next) => {
