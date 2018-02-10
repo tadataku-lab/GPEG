@@ -11,7 +11,7 @@ object PackratParser{
 
     class PackratParser(){
         def packrat_parse(p: ParserContext): ParserContext = {
-            parse(p).dump_memo
+            parse(p)
         }
 
         def exe_match(p: ParserContext, bytes: Array[Byte]): Set[Int] = {
@@ -19,19 +19,20 @@ object PackratParser{
         }
 
         def map_call(p: ParserContext, symbol: Symbol): Set[Int] = {
-            p.result.positions = p.result.positions.flatMap(pos => lookup(p, symbol, pos))
-            p.result.positions
+            val prev_result = p.result.copy
+            var new_result = p.new_result(Set())
+            prev_result.positions.foreach(pos => new_result = p.merge(new_result,lookup(p, symbol, pos, prev_result.trees(pos))))
+            p.set_result(new_result).result.positions
         }
 
-        def lookup(p: ParserContext, symbol: Symbol, pos: Int): Set[Int] = {
+        def lookup(p: ParserContext, symbol: Symbol, pos: Int, prev_tree: ArrayBuffer[Tree]): ParserResult = {
             p.lookup(symbol, pos) match{
-                case Some(result) => p.set_result(result.copy).update(symbol,p.result.trees(pos))
-                case None => call_symbol(p, symbol, pos)
+                case Some(result) => p.set_result(result.copy).update(symbol,prev_tree)
+                case None => call_symbol(p, symbol, pos, prev_tree)
             }
         }
 
-        def call_symbol(p: ParserContext, symbol: Symbol, pos: Int): Set[Int] = {
-            val prev_tree = p.result.trees(pos).clone
+        def call_symbol(p: ParserContext, symbol: Symbol, pos: Int, prev_tree: ArrayBuffer[Tree]): ParserResult = {
             parse(p.set_exp(p.rules(symbol)).set_result(p.new_result(Set(pos)))).memo(symbol, pos).update(symbol,prev_tree)
         }
 
@@ -42,7 +43,7 @@ object PackratParser{
 
         def union(p: ParserContext, lhs: PExp, rhs: PExp, pos: Int): Set[Int] = {
             val prev_trees = p.result.trees.clone
-            merge(p, parse(p.set_exp(lhs).set_result(p.make_result(pos, p.result.trees))).result, parse(p.set_exp(rhs).set_result(p.make_result(pos, prev_trees))).result)
+            merge(p, parse(p.set_exp(lhs).set_result(p.make_result(pos, prev_trees.clone))).result, parse(p.set_exp(rhs).set_result(p.make_result(pos, prev_trees))).result)
         }
 
         def merge(p: ParserContext, lhs_result: ParserResult, rhs_result: ParserResult): Set[Int] = {
@@ -57,7 +58,7 @@ object PackratParser{
         def parse(p: ParserContext): ParserContext = {
             p.exp match {
                 case PSucc() => {
-                    return (p)
+                    return p
                 }
                 case PEmpty(next) => {
                     p.exp = next

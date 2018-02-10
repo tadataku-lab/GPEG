@@ -24,6 +24,11 @@ object ParserContext {
             this
         }
 
+        def dump_result2(): ParserContext = {
+            println("result2: " + result)
+            this
+        }
+
         def dump_exp(): ParserContext = {
             println("exp: " + exp)
             this
@@ -79,8 +84,8 @@ object ParserContext {
             this
         }
 
-        def update(symbol: Symbol, prev: ArrayBuffer[Tree]): Set[Int] = {
-            this.set_result(result.update(symbol, prev)).result.positions
+        def update(symbol: Symbol, prev: ArrayBuffer[Tree]): ParserResult = {
+            this.set_result(result.update(symbol, prev)).result
         }
 
         def merge(lhs_result: ParserResult, rhs_result: ParserResult): ParserResult = {
@@ -90,9 +95,17 @@ object ParserContext {
 
     case class ParserResult(var positions: Set[Int], var trees: Array[ArrayBuffer[Tree]]){
         override def toString(): String = {
-            var sb = new StringBuilder()
-            positions.foreach(pos => sb = sb.append("{ pos<" + pos + "> tree: " + trees(pos) + "}"))
-            sb.toString
+            if(positions.isEmpty){
+                return "{fail}"
+            }else{
+                var sb = new StringBuilder()
+                positions.foreach(pos => sb = sb.append("{ pos<" + pos + "> tree: " + trees(pos) + "}"))
+                sb.toString
+            }
+        }
+        def dump(): ParserResult = {
+            println(this)
+            this
         }
         def copy(): ParserResult = {
             ParserResult(positions.clone, trees.clone)
