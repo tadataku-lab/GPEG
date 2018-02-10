@@ -17,24 +17,24 @@ object PackratParser{
         def exe_match(p: ParserContext, bytes: Array[Byte]): Set[Int] = {
             p.map_pos(bytes).result.positions
         }
-/**
-        def map_call(p: ParserContext, symbol: Symbol): ArrayBuffer[Int] = {
-            p.result.pos = p.result.pos.flatMap(i => lookup(p, symbol, i))
-            p.result.pos
+
+        def map_call(p: ParserContext, symbol: Symbol): Set[Int] = {
+            p.result.positions = p.result.positions.flatMap(pos => lookup(p, symbol, pos))
+            p.result.positions
         }
 
-        def lookup(p: ParserContext, symbol: Symbol, pos: Int): ArrayBuffer[Int] = {
+        def lookup(p: ParserContext, symbol: Symbol, pos: Int): Set[Int] = {
             p.lookup(symbol, pos) match{
-                case Some(result) => p.set_result(result.copy).result.pos
+                case Some(result) => p.set_result(result.copy).result.positions
                 case None => call_symbol(p, symbol, pos)
             }
         }
 
-        def call_symbol(p: ParserContext, symbol: Symbol, pos: Int): ArrayBuffer[Int] = {
-            val prev_trees = p.result.trees.copy
-            parse(p.set_exp(p.rules(symbol)).set_result(p.new_result(pos))).update(symbol,prev).memo(symbol, pos)
+        def call_symbol(p: ParserContext, symbol: Symbol, pos: Int): Set[Int] = {
+            val prev_tree = p.result.trees(pos).clone
+            parse(p.set_exp(p.rules(symbol)).set_result(p.new_result(pos))).update(symbol,prev_tree).memo(symbol, pos)
         }
-*/
+
 /**
         def map_union(p: ParserContext, lhs: PExp, rhs: PExp): ParserResult = {
             p.states = p.states.flatMap(state => union(p, lhs, rhs, state))
@@ -71,7 +71,7 @@ object PackratParser{
                 }
                 */
 
-                //case PCall(symbol, next) => if(map_call(p, symbol).isEmpty) p.set_exp(PFail("")) else parse(p.set_exp(next))
+                case PCall(symbol, next) => if(map_call(p, symbol).isEmpty) p.set_exp(PFail("")) else parse(p.set_exp(next))
             
                 /**
                 case PIf(lhs, rhs, next) => {

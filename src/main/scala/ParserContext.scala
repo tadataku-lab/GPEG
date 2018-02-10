@@ -72,11 +72,11 @@ object ParserContext {
             memo += ((symbol, pos) -> result.copy)
             result.positions
         }
-/**
+
         def update(symbol: Symbol, prev: ArrayBuffer[Tree]): ParserContext = {
             this.set_result(result.update(symbol, prev))
         }
-*/
+
 /**
         def merge():ParserContext = {
             bench(0) += 1
@@ -119,12 +119,10 @@ object ParserContext {
         def copy(): ParserResult = {
             ParserResult(positions.clone, trees.clone)
         }
-        /**
         def update(symbol: Symbol, prev: ArrayBuffer[Tree]): ParserResult = {
-            pos.map(i => trees = prev:+Node(symbol, trees(i)))
+            positions.foreach(i => newNode(prev, i, symbol))
             this
         }
-        */
         def getHead(): ArrayBuffer[Tree] = {
             trees(positions.head)
         }
@@ -136,10 +134,13 @@ object ParserContext {
             ab
         }
         def newLeaf(pos: Int, len: Int, v: String): Set[Int] = {
-            val new_index = pos + len
-            trees(new_index) = trees(new_index):+Leaf(v)
+            val new_pos = pos + len
+            trees(new_pos) = trees(new_pos)++trees(pos):+Leaf(v)
             trees(pos) = ArrayBuffer.empty[Tree]
-            Set(new_index)
+            Set(new_pos)
+        }
+        def newNode(prev_tree: ArrayBuffer[Tree], new_pos: Int, symbol: Symbol): Unit = {
+            trees(new_pos) = prev_tree:+Node(symbol, trees(new_pos))
         }
 
     }
