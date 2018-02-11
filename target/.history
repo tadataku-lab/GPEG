@@ -1,4 +1,3 @@
-compile
 run
 test
 compile
@@ -490,6 +489,8 @@ test
 run
 test
 rub
+run
+test
 run
 test
 run

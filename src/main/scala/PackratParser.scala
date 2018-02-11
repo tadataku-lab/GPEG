@@ -19,21 +19,21 @@ object PackratParser{
         (p: ParserContext, symbol: Symbol) => {
             val prev_result = p.result.copy()
             var new_result = p.new_result(Set())
-            prev_result.positions.foreach(pos => new_result = p.merge(new_result,lookup(p, symbol, pos, prev_result.trees(pos))))
+            prev_result.positions.foreach(pos => new_result = p.merge(new_result,lookup(p, symbol, pos).update(prev_result.trees(pos))))
             p.set_result(new_result).result.positions
         }
 
-        private[this] val lookup: (ParserContext, Symbol, Int, ArrayBuffer[Tree]) => ParserResult = 
-        (p: ParserContext, symbol: Symbol, pos: Int, prev_tree: ArrayBuffer[Tree]) => {
+        private[this] val lookup: (ParserContext, Symbol, Int) => ParserResult = 
+        (p: ParserContext, symbol: Symbol, pos: Int) => {
             p.lookup(symbol, pos) match{
-                case Some(result) => p.set_result(result.copy()).update(prev_tree)
-                case None => call_symbol(p, symbol, pos, prev_tree)
+                case Some(result) => p.set_result(result.copy()).result
+                case None => call_symbol(p, symbol, pos)
             }
         }
 
-        private[this] val call_symbol:(ParserContext, Symbol, Int, ArrayBuffer[Tree]) => ParserResult =
-        (p: ParserContext, symbol: Symbol, pos: Int, prev_tree: ArrayBuffer[Tree])
-        => parse(p.set_exp(p.rules(symbol)).set_result(p.new_result(Set(pos)))).newNode(symbol).memo(symbol, pos).update(prev_tree)
+        private[this] val call_symbol:(ParserContext, Symbol, Int) => ParserResult =
+        (p: ParserContext, symbol: Symbol, pos: Int)
+        => parse(p.set_exp(p.rules(symbol)).set_result(p.new_result(Set(pos)))).newNode(symbol).memo(symbol, pos)
 
         def map_union(p: ParserContext, lhs: PExp, rhs: PExp): Set[Int] = {
             p.result.positions = p.result.positions.flatMap(pos => union(p, lhs, rhs, pos))

@@ -30,7 +30,6 @@ object ParserContext {
 
         def dump_bench(): ParserContext = {
             println("bench1: " + bench(0) + "回 " + bench(1) + "[ms]")
-            println("bench2: " + bench(2) + "回 " + bench(3) + "[ms]")
             this
         }
 
@@ -71,23 +70,9 @@ object ParserContext {
 
         def lookup(symbol: Symbol, pos: Int): Option[ParserResult] = memo.get((symbol, pos))
 
-        def memo(symbol: Symbol, pos: Int): ParserContext = {
+        def memo(symbol: Symbol, pos: Int): ParserResult = {
             memo += ((symbol, pos) -> result.copy())
-            this
-        }
-
-        def bench_update(prev: ArrayBuffer[Tree]): ParserResult = {
-            bench(2)  = bench(2) + 1
-            val start = System.currentTimeMillis
-            this.set_result(result.update(prev))
-            val time = System.currentTimeMillis - start
-            bench(3) = bench(3) + time
             this.result
-        }
-
-        def update(prev: ArrayBuffer[Tree]): ParserResult = {
-            //this.set_result(result.update(prev)).result
-            bench_update(prev)
         }
 
         def newNode(symbol: Symbol): ParserContext = {
