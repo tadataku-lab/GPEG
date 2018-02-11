@@ -19,7 +19,7 @@ object PackratParser{
         (p: ParserContext, symbol: Symbol) => {
             val prev_result = p.result.copy()
             var new_result = p.new_result(Set())
-            prev_result.positions.foreach(pos => new_result = p.merge(new_result,lookup(p, symbol, pos).update(prev_result.trees(pos))))
+            prev_result.positions.foreach(pos => new_result = p.merge(new_result, prev_result.update(pos, p.input_length + 1, lookup(p, symbol, pos))))
             p.set_result(new_result).result.positions
         }
 

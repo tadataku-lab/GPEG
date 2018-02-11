@@ -9,7 +9,7 @@ object ParserContext {
         private[this] var folding: Boolean = false
         val rules: Map[Symbol, PExp] = _rules
         private[this] val input: Array[Byte] = _input
-        private[this] val input_length: Int = _input.length
+        val input_length: Int = _input.length
         private[this] var memo: HashMap[(Symbol, Int), ParserResult] = new HashMap[(Symbol, Int),ParserResult]
         private[this] var bench: Array[Long] = Array(0, 0, 0, 0, 0, 0)
 
@@ -110,10 +110,12 @@ object ParserContext {
         }
         val copy: () => ParserResult = () => ParserResult(positions.clone, trees.clone)
         
-        val update: ArrayBuffer[Tree] => ParserResult = 
-        (prev: ArrayBuffer[Tree]) => {
-            positions.foreach(pos => trees(pos) = prev++trees(pos))
-            //positions.foreach(pos => trees(pos) = trees(pos))
+        val update: (Int, Int, ParserResult) => ParserResult = 
+        (pos: Int, size: Int, next: ParserResult) => {
+            //positions.foreach(pos => trees(pos) = prev++trees(pos))
+            positions = next.positions
+            lazy val prev_trees = trees(pos)
+            positions.foreach(i => trees(i) = prev_trees++next.trees(i))
             this
         }
 

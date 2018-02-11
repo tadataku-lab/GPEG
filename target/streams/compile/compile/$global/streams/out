@@ -1,14 +1,2 @@
 [0m[[0m[33mwarn[0m] [0m[0m-optimise is deprecated: In 2.12, -optimise enables -opt:l:inline -opt-inline-from:**. Check -opt:help for using the Scala 2.12 optimizer.[0m
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/ParserContext.scala:9:27: private var folding in class ParserContext is never used[0m
-[0m[[0m[33mwarn[0m] [0m[0m        private[this] var folding: Boolean = false[0m
-[0m[[0m[33mwarn[0m] [0m[0m                          ^[0m
-[0m[[0m[33mwarn[0m] [0m[0mtwo warnings found[0m
-[0m[[0m[33mwarn[0m] [0m[0m-optimise is deprecated: In 2.12, -optimise enables -opt:l:inline -opt-inline-from:**. Check -opt:help for using the Scala 2.12 optimizer.[0m
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PackratParser.scala:4:34: Unused import[0m
-[0m[[0m[33mwarn[0m] [0m[0mimport scala.collection.mutable.{ArrayBuffer, Set}[0m
-[0m[[0m[33mwarn[0m] [0m[0m                                 ^[0m
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PackratParser.scala:58:15: match may not be exhaustive.[0m
-[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following inputs: PAnd(_, _), PAny(_), PFold(_, _, _, _), PIf(_, _, _), PMany(_, _), PNot(_, _)[0m
-[0m[[0m[33mwarn[0m] [0m[0m            p.exp match {[0m
-[0m[[0m[33mwarn[0m] [0m[0m              ^[0m
-[0m[[0m[33mwarn[0m] [0m[0mthree warnings found[0m
+[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m
