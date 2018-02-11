@@ -24,13 +24,14 @@ object ParserContext {
             this
         }
 
-        def dump_result2(): ParserContext = {
-            println("result2: " + result)
+        def dump_exp(): ParserContext = {
+            println("exp: " + exp)
             this
         }
 
-        def dump_exp(): ParserContext = {
-            println("exp: " + exp)
+        def dump_bench(): ParserContext = {
+            println("bench1: " + bench(0) + "回 " + bench(1) + "[ms]")
+            println("bench2: " + bench(2) + "回 " + bench(3) + "[ms]")
             this
         }
 
@@ -84,12 +85,26 @@ object ParserContext {
             this
         }
 
-        def update(symbol: Symbol, prev: ArrayBuffer[Tree]): ParserResult = {
-            this.set_result(result.update(symbol, prev)).result
+        def update(prev: ArrayBuffer[Tree]): ParserResult = {
+            bench(2)  = bench(2) + 1
+            val start = System.currentTimeMillis
+            this.set_result(result.update(prev))
+            val time = System.currentTimeMillis - start
+            bench(3) = bench(3) + time
+            this.result
+        }
+
+        def newNode(symbol: Symbol): ParserContext = {
+            this.set_result(result.newNode(symbol))
         }
 
         def merge(lhs_result: ParserResult, rhs_result: ParserResult): ParserResult = {
-            this.set_result(lhs_result.merge(rhs_result)).result
+            bench(0)  = bench(0) + 1
+            val start = System.currentTimeMillis
+            this.set_result(lhs_result.merge(rhs_result))
+            val time = System.currentTimeMillis - start
+            bench(1) = bench(1) + time
+            this.result
         }
     }
 
@@ -110,82 +125,56 @@ object ParserContext {
         def copy(): ParserResult = {
             ParserResult(positions.clone, trees.clone)
         }
+        /**
         def update(symbol: Symbol, prev: ArrayBuffer[Tree]): ParserResult = {
-            positions.foreach(i => newNode(prev, i, symbol))
+            positions.foreach(pos => trees(pos) = prev:+Node(symbol, trees(pos)))
+            this
+        }
+        */
+        def update(prev: ArrayBuffer[Tree]): ParserResult = {
+            positions.foreach(pos => trees(pos) = prev++trees(pos))
+            this
+        }
+        def newNode(symbol: Symbol): ParserResult = {
+            positions.foreach(pos => trees(pos) = ArrayBuffer(Node(symbol, trees(pos))))
             this
         }
         def merge(another: ParserResult): ParserResult = {
             another.positions.foreach(pos => setTree(pos, another.trees(pos)))
-            positions = positions++another.positions
+            positions = positions | another.positions
             this
         }
+        /**
         def setTree(pos: Int, tree: ArrayBuffer[Tree]): Unit = {
-            if(trees(pos).isEmpty) trees(pos) = tree else trees(pos) = ArrayBuffer(Node(Symbol("amb<" + pos + ">"), trees(pos)), Node(Symbol("amb<" + pos + ">"), tree))
+            val sym = Symbol("amb<" + pos + ">")
+            if(trees(pos).isEmpty) trees(pos) = tree else trees(pos) = ArrayBuffer(Node(sym, trees(pos)), Node(sym, tree))
         }
+        */
+        
+        def setTree(pos: Int, tree: ArrayBuffer[Tree]): Unit = {
+            if(trees(pos).isEmpty) trees(pos) = tree else {
+                trees(pos).head match{
+                    case an: AmbNode => trees(pos) += AmbNode(pos, tree)
+                    case _ => trees(pos) = ArrayBuffer(AmbNode(pos, trees(pos)), AmbNode(pos, tree))
+                }
+            }
+        }
+        
         def getHead(): ArrayBuffer[Tree] = {
             trees(positions.head)
         }
         def makeAmb(): ArrayBuffer[Tree] = {
-            var ab = ArrayBuffer.empty[Tree]
+            val ab = ArrayBuffer.empty[Tree]
             for(pos <- positions){
-                ab = ab:+Node(Symbol("amb<" + pos + ">"), trees(pos))
+                ab += AmbNode(pos, trees(pos))
             }
             ab
         }
         def newLeaf(pos: Int, len: Int, v: String, new_trees: Array[ArrayBuffer[Tree]]): Set[Int] = {
             val new_pos = pos + len
-            new_trees(new_pos) = trees(pos):+Leaf(v)
+            new_trees(new_pos) += Leaf(v)
             Set(new_pos)
         }
-        def newNode(prev_tree: ArrayBuffer[Tree], new_pos: Int, symbol: Symbol): Unit = {
-            trees(new_pos) = prev_tree:+Node(symbol, trees(new_pos))
-        }
 
     }
-    
-/**
-    case class State(var pos: Int, var trees: ArrayBuffer[Tree]){
-        def copy(): State = {
-            State(pos, trees)
-        }
-
-        def newState(): State = {
-            State(pos, ArrayBuffer())
-        }
-
-        def update(name: Symbol, state: State): State = {
-            trees = state.trees:+Node(name, trees)
-            this
-        }
-
-        def newLeaf(v: String): State = {
-            trees = trees:+Leaf(v)
-            this
-        }
-
-        def addNode(name: Symbol, next: ArrayBuffer[Tree]): State = {
-            trees = trees:+Node(name, next)
-            this
-        }
-
-        def newNode(name: Symbol): Node = {
-            Node(name, trees)
-        }
-
-        def newPos(len: Int): State = {
-            pos = pos + len
-            this
-        }
-
-        def merge(states: ArrayBuffer[State], id: Long): State = {
-            val sym = Symbol("amb<" + id + ">")
-            trees = ArrayBuffer(Node(sym,trees))++states.flatMap(state => ArrayBuffer(Node(sym, state.trees)))
-            this
-        }
-
-        def posEq(state: State): Boolean = {
-            pos == state.pos
-        }
-    }
-    */
 }

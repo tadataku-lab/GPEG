@@ -3,5 +3,7 @@
 [0m[[0m[0minfo[0m] [0m[0m[32m- test2[0m[0m
 [0m[[0m[0minfo[0m] [0m[0m[32m- test3[0m[0m
 [0m[[0m[0minfo[0m] [0m[0m[32m- test4[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[32m- unordered choice[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[32m- unordered choice and nonterminal[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m- unordered choice *** FAILED ***[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  "['S [[amb<2> [b]][amb<3> ][b]]]" did not equal "['S [['amb<2> [a][b]]['amb<3> [ab]][b]]]" (test.scala:73)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m- unordered choice and nonterminal *** FAILED ***[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  "['S [[amb<2> [b]][amb<3> ][b]]]" did not equal "['S [['amb<2> ['B [a]][b]]['amb<3> ['B [ab]]][b]]]" (test.scala:82)[0m[0m

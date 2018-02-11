@@ -11,7 +11,7 @@ object PackratParser{
 
     class PackratParser(){
         def packrat_parse(p: ParserContext): ParserContext = {
-            parse(p)
+            parse(p).dump_bench
         }
 
         def exe_match(p: ParserContext, bytes: Array[Byte]): Set[Int] = {
@@ -27,13 +27,13 @@ object PackratParser{
 
         def lookup(p: ParserContext, symbol: Symbol, pos: Int, prev_tree: ArrayBuffer[Tree]): ParserResult = {
             p.lookup(symbol, pos) match{
-                case Some(result) => p.set_result(result.copy).update(symbol,prev_tree)
+                case Some(result) => p.set_result(result.copy).update(prev_tree)
                 case None => call_symbol(p, symbol, pos, prev_tree)
             }
         }
 
         def call_symbol(p: ParserContext, symbol: Symbol, pos: Int, prev_tree: ArrayBuffer[Tree]): ParserResult = {
-            parse(p.set_exp(p.rules(symbol)).set_result(p.new_result(Set(pos)))).memo(symbol, pos).update(symbol,prev_tree)
+            parse(p.set_exp(p.rules(symbol)).set_result(p.new_result(Set(pos)))).newNode(symbol).memo(symbol, pos).update(prev_tree)
         }
 
         def map_union(p: ParserContext, lhs: PExp, rhs: PExp): Set[Int] = {
