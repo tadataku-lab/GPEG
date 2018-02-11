@@ -8,9 +8,7 @@ object Tree{
         override def toString: String = {
             "[" + v + "]"
         }
-        def copy(): Leaf = {
-            Leaf(v)
-        }
+        def copy(): Leaf = Leaf(v)
     }
     case class Node(name: Symbol, next: ArrayBuffer[Tree]) extends Tree{
         override def toString: String = {
@@ -22,9 +20,7 @@ object Tree{
             sb.append("]")
             sb.toString
         }
-        def copy(): Node = {
-            Node(name, next.flatMap(n => ArrayBuffer(n.copy)))
-        }
+        def copy(): Node =  Node(name, next.flatMap(n => ArrayBuffer(n.copy)))
     }
     case class AmbNode(id: Int, next: ArrayBuffer[Tree]) extends Tree{
         override def toString: String = {
@@ -36,8 +32,6 @@ object Tree{
             sb.append("]")
             sb.toString
         }
-        def copy(): AmbNode = {
-            AmbNode(id, next.flatMap(n => ArrayBuffer(n.copy)))
-        }
+        def copy(): AmbNode = AmbNode(id, next.flatMap(n => ArrayBuffer(n.copy)))
     }
 }

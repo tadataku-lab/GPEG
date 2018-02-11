@@ -10,13 +10,10 @@ object PackratParser{
     }
 
     class PackratParser(){
-        def packrat_parse(p: ParserContext): ParserContext = {
-            parse(p).dump_bench
-        }
+        def packrat_parse(p: ParserContext): ParserContext = parse(p).dump_bench
 
-        def exe_match(p: ParserContext, bytes: Array[Byte]): Set[Int] = {
-            p.map_pos(bytes).result.positions
-        }
+        def exe_match(p: ParserContext, bytes: Array[Byte]): Set[Int] 
+        = p.map_pos(bytes).result.positions
 
         def map_call(p: ParserContext, symbol: Symbol): Set[Int] = {
             val prev_result = p.result.copy
@@ -32,9 +29,8 @@ object PackratParser{
             }
         }
 
-        def call_symbol(p: ParserContext, symbol: Symbol, pos: Int, prev_tree: ArrayBuffer[Tree]): ParserResult = {
-            parse(p.set_exp(p.rules(symbol)).set_result(p.new_result(Set(pos)))).newNode(symbol).memo(symbol, pos).update(prev_tree)
-        }
+        def call_symbol(p: ParserContext, symbol: Symbol, pos: Int, prev_tree: ArrayBuffer[Tree]): ParserResult 
+        = parse(p.set_exp(p.rules(symbol)).set_result(p.new_result(Set(pos)))).newNode(symbol).memo(symbol, pos).update(prev_tree)
 
         def map_union(p: ParserContext, lhs: PExp, rhs: PExp): Set[Int] = {
             p.result.positions = p.result.positions.flatMap(pos => union(p, lhs, rhs, pos))
@@ -57,17 +53,12 @@ object PackratParser{
 
         def parse(p: ParserContext): ParserContext = {
             p.exp match {
-                case PSucc() => {
-                    return p
-                }
-                case PEmpty(next) => {
-                    p.exp = next
-                    return parse(p)
-                }
+                case PSucc() => p
+                case PEmpty(next) => parse(p.set_exp(next))
                 case PFail(msg) => throw new RuntimeException(msg)
-
                 case PMatch(bytes, next) => if(exe_match(p, bytes).isEmpty) p.set_exp(PFail("")).set_result(p.new_result(Set())) else parse(p.set_exp(next))
-        
+                case PCall(symbol, next) => if(map_call(p, symbol).isEmpty) p.set_exp(PFail("")).set_result(p.new_result(Set())) else parse(p.set_exp(next))
+                case PUnion(lhs, rhs) => if(map_union(p, lhs, rhs).isEmpty) p.set_exp(PFail("")) else p
                 /**
                 case PAny(next) => {
                     if((p.pos + 1) > input.length){
@@ -81,8 +72,6 @@ object PackratParser{
                 }
                 */
 
-                case PCall(symbol, next) => if(map_call(p, symbol).isEmpty) p.set_exp(PFail("")).set_result(p.new_result(Set())) else parse(p.set_exp(next))
-            
                 /**
                 case PIf(lhs, rhs, next) => {
                     p.exp = lhs
@@ -126,8 +115,6 @@ object PackratParser{
                 }
                 */
                 
-                case PUnion(lhs, rhs) => if(map_union(p, lhs, rhs).isEmpty) p.set_exp(PFail("")) else p
-
                 /**
                 case PNot(body, next) => {
                     p.exp = body

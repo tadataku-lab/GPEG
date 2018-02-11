@@ -7,7 +7,6 @@ object ParserContext {
         var result: ParserResult = ParserResult(Set(0), Array.fill(_input.length + 1)(ArrayBuffer.empty[Tree]))
         var exp: PExp = _exp
         var folding: Boolean = false
-        var ID: Long = 0
         val rules: Map[Symbol, PExp] = _rules
         val input: Array[Byte] = _input
         val input_length: Int = _input.length
@@ -35,13 +34,9 @@ object ParserContext {
             this
         }
 
-        def new_result(new_positions: Set[Int]): ParserResult = {
-            ParserResult(new_positions, Array.fill(_input.length + 1)(ArrayBuffer.empty[Tree]))
-        }
+        def new_result(new_positions: Set[Int]): ParserResult = ParserResult(new_positions, Array.fill(_input.length + 1)(ArrayBuffer.empty[Tree]))
 
-        def make_result(pos: Int, prev_trees: Array[ArrayBuffer[Tree]]): ParserResult = {
-            ParserResult(Set(pos), prev_trees)
-        }
+        def make_result(pos: Int, prev_trees: Array[ArrayBuffer[Tree]]): ParserResult = ParserResult(Set(pos), prev_trees)
 
         def set_exp(e: PExp): ParserContext = {
             exp = e
@@ -60,13 +55,11 @@ object ParserContext {
             this
         }
 
-        def match_bytes(bytes: Array[Byte], pos: Int, new_trees: Array[ArrayBuffer[Tree]]): Set[Int] = {
-            if(bytesEq(bytes, pos, bytes.length)) result.newLeaf(pos, bytes.length, (bytes.map(_.toChar)).mkString, new_trees) else Set()
-        }
+        def match_bytes(bytes: Array[Byte], pos: Int, new_trees: Array[ArrayBuffer[Tree]]): Set[Int] 
+        = if(bytesEq(bytes, pos, bytes.length)) result.newLeaf(pos, bytes.length, (bytes.map(_.toChar)).mkString, new_trees) else Set()
 
-        def bytesEq(bytes: Array[Byte], pos: Int, length: Int): Boolean = {
-            if((length + pos) > input_length) false else bytes.sameElements(input.slice(pos, pos + length))
-        }
+        def bytesEq(bytes: Array[Byte], pos: Int, length: Int): Boolean 
+        = if((length + pos) > input_length) false else bytes.sameElements(input.slice(pos, pos + length))
 
         def makeAmbNode(name: Symbol): Node = {
             result.positions.size match{
@@ -76,16 +69,14 @@ object ParserContext {
             }
         }
 
-        def lookup(symbol: Symbol, pos: Int): Option[ParserResult] = {
-            memo.get((symbol, pos))
-        }
+        def lookup(symbol: Symbol, pos: Int): Option[ParserResult] = memo.get((symbol, pos))
 
         def memo(symbol: Symbol, pos: Int): ParserContext = {
             memo += ((symbol, pos) -> result.copy)
             this
         }
 
-        def update(prev: ArrayBuffer[Tree]): ParserResult = {
+        def bench_update(prev: ArrayBuffer[Tree]): ParserResult = {
             bench(2)  = bench(2) + 1
             val start = System.currentTimeMillis
             this.set_result(result.update(prev))
@@ -94,17 +85,27 @@ object ParserContext {
             this.result
         }
 
+        def update(prev: ArrayBuffer[Tree]): ParserResult = {
+            //this.set_result(result.update(prev)).result
+            bench_update(prev)
+        }
+
         def newNode(symbol: Symbol): ParserContext = {
             this.set_result(result.newNode(symbol))
         }
 
-        def merge(lhs_result: ParserResult, rhs_result: ParserResult): ParserResult = {
-            bench(0)  = bench(0) + 1
+        def bench_merge(lhs_result: ParserResult, rhs_result: ParserResult): ParserResult = {
+            //bench(0)  = bench(0) + 1
             val start = System.currentTimeMillis
             this.set_result(lhs_result.merge(rhs_result))
             val time = System.currentTimeMillis - start
-            bench(1) = bench(1) + time
+            //bench(1) = bench(1) + time
             this.result
+        }
+
+        def merge(lhs_result: ParserResult, rhs_result: ParserResult): ParserResult = {
+            //this.set_result(lhs_result.merge(rhs_result)).result
+            bench_merge(lhs_result, rhs_result)
         }
     }
 
@@ -122,9 +123,7 @@ object ParserContext {
             println(this)
             this
         }
-        def copy(): ParserResult = {
-            ParserResult(positions.clone, trees.clone)
-        }
+        def copy(): ParserResult = ParserResult(positions.clone, trees.clone)
         /**
         def update(symbol: Symbol, prev: ArrayBuffer[Tree]): ParserResult = {
             positions.foreach(pos => trees(pos) = prev:+Node(symbol, trees(pos)))
@@ -160,9 +159,8 @@ object ParserContext {
             }
         }
         
-        def getHead(): ArrayBuffer[Tree] = {
-            trees(positions.head)
-        }
+        def getHead(): ArrayBuffer[Tree] = trees(positions.head)
+        
         def makeAmb(): ArrayBuffer[Tree] = {
             val ab = ArrayBuffer.empty[Tree]
             for(pos <- positions){
