@@ -6,12 +6,12 @@ object ParserContext {
     class ParserContext(_exp: PExp, _rules: Map[Symbol, PExp], _input: Array[Byte]){
         var result: ParserResult = ParserResult(Set(0), Array.fill(_input.length + 1)(ArrayBuffer.empty[Tree]))
         var exp: PExp = _exp
-        var folding: Boolean = false
+        private[this] var folding: Boolean = false
         val rules: Map[Symbol, PExp] = _rules
-        val input: Array[Byte] = _input
-        val input_length: Int = _input.length
-        var memo: HashMap[(Symbol, Int), ParserResult] = new HashMap[(Symbol, Int),ParserResult]
-        var bench: Array[Long] = Array(0, 0, 0, 0, 0, 0)
+        private[this] val input: Array[Byte] = _input
+        private[this] val input_length: Int = _input.length
+        private[this] var memo: HashMap[(Symbol, Int), ParserResult] = new HashMap[(Symbol, Int),ParserResult]
+        private[this] var bench: Array[Long] = Array(0, 0, 0, 0, 0, 0)
 
         def dump_memo(): ParserContext = {
             println("memo: " + memo)
@@ -72,7 +72,7 @@ object ParserContext {
         def lookup(symbol: Symbol, pos: Int): Option[ParserResult] = memo.get((symbol, pos))
 
         def memo(symbol: Symbol, pos: Int): ParserContext = {
-            memo += ((symbol, pos) -> result.copy)
+            memo += ((symbol, pos) -> result.copy())
             this
         }
 
@@ -95,11 +95,11 @@ object ParserContext {
         }
 
         def bench_merge(lhs_result: ParserResult, rhs_result: ParserResult): ParserResult = {
-            //bench(0)  = bench(0) + 1
+            bench(0)  = bench(0) + 1
             val start = System.currentTimeMillis
             this.set_result(lhs_result.merge(rhs_result))
             val time = System.currentTimeMillis - start
-            //bench(1) = bench(1) + time
+            bench(1) = bench(1) + time
             this.result
         }
 
@@ -123,34 +123,29 @@ object ParserContext {
             println(this)
             this
         }
-        def copy(): ParserResult = ParserResult(positions.clone, trees.clone)
-        /**
-        def update(symbol: Symbol, prev: ArrayBuffer[Tree]): ParserResult = {
-            positions.foreach(pos => trees(pos) = prev:+Node(symbol, trees(pos)))
-            this
-        }
-        */
-        def update(prev: ArrayBuffer[Tree]): ParserResult = {
+        val copy: () => ParserResult = () => ParserResult(positions.clone, trees.clone)
+        
+        val update: ArrayBuffer[Tree] => ParserResult = 
+        (prev: ArrayBuffer[Tree]) => {
             positions.foreach(pos => trees(pos) = prev++trees(pos))
+            //positions.foreach(pos => trees(pos) = trees(pos))
             this
         }
+
         def newNode(symbol: Symbol): ParserResult = {
             positions.foreach(pos => trees(pos) = ArrayBuffer(Node(symbol, trees(pos))))
             this
         }
-        def merge(another: ParserResult): ParserResult = {
+
+        val merge: ParserResult => ParserResult = 
+        (another: ParserResult) => {
             another.positions.foreach(pos => setTree(pos, another.trees(pos)))
             positions = positions | another.positions
             this
         }
-        /**
-        def setTree(pos: Int, tree: ArrayBuffer[Tree]): Unit = {
-            val sym = Symbol("amb<" + pos + ">")
-            if(trees(pos).isEmpty) trees(pos) = tree else trees(pos) = ArrayBuffer(Node(sym, trees(pos)), Node(sym, tree))
-        }
-        */
         
-        def setTree(pos: Int, tree: ArrayBuffer[Tree]): Unit = {
+        private[this] val setTree: (Int, ArrayBuffer[Tree]) => Unit =
+        (pos: Int, tree: ArrayBuffer[Tree]) => {
             if(trees(pos).isEmpty) trees(pos) = tree else {
                 trees(pos).head match{
                     case an: AmbNode => trees(pos) += AmbNode(pos, tree)
@@ -160,7 +155,7 @@ object ParserContext {
         }
         
         def getHead(): ArrayBuffer[Tree] = trees(positions.head)
-        
+
         def makeAmb(): ArrayBuffer[Tree] = {
             val ab = ArrayBuffer.empty[Tree]
             for(pos <- positions){

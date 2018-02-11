@@ -15,22 +15,25 @@ object PackratParser{
         def exe_match(p: ParserContext, bytes: Array[Byte]): Set[Int] 
         = p.map_pos(bytes).result.positions
 
-        def map_call(p: ParserContext, symbol: Symbol): Set[Int] = {
-            val prev_result = p.result.copy
+        private[this] val map_call: (ParserContext, Symbol) => Set[Int] = 
+        (p: ParserContext, symbol: Symbol) => {
+            val prev_result = p.result.copy()
             var new_result = p.new_result(Set())
             prev_result.positions.foreach(pos => new_result = p.merge(new_result,lookup(p, symbol, pos, prev_result.trees(pos))))
             p.set_result(new_result).result.positions
         }
 
-        def lookup(p: ParserContext, symbol: Symbol, pos: Int, prev_tree: ArrayBuffer[Tree]): ParserResult = {
+        private[this] val lookup: (ParserContext, Symbol, Int, ArrayBuffer[Tree]) => ParserResult = 
+        (p: ParserContext, symbol: Symbol, pos: Int, prev_tree: ArrayBuffer[Tree]) => {
             p.lookup(symbol, pos) match{
-                case Some(result) => p.set_result(result.copy).update(prev_tree)
+                case Some(result) => p.set_result(result.copy()).update(prev_tree)
                 case None => call_symbol(p, symbol, pos, prev_tree)
             }
         }
 
-        def call_symbol(p: ParserContext, symbol: Symbol, pos: Int, prev_tree: ArrayBuffer[Tree]): ParserResult 
-        = parse(p.set_exp(p.rules(symbol)).set_result(p.new_result(Set(pos)))).newNode(symbol).memo(symbol, pos).update(prev_tree)
+        private[this] val call_symbol:(ParserContext, Symbol, Int, ArrayBuffer[Tree]) => ParserResult =
+        (p: ParserContext, symbol: Symbol, pos: Int, prev_tree: ArrayBuffer[Tree])
+        => parse(p.set_exp(p.rules(symbol)).set_result(p.new_result(Set(pos)))).newNode(symbol).memo(symbol, pos).update(prev_tree)
 
         def map_union(p: ParserContext, lhs: PExp, rhs: PExp): Set[Int] = {
             p.result.positions = p.result.positions.flatMap(pos => union(p, lhs, rhs, pos))
