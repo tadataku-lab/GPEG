@@ -1,7 +1,7 @@
 import AST._
 import Tree._
 import ParserContext._
-import scala.collection.mutable.{ArrayBuffer, Set}
+import scala.collection.mutable.{Set}
 
 object PackratParser{  
     def peg_parse(g: PGrammar, input: String): Option[(Tree, ParserContext)] = {
@@ -18,8 +18,8 @@ object PackratParser{
         private[this] val map_call: (ParserContext, Symbol) => Set[Int] = 
         (p: ParserContext, symbol: Symbol) => {
             val prev_result = p.result.copy()
-            var new_result = p.new_result(Set())
-            prev_result.positions.foreach(pos => new_result = p.merge(new_result, prev_result.update(pos, p.input_length + 1, lookup(p, symbol, pos))))
+            val new_result = p.new_result(Set())
+            prev_result.positions.foreach(pos => p.merge(new_result, lookup(p, symbol, pos).update(pos, prev_result.trees)))
             p.set_result(new_result).result.positions
         }
 

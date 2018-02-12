@@ -1,15 +1,16 @@
 import AST._
 import Tree._
-import scala.collection.mutable.{HashMap, ArrayBuffer, Set}
+import scala.collection.mutable.{HashMap, Set}
+import scala.collection.immutable.{Vector}
 
 object ParserContext {
     class ParserContext(_exp: PExp, _rules: Map[Symbol, PExp], _input: Array[Byte]){
-        var result: ParserResult = ParserResult(Set(0), Array.fill(_input.length + 1)(ArrayBuffer.empty[Tree]))
+        var result: ParserResult = ParserResult(Set(0), Array.fill(_input.length + 1)(Vector.empty[Tree]))
         var exp: PExp = _exp
         private[this] var folding: Boolean = false
         val rules: Map[Symbol, PExp] = _rules
         private[this] val input: Array[Byte] = _input
-        val input_length: Int = _input.length
+        private[this] val input_length: Int = _input.length
         private[this] var memo: HashMap[(Symbol, Int), ParserResult] = new HashMap[(Symbol, Int),ParserResult]
         private[this] var bench: Array[Long] = Array(0, 0, 0, 0, 0, 0)
 
@@ -33,9 +34,9 @@ object ParserContext {
             this
         }
 
-        def new_result(new_positions: Set[Int]): ParserResult = ParserResult(new_positions, Array.fill(_input.length + 1)(ArrayBuffer.empty[Tree]))
+        def new_result(new_positions: Set[Int]): ParserResult = ParserResult(new_positions, Array.fill(_input.length + 1)(Vector.empty[Tree]))
 
-        def make_result(pos: Int, prev_trees: Array[ArrayBuffer[Tree]]): ParserResult = ParserResult(Set(pos), prev_trees)
+        def make_result(pos: Int, prev_trees: Array[Vector[Tree]]): ParserResult = ParserResult(Set(pos), prev_trees)
 
         def set_exp(e: PExp): ParserContext = {
             exp = e
@@ -48,13 +49,13 @@ object ParserContext {
         }
 
         def map_pos(bytes: Array[Byte]): ParserContext = {
-            val new_trees = Array.fill(_input.length + 1)(ArrayBuffer.empty[Tree])
+            val new_trees = Array.fill(_input.length + 1)(Vector.empty[Tree])
             result.positions = result.positions.flatMap(pos => match_bytes(bytes, pos, new_trees))
             result.trees = new_trees
             this
         }
 
-        def match_bytes(bytes: Array[Byte], pos: Int, new_trees: Array[ArrayBuffer[Tree]]): Set[Int] 
+        def match_bytes(bytes: Array[Byte], pos: Int, new_trees: Array[Vector[Tree]]): Set[Int] 
         = if(bytesEq(bytes, pos, bytes.length)) result.newLeaf(pos, bytes.length, (bytes.map(_.toChar)).mkString, new_trees) else Set()
 
         def bytesEq(bytes: Array[Byte], pos: Int, length: Int): Boolean 
@@ -62,7 +63,7 @@ object ParserContext {
 
         def makeAmbNode(name: Symbol): Node = {
             result.positions.size match{
-                case 0 => Node(Symbol("fail"), ArrayBuffer())
+                case 0 => Node(Symbol("fail"), Vector())
                 case 1 => Node(name, result.getHead)
                 case _ => Node(name, result.makeAmb)
             }
@@ -94,7 +95,7 @@ object ParserContext {
         }
     }
 
-    case class ParserResult(var positions: Set[Int], var trees: Array[ArrayBuffer[Tree]]){
+    case class ParserResult(var positions: Set[Int], var trees: Array[Vector[Tree]]){
         override def toString(): String = {
             if(positions.isEmpty){
                 return "{fail}"
@@ -110,17 +111,15 @@ object ParserContext {
         }
         val copy: () => ParserResult = () => ParserResult(positions.clone, trees.clone)
         
-        val update: (Int, Int, ParserResult) => ParserResult = 
-        (pos: Int, size: Int, next: ParserResult) => {
-            //positions.foreach(pos => trees(pos) = prev++trees(pos))
-            positions = next.positions
-            lazy val prev_trees = trees(pos)
-            positions.foreach(i => trees(i) = prev_trees++next.trees(i))
+        val update: (Int, Array[Vector[Tree]]) => ParserResult = 
+        (pos: Int, prev: Array[Vector[Tree]]) => {
+            lazy val prev_tree = prev(pos)
+            positions.foreach(i => trees(i) = prev_tree ++ trees(i) )
             this
         }
 
         def newNode(symbol: Symbol): ParserResult = {
-            positions.foreach(pos => trees(pos) = ArrayBuffer(Node(symbol, trees(pos))))
+            positions.foreach(pos => trees(pos) = Vector(Node(symbol, trees(pos))))
             this
         }
 
@@ -131,28 +130,28 @@ object ParserContext {
             this
         }
         
-        private[this] val setTree: (Int, ArrayBuffer[Tree]) => Unit =
-        (pos: Int, tree: ArrayBuffer[Tree]) => {
+        private[this] val setTree: (Int, Vector[Tree]) => Unit =
+        (pos: Int, tree: Vector[Tree]) => {
             if(trees(pos).isEmpty) trees(pos) = tree else {
                 trees(pos).head match{
-                    case an: AmbNode => trees(pos) += AmbNode(pos, tree)
-                    case _ => trees(pos) = ArrayBuffer(AmbNode(pos, trees(pos)), AmbNode(pos, tree))
+                    case an: AmbNode => trees(pos) = trees(pos):+AmbNode(pos, tree)
+                    case _ => trees(pos) = Vector(AmbNode(pos, trees(pos)), AmbNode(pos, tree))
                 }
             }
         }
         
-        def getHead(): ArrayBuffer[Tree] = trees(positions.head)
+        def getHead(): Vector[Tree] = trees(positions.head)
 
-        def makeAmb(): ArrayBuffer[Tree] = {
-            val ab = ArrayBuffer.empty[Tree]
+        def makeAmb(): Vector[Tree] = {
+            var ab = Vector.empty[Tree]
             for(pos <- positions){
-                ab += AmbNode(pos, trees(pos))
+                ab = ab:+AmbNode(pos, trees(pos))
             }
             ab
         }
-        def newLeaf(pos: Int, len: Int, v: String, new_trees: Array[ArrayBuffer[Tree]]): Set[Int] = {
+        def newLeaf(pos: Int, len: Int, v: String, new_trees: Array[Vector[Tree]]): Set[Int] = {
             val new_pos = pos + len
-            new_trees(new_pos) += Leaf(v)
+            new_trees(new_pos) = new_trees(new_pos):+Leaf(v)
             Set(new_pos)
         }
 
