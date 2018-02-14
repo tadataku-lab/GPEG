@@ -56,9 +56,9 @@ object ParserContext {
 
         def makeAmbNode(name: Symbol): Node = {
             result.positions.size match{
-                case 0 => Node(Symbol("fail"), Array())
-                case 1 => Node(name, result.getHead.toArray)
-                case _ => Node(name, result.makeAmb.toArray)
+                case 0 => Node(Symbol("fail"), null)
+                case 1 => Node(name, result.getHead)
+                case _ => Node(name, result.makeAmb)
             }
         }
 
@@ -97,7 +97,7 @@ object ParserContext {
         }
 
         def newNode(symbol: Symbol): ParserResult = {
-            positions.foreach(pos => trees(pos) = ArrayBuffer(Node(symbol, trees(pos).toArray)))
+            positions.foreach(pos => trees(pos) = ArrayBuffer(Node(symbol, trees(pos))))
             this
         }
 
@@ -112,8 +112,8 @@ object ParserContext {
         (pos: Int, tree: ArrayBuffer[Tree]) => {
             if(trees(pos) == null) trees(pos) = tree else {
                 trees(pos).head match{
-                    case an: AmbNode => trees(pos) = trees(pos):+AmbNode(pos, tree.toArray)
-                    case _ => trees(pos) = ArrayBuffer(AmbNode(pos, trees(pos).toArray), AmbNode(pos, tree.toArray))
+                    case an: AmbNode => trees(pos) = trees(pos):+AmbNode(pos, tree)
+                    case _ => trees(pos) = ArrayBuffer(AmbNode(pos, trees(pos)), AmbNode(pos, tree))
                 }
             }
         }
@@ -123,7 +123,7 @@ object ParserContext {
         def makeAmb(): ArrayBuffer[Tree] = {
             var ab = ArrayBuffer.empty[Tree]
             for(pos <- positions){
-                ab = ab:+AmbNode(pos, trees(pos).toArray)
+                ab = ab:+AmbNode(pos, trees(pos))
             }
             ab
         }

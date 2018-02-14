@@ -4,7 +4,7 @@
 		module="gpeg-build"
 		revision="0.1-SNAPSHOT"
 		status="integration"
-		publication="20180214143853"
+		publication="20180214155125"
 		e:sbtVersion="1.0" e:scalaVersion="2.12"
 	>
 		<description>

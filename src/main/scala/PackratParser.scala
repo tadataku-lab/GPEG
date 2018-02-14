@@ -65,9 +65,9 @@ object PackratParser{
                 case PSucc() => p
                 case PEmpty(next) => parse(p.set_exp(next))
                 case PFail(msg) => throw new RuntimeException(msg)
-                case PMatch(bytes, next) => if(exe_match(p, bytes).isEmpty) p.set_exp(PFail("")).set_result(p.new_result(Set())) else parse(p.set_exp(next))
-                case PCall(symbol, next) => if(map_call(p, symbol).isEmpty) p.set_exp(PFail("")).set_result(p.new_result(Set())) else parse(p.set_exp(next))
-                case PUnion(lhs, rhs) => if(map_union(p, lhs, rhs).isEmpty) p.set_exp(PFail("")) else p
+                case PMatch(bytes, next) => if(!exe_match(p, bytes).nonEmpty) p.set_exp(PFail("")).set_result(p.new_result(Set())) else parse(p.set_exp(next))
+                case PCall(symbol, next) => if(!map_call(p, symbol).nonEmpty) p.set_exp(PFail("")).set_result(p.new_result(Set())) else parse(p.set_exp(next))
+                case PUnion(lhs, rhs) => if(!map_union(p, lhs, rhs).nonEmpty) p.set_exp(PFail("")) else p
                 /**
                 case PAny(next) => {
                     if((p.pos + 1) > input.length){
