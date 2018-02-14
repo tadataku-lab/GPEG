@@ -1,7 +1,3 @@
-run
-test
-compile
-run
 compile
 run
 test
@@ -498,3 +494,7 @@ test
 run
 test
 run
+eclipse
+activator
+compile
+eclipse

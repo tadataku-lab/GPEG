@@ -5,14 +5,13 @@ import scala.collection.immutable.{Vector}
 
 object ParserContext {
     class ParserContext(_exp: PExp, _rules: Map[Symbol, PExp], _input: Array[Byte]){
-        var result: ParserResult = ParserResult(Set(0), Array.fill(_input.length + 1)(Vector.empty[Tree]))
+        var result: ParserResult = ParserResult(Set(0), Array.fill(_input.length + 1)(null))
         var exp: PExp = _exp
         private[this] var folding: Boolean = false
         val rules: Map[Symbol, PExp] = _rules
         private[this] val input: Array[Byte] = _input
         private[this] val input_length: Int = _input.length
-        private[this] var memo: HashMap[(Symbol, Int), ParserResult] = new HashMap[(Symbol, Int),ParserResult]
-        private[this] var bench: Array[Long] = Array(0, 0, 0, 0, 0, 0)
+        private[this] val memo: HashMap[(Symbol, Int), Option[ParserResult]] = new HashMap[(Symbol, Int), Option[ParserResult]]
 
         def dump_memo(): ParserContext = {
             println("memo: " + memo)
@@ -29,12 +28,7 @@ object ParserContext {
             this
         }
 
-        def dump_bench(): ParserContext = {
-            println("bench1: " + bench(0) + "回 " + bench(1) + "[ms]")
-            this
-        }
-
-        def new_result(new_positions: Set[Int]): ParserResult = ParserResult(new_positions, Array.fill(_input.length + 1)(Vector.empty[Tree]))
+        def new_result(new_positions: Set[Int]): ParserResult = ParserResult(new_positions, Array.fill(_input.length + 1)(null))
 
         def make_result(pos: Int, prev_trees: Array[Vector[Tree]]): ParserResult = ParserResult(Set(pos), prev_trees)
 
@@ -69,29 +63,15 @@ object ParserContext {
             }
         }
 
-        def lookup(symbol: Symbol, pos: Int): Option[ParserResult] = memo.get((symbol, pos))
+        def lookup(symbol: Symbol, pos: Int): Option[Option[ParserResult]] = memo.get((symbol, pos))
 
         def memo(symbol: Symbol, pos: Int): ParserResult = {
-            memo += ((symbol, pos) -> result.copy())
+            if(result.positions.isEmpty) memo += ((symbol, pos) -> None) else memo += ((symbol, pos) -> Some(result.copy()))
             this.result
         }
 
         def newNode(symbol: Symbol): ParserContext = {
             this.set_result(result.newNode(symbol))
-        }
-
-        def bench_merge(lhs_result: ParserResult, rhs_result: ParserResult): ParserResult = {
-            bench(0)  = bench(0) + 1
-            val start = System.currentTimeMillis
-            this.set_result(lhs_result.merge(rhs_result))
-            val time = System.currentTimeMillis - start
-            bench(1) = bench(1) + time
-            this.result
-        }
-
-        def merge(lhs_result: ParserResult, rhs_result: ParserResult): ParserResult = {
-            //this.set_result(lhs_result.merge(rhs_result)).result
-            bench_merge(lhs_result, rhs_result)
         }
     }
 
@@ -111,10 +91,9 @@ object ParserContext {
         }
         val copy: () => ParserResult = () => ParserResult(positions.clone, trees.clone)
         
-        val update: (Int, Array[Vector[Tree]]) => ParserResult = 
-        (pos: Int, prev: Array[Vector[Tree]]) => {
-            lazy val prev_tree = prev(pos)
-            positions.foreach(i => trees(i) = prev_tree ++ trees(i) )
+        val update: Vector[Tree] => ParserResult = 
+        (prev: Vector[Tree]) => {
+            positions.foreach(i => trees(i) = if(prev == null) trees(i) else (prev ++ trees(i)))
             this
         }
 
@@ -132,7 +111,7 @@ object ParserContext {
         
         private[this] val setTree: (Int, Vector[Tree]) => Unit =
         (pos: Int, tree: Vector[Tree]) => {
-            if(trees(pos).isEmpty) trees(pos) = tree else {
+            if(trees(pos) == null) trees(pos) = tree else {
                 trees(pos).head match{
                     case an: AmbNode => trees(pos) = trees(pos):+AmbNode(pos, tree)
                     case _ => trees(pos) = Vector(AmbNode(pos, trees(pos)), AmbNode(pos, tree))
@@ -151,7 +130,10 @@ object ParserContext {
         }
         def newLeaf(pos: Int, len: Int, v: String, new_trees: Array[Vector[Tree]]): Set[Int] = {
             val new_pos = pos + len
-            new_trees(new_pos) = new_trees(new_pos):+Leaf(v)
+            new_trees(new_pos) match{
+                case null => new_trees(new_pos) = Vector(Leaf(v))
+                case _ => new_trees(new_pos) = new_trees(new_pos):+Leaf(v)
+            }
             Set(new_pos)
         }
 

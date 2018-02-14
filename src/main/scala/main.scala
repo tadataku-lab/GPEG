@@ -26,8 +26,8 @@ object Main{
     def main(args: Array[String]):Unit = {
 
         var b = ""
-        for(i <- 1 to 4) b += "b"
-        exeCommand(getCommand(Array("-d", "src/main/resources/GPEG/rule.gpeg", b)))
+        for(i <- 1 to 250) b += "b"
+        exeCommand(getCommand(Array("-b", "src/main/resources/GPEG/rule.gpeg", b)))
         //exeCommand(getCommand(args))
         
         /**
@@ -109,6 +109,10 @@ object Main{
     }
 
     def exeParse(pgrammar: PGrammar, command: Command): Unit = {
+        command.gpeg match {
+          case Some(g) => g.close()
+          case None =>
+        }
         command.option.file match {
             case None =>
             case Some(input) => showParseResult(pgrammar, file2string(input), command.option)

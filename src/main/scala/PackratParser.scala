@@ -10,23 +10,28 @@ object PackratParser{
     }
 
     class PackratParser(){
-        def packrat_parse(p: ParserContext): ParserContext = parse(p).dump_bench
+
+        def packrat_parse(p: ParserContext): ParserContext = parse(p)
 
         def exe_match(p: ParserContext, bytes: Array[Byte]): Set[Int] 
         = p.map_pos(bytes).result.positions
 
         private[this] val map_call: (ParserContext, Symbol) => Set[Int] = 
         (p: ParserContext, symbol: Symbol) => {
-            val prev_result = p.result.copy()
+            val prev_positions = p.result.positions.clone
+            val prev_trees = p.result.trees.clone
             val new_result = p.new_result(Set())
-            prev_result.positions.foreach(pos => p.merge(new_result, lookup(p, symbol, pos).update(pos, prev_result.trees)))
+            prev_positions.foreach(pos => new_result.merge(lookup(p, symbol, pos).update(prev_trees(pos))))
             p.set_result(new_result).result.positions
         }
 
         private[this] val lookup: (ParserContext, Symbol, Int) => ParserResult = 
         (p: ParserContext, symbol: Symbol, pos: Int) => {
             p.lookup(symbol, pos) match{
-                case Some(result) => p.set_result(result.copy()).result
+                case Some(result) => result match {
+                    case Some(succ) => p.set_result(succ.copy()).result
+                    case None => p.set_result(p.new_result(Set())).result
+                    }
                 case None => call_symbol(p, symbol, pos)
             }
         }
@@ -49,12 +54,13 @@ object PackratParser{
             (lhs_result.positions.nonEmpty, rhs_result.positions.nonEmpty) match{
                 case (true, false) => p.set_result(lhs_result).result.positions
                 case (false, true) => p.set_result(rhs_result).result.positions
-                case (true, true) => p.merge(lhs_result, rhs_result).positions
+                case (true, true) => p.set_result(lhs_result.merge(rhs_result)).result.positions
                 case (false, false) => p.set_result(p.new_result(Set())).result.positions
             }
         }
 
-        def parse(p: ParserContext): ParserContext = {
+        private[this] val parse: ParserContext => ParserContext = 
+        (p: ParserContext) => {
             p.exp match {
                 case PSucc() => p
                 case PEmpty(next) => parse(p.set_exp(next))
