@@ -25,17 +25,17 @@ object PackratParser{
             p.set_result(new_result).result.positions
         }
 
-        private[this] val lookup: (ParserContext, Symbol, Int) => ParserResult = 
+        private[this] val lookup: (ParserContext, Symbol, Int) => Memo = 
         (p: ParserContext, symbol: Symbol, pos: Int) => {
             p.lookup(symbol, pos) match{
-                case Some(result) => p.set_result(result.copy()).result
+                case Some(result) => result.copy()
                 case None => call_symbol(p, symbol, pos)
             }
         }
 
-        private[this] val call_symbol:(ParserContext, Symbol, Int) => ParserResult =
+        private[this] val call_symbol:(ParserContext, Symbol, Int) => Memo =
         (p: ParserContext, symbol: Symbol, pos: Int)
-        => parse(p.set_exp(p.rules(symbol)).set_result(p.new_result(Set(pos)))).newNode(symbol).memo(symbol, pos)
+        => parse(p.set_exp(p.rules(symbol)).set_result(p.new_result(Set(pos)))).memo(symbol, pos)
 
         def map_union(p: ParserContext, lhs: PExp, rhs: PExp): Set[Int] = {
             p.result.positions = p.result.positions.flatMap(pos => union(p, lhs, rhs, pos))

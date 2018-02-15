@@ -1,6 +1,13 @@
 run
 compile
 run
+test
+tets
+test
+compile
+run
+compile
+run
 compile
 run
 compile
@@ -487,13 +494,6 @@ compile
 eclipse
 compile
 run
-compile
-run
-compile
-run
-compile
-run
-sbt
 compile
 run
 compile

@@ -22,6 +22,8 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$Alt.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$Grammar$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$Grammar$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ParserContext$Memo$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/ParserContext$Memo$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	Main$Command$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/Main$Command$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$PSucc.class[0m
@@ -136,6 +138,8 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/GpegParser$Pos.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$And$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$And$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ParserContext$Memo.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/ParserContext$Memo.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$PGrammar$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/shonanking/lab/GPEG/target/scala-2.12/classes/AST$PGrammar$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	AST$Any$.class[0m
