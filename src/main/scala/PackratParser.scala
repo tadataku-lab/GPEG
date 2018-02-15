@@ -28,10 +28,7 @@ object PackratParser{
         private[this] val lookup: (ParserContext, Symbol, Int) => ParserResult = 
         (p: ParserContext, symbol: Symbol, pos: Int) => {
             p.lookup(symbol, pos) match{
-                case Some(result) => result match {
-                    case Some(succ) => p.set_result(succ.copy()).result
-                    case None => p.set_result(p.new_result(Set())).result
-                    }
+                case Some(result) => p.set_result(result.copy()).result
                 case None => call_symbol(p, symbol, pos)
             }
         }
