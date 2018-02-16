@@ -1,6 +1,4 @@
 run
-compile
-run
 test
 tets
 test
@@ -497,4 +495,6 @@ run
 compile
 run
 compile
+run
+_
 run

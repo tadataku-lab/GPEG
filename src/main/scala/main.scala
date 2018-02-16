@@ -25,9 +25,9 @@ object Main{
 
     def main(args: Array[String]):Unit = {
 
-        var b = ""
-        for(i <- 1 to 170) b += "b"
-        exeCommand(getCommand(Array("-b", "src/main/resources/GPEG/rule.gpeg", b)))
+        val b = new StringBuilder
+        for(i <- 1 to 100) b.append("b")
+        exeCommand(getCommand(Array("-b", "src/main/resources/GPEG/rule.gpeg", b.toString)))
         //exeCommand(getCommand(args))
         
         /**
