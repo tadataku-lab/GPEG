@@ -1,19 +1,8 @@
-[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/ParserContext.scala:70:133: polymorphic expression cannot be instantiated to expected type;[0m
-[0m[[0m[31merror[0m] [0m[0m found   : [T]Array[T][0m
-[0m[[0m[31merror[0m] [0m[0m required: scala.collection.immutable.Vector[Tree.Node][0m
-[0m[[0m[31merror[0m] [0m[0m            val memo:Memo = if(result.positions.nonEmpty) Memo(result.positions.clone, newNode(symbol), true) else Memo(Set(), Array(), false)[0m
-[0m[[0m[31merror[0m] [0m[0m                                                                                                                                    ^[0m
-[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/ParserContext.scala:81:66: method clone in class Object cannot be accessed in scala.collection.immutable.Vector[Tree.Node][0m
-[0m[[0m[31merror[0m] [0m[0m Access to protected method clone not permitted because[0m
-[0m[[0m[31merror[0m] [0m[0m prefix type scala.collection.immutable.Vector[Tree.Node] does not conform to[0m
-[0m[[0m[31merror[0m] [0m[0m class Memo in object ParserContext where the access takes place[0m
-[0m[[0m[31merror[0m] [0m[0m        val copy: () => Memo = () => Memo(positions.clone, nodes.clone, isSucc)[0m
-[0m[[0m[31merror[0m] [0m[0m                                                                 ^[0m
-[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/ParserContext.scala:117:38: value update is not a member of scala.collection.immutable.Vector[Tree.Node][0m
-[0m[[0m[31merror[0m] [0m[0m            positions.foreach(pos => nodes(pos) = Node(symbol, if(trees(pos) == null) Vector() else trees(pos)))[0m
-[0m[[0m[31merror[0m] [0m[0m                                     ^[0m
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/ParserContext.scala:10:27: private var folding in class ParserContext is never used[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/ParserContext.scala:9:27: private var folding in class ParserContext is never used[0m
 [0m[[0m[33mwarn[0m] [0m[0m        private[this] var folding: Boolean = false[0m
 [0m[[0m[33mwarn[0m] [0m[0m                          ^[0m
-[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m
-[0m[[0m[31merror[0m] [0m[0mthree errors found[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/PackratParser.scala:61:15: match may not be exhaustive.[0m
+[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following inputs: PAnd(_, _), PAny(_), PFold(_, _, _, _), PIf(_, _, _), PMany(_, _), PNot(_, _)[0m
+[0m[[0m[33mwarn[0m] [0m[0m            p.exp match {[0m
+[0m[[0m[33mwarn[0m] [0m[0m              ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mtwo warnings found[0m

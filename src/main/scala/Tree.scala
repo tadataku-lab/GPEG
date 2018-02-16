@@ -1,4 +1,3 @@
-import scala.collection.immutable.{Vector}
 
 object Tree{
     sealed trait Tree{
@@ -10,7 +9,7 @@ object Tree{
         }
         def copy(): Leaf = Leaf(v)
     }
-    case class Node(name: Symbol, next: Vector[Tree]) extends Tree{
+    case class Node(name: Symbol, next: Array[Tree]) extends Tree{
         override def toString: String = {
             val sb = new StringBuilder
             sb.append("[" + name + " ")
@@ -20,9 +19,9 @@ object Tree{
             sb.append("]")
             sb.toString
         }
-        def copy(): Node =  Node(name, next.flatMap(n => Vector(n.copy)))
+        def copy(): Node =  Node(name, next.flatMap(n => Array(n.copy)))
     }
-    case class AmbNode(id: Int, next: Vector[Tree]) extends Tree{
+    case class AmbNode(id: Int, next: Array[Tree]) extends Tree{
         override def toString: String = {
             val sb = new StringBuilder
             sb.append("[amb<" + id + "> ")
@@ -32,6 +31,6 @@ object Tree{
             sb.append("]")
             sb.toString
         }
-        def copy(): AmbNode = AmbNode(id, next.flatMap(n => Vector(n.copy)))
+        def copy(): AmbNode = AmbNode(id, next.flatMap(n => Array(n.copy)))
     }
 }
