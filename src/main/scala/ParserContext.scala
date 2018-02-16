@@ -3,14 +3,15 @@ import Tree._
 import scala.collection.mutable.{OpenHashMap, Set}
 
 object ParserContext {
-    class ParserContext(_exp: PExp, _rules: Map[Symbol, PExp], _input: Array[Byte]){
+    class ParserContext(_exp: PExp, _rules: Array[PExp], _symbols: Array[Symbol], _input: Array[Byte]){
         var result: ParserResult = ParserResult(Set(0), Array.fill(_input.length + 1)(null))
         var exp: PExp = _exp
         private[this] var folding: Boolean = false
-        val rules: Map[Symbol, PExp] = _rules
+        val rules: Array[PExp] = _rules
+        val symbols: Array[Symbol] = _symbols
         private[this] val input: Array[Byte] = _input
         private[this] val input_length: Int = _input.length
-        private[this] val memos: Array[OpenHashMap[Symbol, Memo]] = Array.fill(_input.length + 1)(OpenHashMap.empty[Symbol, Memo])
+        private[this] val memos: Array[OpenHashMap[Int, Memo]] = Array.fill(_input.length + 1)(OpenHashMap.empty[Int, Memo])
 
         def dump_memo(): ParserContext = {
             println("memo: " + memos)
@@ -62,12 +63,12 @@ object ParserContext {
             }
         }
 
-        def lookup(symbol: Symbol, pos: Int): Option[Memo] = memos(pos).get(symbol)
+        def lookup(nsym: Int, pos: Int): Option[Memo] = memos(pos).get(nsym)
 
-        def memo(symbol: Symbol, pos: Int): Memo = {
+        def memo(nsym: Int, pos: Int): Memo = {
             //if(!result.positions.nonEmpty) memo += ((symbol, pos) -> None) else memo += ((symbol, pos) -> Some(result.copy()))
-            val memo:Memo = if(result.positions.nonEmpty) Memo(result.positions.clone, newNode(symbol), true) else Memo(Set(), Array(), false)
-            memos(pos) += (symbol -> memo)
+            val memo:Memo = if(result.positions.nonEmpty) Memo(result.positions.clone, newNode(symbols(nsym)), true) else Memo(Set(), Array(), false)
+            memos(pos) += (nsym -> memo)
             memo
         }
 

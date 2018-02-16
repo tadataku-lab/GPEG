@@ -18,7 +18,7 @@ object AST {
   //case class FoldMany(label: Symbol, lhs: Exp, rhs: Exp) extends Exp 
   //case class LinkTree(label: Symbol, body: Exp) extends Exp
 
-  case class PGrammar(start: Symbol, rules: Map[Symbol,PExp])
+  case class PGrammar(start: Int, rules: Array[PExp], symbols: Array[Symbol])
 
   sealed trait PExp{
     def copy(): PExp
@@ -93,6 +93,17 @@ object AST {
       PCall(name, new_next)
     }
   }
+  case class PCallNum(num: Int, next: PExp) extends PExp with HasNext{
+    def copy(): PCallNum = {
+      PCallNum(num, next.copy)
+    }
+    def set_next(new_next: PExp): PCallNum = {
+      PCallNum(num, next.set_next(new_next))
+    }
+    def assign_next(new_next: PExp): PCallNum = {
+      PCallNum(num, new_next)
+    }
+  }
   case class PIf(lhs: PExp, rhs: PExp, next: PExp) extends PExp with HasNext{
     def copy(): PIf = {
       PIf(lhs.copy, rhs.copy, next.copy)
@@ -156,6 +167,17 @@ object AST {
     }
     def assign_next(new_next: PExp): PFold = {
       PFold(name, body.copy, rec, new_next)
+    }
+  }
+  case class PFoldNum(num: Int, body: PExp, rec: Int, next: PExp) extends PExp with HasNext{
+    def copy(): PFoldNum = {
+      PFoldNum(num, body.copy, rec, next.copy)
+    }
+    def set_next(new_next: PExp): PFoldNum = {
+      PFoldNum(num, body.copy, rec, next.set_next(new_next))
+    }
+    def assign_next(new_next: PExp): PFoldNum = {
+      PFoldNum(num, body.copy, rec, new_next)
     }
   }
   //case class PLink(name: Symbol, body: PExp, next: PExp) extends PExp

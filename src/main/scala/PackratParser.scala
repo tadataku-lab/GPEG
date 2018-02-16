@@ -5,8 +5,8 @@ import scala.collection.mutable.{Set}
 
 object PackratParser{  
     def peg_parse(g: PGrammar, input: String): Option[(Tree, ParserContext)] = {
-        val new_p = new PackratParser().packrat_parse(new ParserContext(g.rules(g.start) , g.rules, input.getBytes))
-        return Some((new_p.makeAmbNode(g.start), new_p))
+        val new_p = new PackratParser().packrat_parse(new ParserContext(g.rules(g.start) , g.rules, g.symbols, input.getBytes))
+        return Some((new_p.makeAmbNode(g.symbols(g.start)), new_p))
     }
 
     class PackratParser(){
@@ -16,26 +16,26 @@ object PackratParser{
         def exe_match(p: ParserContext, bytes: Array[Byte]): Set[Int] 
         = p.map_pos(bytes).result.positions
 
-        private[this] val map_call: (ParserContext, Symbol) => Set[Int] = 
-        (p: ParserContext, symbol: Symbol) => {
+        private[this] val map_call: (ParserContext, Int) => Set[Int] = 
+        (p: ParserContext, nsym: Int) => {
             val prev_positions = p.result.positions.clone
             val prev_trees = p.result.trees.clone
             val new_result = p.new_result(Set())
-            prev_positions.foreach(pos => new_result.merge(lookup(p, symbol, pos).update(prev_trees(pos))))
+            prev_positions.foreach(pos => new_result.merge(lookup(p, nsym, pos).update(prev_trees(pos))))
             p.set_result(new_result).result.positions
         }
 
-        private[this] val lookup: (ParserContext, Symbol, Int) => Memo = 
-        (p: ParserContext, symbol: Symbol, pos: Int) => {
-            p.lookup(symbol, pos) match{
+        private[this] val lookup: (ParserContext, Int, Int) => Memo = 
+        (p: ParserContext, nsym: Int, pos: Int) => {
+            p.lookup(nsym, pos) match{
                 case Some(result) => result.copy()
-                case None => call_symbol(p, symbol, pos)
+                case None => call_symbol(p, nsym, pos)
             }
         }
 
-        private[this] val call_symbol:(ParserContext, Symbol, Int) => Memo =
-        (p: ParserContext, symbol: Symbol, pos: Int)
-        => parse(p.set_exp(p.rules(symbol)).set_result(p.new_result(Set(pos)))).memo(symbol, pos)
+        private[this] val call_symbol:(ParserContext, Int, Int) => Memo =
+        (p: ParserContext, nsym: Int, pos: Int)
+        => parse(p.set_exp(p.rules(nsym)).set_result(p.new_result(Set(pos)))).memo(nsym, pos)
 
         def map_union(p: ParserContext, lhs: PExp, rhs: PExp): Set[Int] = {
             p.result.positions = p.result.positions.flatMap(pos => union(p, lhs, rhs, pos))
@@ -63,7 +63,7 @@ object PackratParser{
                 case PEmpty(next) => parse(p.set_exp(next))
                 case PFail(msg) => throw new RuntimeException(msg)
                 case PMatch(bytes, next) => if(!exe_match(p, bytes).nonEmpty) p.set_exp(PFail("")).set_result(p.new_result(Set())) else parse(p.set_exp(next))
-                case PCall(symbol, next) => if(!map_call(p, symbol).nonEmpty) p.set_exp(PFail("")).set_result(p.new_result(Set())) else parse(p.set_exp(next))
+                case PCallNum(nsym, next) => if(!map_call(p, nsym).nonEmpty) p.set_exp(PFail("")).set_result(p.new_result(Set())) else parse(p.set_exp(next))
                 case PUnion(lhs, rhs) => if(!map_union(p, lhs, rhs).nonEmpty) p.set_exp(PFail("")) else p
                 /**
                 case PAny(next) => {
