@@ -1,6 +1,6 @@
 import AST._
 import Tree._
-import scala.collection.mutable.{HashMap, Set}
+import scala.collection.mutable.{OpenHashMap, Set}
 
 object ParserContext {
     class ParserContext(_exp: PExp, _rules: Map[Symbol, PExp], _input: Array[Byte]){
@@ -10,7 +10,7 @@ object ParserContext {
         val rules: Map[Symbol, PExp] = _rules
         private[this] val input: Array[Byte] = _input
         private[this] val input_length: Int = _input.length
-        private[this] val memos: Array[HashMap[Symbol, Memo]] = Array.fill(_input.length + 1)(HashMap.empty[Symbol, Memo])
+        private[this] val memos: Array[OpenHashMap[Symbol, Memo]] = Array.fill(_input.length + 1)(OpenHashMap.empty[Symbol, Memo])
 
         def dump_memo(): ParserContext = {
             println("memo: " + memos)
