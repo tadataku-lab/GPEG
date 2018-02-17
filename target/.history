@@ -4,8 +4,6 @@ compile
 run
 compile
 run
-compile
-run
 test
 compile
 run
@@ -491,6 +489,8 @@ run
 compile
 run
 _
+run
+compile
 run
 compile
 run

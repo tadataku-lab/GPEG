@@ -3,6 +3,7 @@ object Tree{
     sealed trait Tree{
         def copy(): Tree
     }
+
     case class Leaf(v: String) extends Tree{
         override def toString: String = {
             "[" + v + "]"
