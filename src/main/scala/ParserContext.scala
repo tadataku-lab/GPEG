@@ -1,10 +1,10 @@
 import AST._
 import Tree._
-import scala.collection.mutable.{TreeSet}
+import scala.collection.mutable.{Set}
 
 object ParserContext {
     class ParserContext(_exp: PExp, _rules: Array[PExp], _symbols: Array[Symbol], _input: Array[Byte]){
-        var result: ParserResult = ParserResult(TreeSet(0), Array.fill(_input.length + 1)(null))
+        var result: ParserResult = ParserResult(Set(0), Array.fill(_input.length + 1)(null))
         var exp: PExp = _exp
         private[this] var folding: Boolean = false
         val rules: Array[PExp] = _rules
@@ -28,9 +28,9 @@ object ParserContext {
             this
         }
 
-        def new_result(new_positions: TreeSet[Int]): ParserResult = ParserResult(new_positions, Array.fill(_input.length + 1)(null))
+        def new_result(new_positions: Set[Int]): ParserResult = ParserResult(new_positions, Array.fill(_input.length + 1)(null))
 
-        def make_result(pos: Int, prev_trees: Array[Array[Tree]]): ParserResult = ParserResult(TreeSet(pos), prev_trees)
+        def make_result(pos: Int, prev_trees: Array[ChildTree]): ParserResult = ParserResult(Set(pos), prev_trees)
 
         def set_exp(e: PExp): ParserContext = {
             exp = e
@@ -43,14 +43,14 @@ object ParserContext {
         }
 
         def map_pos(bytes: Array[Byte]): ParserContext = {
-            val new_trees: Array[Array[Tree]] = Array.fill(input.length + 1)(null)
+            val new_trees: Array[ChildTree] = Array.fill(input.length + 1)(null)
             result.positions = result.positions.flatMap(pos => match_bytes(bytes, pos, new_trees))
             result.trees = new_trees
             this
         }
 
-        def match_bytes(bytes: Array[Byte], pos: Int, new_trees: Array[Array[Tree]]): TreeSet[Int] 
-        = if(bytesEq(bytes, pos, bytes.length)) result.newLeaf(pos, bytes.length, (bytes.map(_.toChar)).mkString, new_trees) else TreeSet()
+        def match_bytes(bytes: Array[Byte], pos: Int, new_trees: Array[ChildTree]): Set[Int] 
+        = if(bytesEq(bytes, pos, bytes.length)) result.newLeaf(pos, bytes.length, (bytes.map(_.toChar)).mkString, new_trees) else Set()
 
         def bytesEq(bytes: Array[Byte], pos: Int, length: Int): Boolean 
         = if((length + pos) > input_length) false else bytes.sameElements(input.slice(pos, pos + length))
@@ -71,7 +71,7 @@ object ParserContext {
 
         def memo(nsym: Int, pos: Int): Memo = {
             //if(!result.positions.nonEmpty) memo += ((symbol, pos) -> None) else memo += ((symbol, pos) -> Some(result.copy()))
-            val memo:Memo = if(result.positions.nonEmpty) Memo(pos, result.positions.clone, newNode(symbols(nsym)), true) else Memo(pos, TreeSet(), Array(), false)
+            val memo:Memo = if(result.positions.nonEmpty) Memo(pos, result.positions.clone, newNode(symbols(nsym)), true) else Memo(pos, Set(), Array(), false)
             memos(longkey(pos, nsym)) = memo
             memo
         }
@@ -81,25 +81,25 @@ object ParserContext {
         }
     }
 
-    case class Memo(key: Int, positions: TreeSet[Int], nodes: Array[Node], isSucc: Boolean){
-        val copy: () => Memo = () => Memo(key, positions.clone, nodes.clone, isSucc)
-        val update: Array[Tree] => ParserResult = 
-        (prev: Array[Tree]) => {
+    case class Memo(key: Int, positions: Set[Int], nodes: Array[Node], isSucc: Boolean){
+        //val copy: () => Memo = () => Memo(key, positions.clone, nodes.clone, isSucc)
+        val update: ChildTree => ParserResult = 
+        (prev: ChildTree) => {
             if(isSucc){
-                val trees:Array[Array[Tree]] = Array.fill(nodes.size)(null)
+                val trees:Array[ChildTree] = Array.fill(nodes.size)(null)
                 if(prev == null){
-                    positions.foreach(pos => trees(pos) = Array(nodes(pos)))
+                    positions.foreach(pos => trees(pos) = ChildTree(nodes(pos), null))
                 }else{
-                    positions.foreach(pos => trees(pos) = prev:+nodes(pos))
+                    positions.foreach(pos => trees(pos) = ChildTree(nodes(pos), prev))
                 }
                 ParserResult(positions, trees)
             }else{
-                ParserResult(TreeSet(), null)
+                ParserResult(Set(), null)
             }
         }
     }
 
-    case class ParserResult(var positions: TreeSet[Int], var trees: Array[Array[Tree]]){
+    case class ParserResult(var positions: Set[Int], var trees: Array[ChildTree]){
         override def toString(): String = {
             if(positions.isEmpty){
                 return "{fail}"
@@ -117,43 +117,43 @@ object ParserContext {
 
         def newNode(symbol: Symbol, size: Int): Array[Node] = {
             val nodes:Array[Node] = Array.fill(size)(null)
-            positions.foreach(pos => nodes(pos) = Node(symbol, if(trees(pos) == null) Array() else trees(pos)))
+            positions.foreach(pos => nodes(pos) = Node(symbol, trees(pos)))
             nodes
         }
 
         val merge: ParserResult => ParserResult = 
         (another: ParserResult) => {
-            another.positions.foreach(pos => TreeSetTree(pos, another.trees(pos)))
+            another.positions.foreach(pos => setTree(pos, another.trees(pos)))
             positions = positions | another.positions
             this
         }
         
-        private[this] val TreeSetTree: (Int, Array[Tree]) => Unit =
-        (pos: Int, tree: Array[Tree]) => {
+        private[this] val setTree: (Int, ChildTree) => Unit =
+        (pos: Int, tree: ChildTree) => {
             if(trees(pos) == null) trees(pos) = tree else {
-                trees(pos).head match{
-                    case an: AmbNode => trees(pos) = trees(pos):+AmbNode(pos, tree)
-                    case _ => trees(pos) = Array(AmbNode(pos, trees(pos)), AmbNode(pos, tree))
+                trees(pos).tree match{
+                    case an: AmbNode => trees(pos) = ChildTree(AmbNode(pos, tree), trees(pos))
+                    case _ => trees(pos) = ChildTree(AmbNode(pos, tree), ChildTree(AmbNode(pos, trees(pos)), null))
                 }
             }
         }
         
-        def getHead(): Array[Tree] = trees(positions.head)
+        def getHead(): ChildTree = trees(positions.head)
 
-        def makeAmb(): Array[Tree] = {
-            var ab = Array.empty[Tree]
+        def makeAmb(): ChildTree = {
+            var ab: ChildTree = null
             for(pos <- positions){
-                ab = ab:+AmbNode(pos, trees(pos))
+                ab = ChildTree(AmbNode(pos, trees(pos)), ab)
             }
             ab
         }
-        def newLeaf(pos: Int, len: Int, v: String, new_trees: Array[Array[Tree]]): TreeSet[Int] = {
+        def newLeaf(pos: Int, len: Int, v: String, new_trees: Array[ChildTree]): Set[Int] = {
             val new_pos = pos + len
             trees(pos) match{
-                case null => new_trees(new_pos) = Array(Leaf(v))
-                case _ => new_trees(new_pos) = trees(pos):+Leaf(v)
+                case null => new_trees(new_pos) = ChildTree(Leaf(v), null)
+                case _ => new_trees(new_pos) = ChildTree(Leaf(v), trees(pos))
             }
-            TreeSet(new_pos)
+            Set(new_pos)
         }
 
     }
