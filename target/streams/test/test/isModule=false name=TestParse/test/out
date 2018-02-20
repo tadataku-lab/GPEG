@@ -3,7 +3,5 @@
 [0m[[0m[0minfo[0m] [0m[0m[32m- test2[0m[0m
 [0m[[0m[0minfo[0m] [0m[0m[32m- test3[0m[0m
 [0m[[0m[0minfo[0m] [0m[0m[32m- test4[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[31m- unordered choice *** FAILED ***[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[31m  "['S [[amb<2> [b]][amb<3> ][b]]]" did not equal "['S [['amb<2> [a][b]]['amb<3> [ab]][b]]]" (test.scala:73)[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[31m- unordered choice and nonterminal *** FAILED ***[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[31m  "['S [[amb<2> [b]][amb<3> ][b]]]" did not equal "['S [['amb<2> ['B [a]][b]]['amb<3> ['B [ab]]][b]]]" (test.scala:82)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m- highly ambiguity [b4] *** FAILED ***[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  "... ['S' [b]]]]['S ['S'[ ][b]]]][amb<4> ['S' [..." did not equal "... ['S' [b]]]]['S ['S'[][b]]]][amb<4> ['S' [..." (test.scala:105)[0m[0m

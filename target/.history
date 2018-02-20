@@ -1,9 +1,3 @@
-tesr
-test
-compile
-run
-test
-compile
 run
 test
 compile
@@ -497,4 +491,10 @@ run
 compile
 run
 compile
+run
+compile
+run
+test
+run
+test
 run

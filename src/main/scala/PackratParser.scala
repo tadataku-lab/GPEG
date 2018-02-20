@@ -17,6 +17,7 @@ object PackratParser{
         def exe_match(p: ParserContext, bytes: Array[Byte]): BitSet 
         = p.map_pos(bytes).result.positions
 
+/**
         private[this] val map_call: (ParserContext, Int) => BitSet = 
         (p: ParserContext, nsym: Int) => {
             val prev_positions = p.result.positions.clone
@@ -26,6 +27,7 @@ object PackratParser{
             reccall(p, nsym, prev_positions, new_result, ())
             p.set_result(new_result).result.positions
         }
+        
 
         @tailrec
         private[this] val reccall: (ParserContext, Int, BitSet, ParserResult, Unit) => Unit =
@@ -33,26 +35,28 @@ object PackratParser{
             val prev_trees = p.result.trees.clone
             if(rest.nonEmpty)reccall(p, nsym, rest.tail, result, result.merge(lookup(p, nsym, rest.head).update(prev_trees(rest.head)))) else ()
         } 
+        */
 
         private[this] val lookup: (ParserContext, Int, Int) => Memo = 
         (p: ParserContext, nsym: Int, pos: Int) => {
             val memo = p.lookup(nsym, pos)
             (memo.key == pos) match{
                 case true => memo
-                case false => call_symbol(p, nsym, pos)
+                case false => parse(p.set_exp(p.rules(nsym)).set_result(p.new_result(BitSet(pos)))).memo(nsym, pos)
             }
         }
-
+/**
         private[this] val call_symbol:(ParserContext, Int, Int) => Memo =
         (p: ParserContext, nsym: Int, pos: Int)
         => parse(p.set_exp(p.rules(nsym)).set_result(p.new_result(BitSet(pos)))).memo(nsym, pos)
-
+*/
+/**
         def map_union(p: ParserContext, lhs: PExp, rhs: PExp): BitSet = {
             //p.result.positions = p.result.positions.flatMap(pos => union(p, lhs, rhs, pos))
             p.result.positions = union(p, lhs, rhs, p.result.positions, BitSet())
             p.result.positions
         }
-
+*/
         @tailrec
         private[this] def union(p: ParserContext, lhs: PExp, rhs: PExp, rest: BitSet, value: BitSet): BitSet = {
             val prev_trees = p.result.trees.clone
@@ -79,8 +83,17 @@ object PackratParser{
                 case PEmpty(next) => parse(p.set_exp(next))
                 case PFail(msg) => throw new RuntimeException(msg)
                 case PMatch(bytes, next) => if(!exe_match(p, bytes).nonEmpty) p.set_exp(PFail("")).set_result(p.new_result(BitSet())) else parse(p.set_exp(next))
-                case PCallNum(nsym, next) => if(!map_call(p, nsym).nonEmpty) p.set_exp(PFail("")).set_result(p.new_result(BitSet())) else parse(p.set_exp(next))
-                case PUnion(lhs, rhs) => if(!map_union(p, lhs, rhs).nonEmpty) p.set_exp(PFail("")) else p
+                case PCallNum(nsym, next) => {
+                    val prev_positions = p.result.positions.clone
+                    val new_result = p.new_result(BitSet())
+                    val prev_trees = p.result.trees.clone
+                    prev_positions.foreach(pos => new_result.merge(lookup(p, nsym, pos).update(prev_trees(pos))))
+                    if(!new_result.positions.nonEmpty) p.set_exp(PFail("")).set_result(p.new_result(BitSet())) else parse(p.set_exp(next).set_result(new_result))
+                }
+                case PUnion(lhs, rhs) => {
+                    p.result.positions = union(p, lhs, rhs, p.result.positions, BitSet())
+                    if(!p.result.positions.nonEmpty) p.set_exp(PFail("")) else p
+                }
                 /**
                 case PAny(next) => {
                     if((p.pos + 1) > input.length){
