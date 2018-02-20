@@ -17,56 +17,18 @@ object PackratParser{
         def exe_match(p: ParserContext, bytes: Array[Byte]): BitSet 
         = p.map_pos(bytes).result.positions
 
-/**
-        private[this] val map_call: (ParserContext, Int) => BitSet = 
-        (p: ParserContext, nsym: Int) => {
-            val prev_positions = p.result.positions.clone
-            //val prev_trees = p.result.trees.clone
-            val new_result = p.new_result(BitSet())
-            //prev_positions.foreach(pos => new_result.merge(lookup(p, nsym, pos).update(prev_trees(pos))))
-            reccall(p, nsym, prev_positions, new_result, ())
-            p.set_result(new_result).result.positions
-        }
-        
-
-        @tailrec
-        private[this] val reccall: (ParserContext, Int, BitSet, ParserResult, Unit) => Unit =
-        (p: ParserContext, nsym: Int, rest: BitSet, result: ParserResult, value: Unit) => {
-            val prev_trees = p.result.trees.clone
-            if(rest.nonEmpty)reccall(p, nsym, rest.tail, result, result.merge(lookup(p, nsym, rest.head).update(prev_trees(rest.head)))) else ()
-        } 
-        */
-
-        private[this] val lookup: (ParserContext, Int, Int) => Memo = 
-        (p: ParserContext, nsym: Int, pos: Int) => {
+        def lookup (p: ParserContext, nsym: Int, pos: Int): Memo = {
             val memo = p.lookup(nsym, pos)
             (memo.key == pos) match{
                 case true => memo
                 case false => parse(p.set_exp(p.rules(nsym)).set_result(p.new_result(BitSet(pos)))).memo(nsym, pos)
             }
         }
-/**
-        private[this] val call_symbol:(ParserContext, Int, Int) => Memo =
-        (p: ParserContext, nsym: Int, pos: Int)
-        => parse(p.set_exp(p.rules(nsym)).set_result(p.new_result(BitSet(pos)))).memo(nsym, pos)
-*/
-/**
-        def map_union(p: ParserContext, lhs: PExp, rhs: PExp): BitSet = {
-            //p.result.positions = p.result.positions.flatMap(pos => union(p, lhs, rhs, pos))
-            p.result.positions = union(p, lhs, rhs, p.result.positions, BitSet())
-            p.result.positions
-        }
-*/
-        @tailrec
-        private[this] def union(p: ParserContext, lhs: PExp, rhs: PExp, rest: BitSet, value: BitSet): BitSet = {
-            val prev_trees = p.result.trees.clone
-            if(rest.nonEmpty){
-                union(p, lhs, rhs, rest.tail, 
-                value | merge(p, parse(p.set_exp(lhs).set_result(p.make_result(rest.head, prev_trees.clone))).result, parse(p.set_exp(rhs).set_result(p.make_result(rest.head, prev_trees))).result))
-            }else value
-        }
 
-        def merge(p: ParserContext, lhs_result: ParserResult, rhs_result: ParserResult): BitSet = {
+        def union(p: ParserContext, lhs: PExp, rhs: PExp, pos: Int): BitSet = {
+            val prev_trees = p.result.trees.clone
+            val lhs_result = parse(p.set_exp(lhs).set_result(p.make_result(pos, prev_trees.clone))).result
+            val rhs_result = parse(p.set_exp(rhs).set_result(p.make_result(pos, prev_trees))).result
             (lhs_result.positions.nonEmpty, rhs_result.positions.nonEmpty) match{
                 case (true, false) => p.set_result(lhs_result).result.positions
                 case (false, true) => p.set_result(rhs_result).result.positions
@@ -76,8 +38,7 @@ object PackratParser{
         }
 
         @tailrec
-        private[this] val parse: ParserContext => ParserContext = 
-        (p: ParserContext) => {
+        def parse(p: ParserContext):ParserContext = {
             p.exp match {
                 case PSucc() => p
                 case PEmpty(next) => parse(p.set_exp(next))
@@ -91,7 +52,7 @@ object PackratParser{
                     if(!new_result.positions.nonEmpty) p.set_exp(PFail("")).set_result(p.new_result(BitSet())) else parse(p.set_exp(next).set_result(new_result))
                 }
                 case PUnion(lhs, rhs) => {
-                    p.result.positions = union(p, lhs, rhs, p.result.positions, BitSet())
+                    p.result.positions = p.result.positions.flatMap(pos => union(p, lhs, rhs, pos))
                     if(!p.result.positions.nonEmpty) p.set_exp(PFail("")) else p
                 }
                 /**
