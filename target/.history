@@ -1,7 +1,3 @@
-compile
-run src/main/resources/GPEG/rule.gpeg
-test
-compile
 run
 run src/main/resources/GPEG/rule.gpeg
 test
@@ -491,6 +487,10 @@ run
 test
 run
 test
+run
+compile
+run
+compile
 run
 compile
 run
