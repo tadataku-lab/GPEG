@@ -11,7 +11,7 @@ object ParserContext {
         val symbols: Array[Symbol] = _symbols
         private[this] val input: Array[Byte] = _input
         private[this] val input_length: Int = _input.length
-        private[this] val memos: Array[Memo] = Array.fill(_input.length * symbols.length)(Memo(-1, null, null, false))
+        private[this] val memos: Array[Memo] = Array.fill((_input.length + 1) * symbols.length)(Memo(-1, null, null, false))
 
         def dump_memo(): ParserContext = {
             println("memo: " + memos)
@@ -64,7 +64,7 @@ object ParserContext {
         }
 
         def longkey(key: Int, mpos: Int): Int ={
-            key * mpos
+            key + mpos * this.input_length
         }
 
         def lookup(nsym: Int, pos: Int): Memo = memos(longkey(pos, nsym))

@@ -1,8 +1,4 @@
-[0m[[0m[31merror[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:8:14: object testing is not a member of package scala[0m
-[0m[[0m[31merror[0m] [0m[0mimport scala.testing.Benchmark[0m
-[0m[[0m[31merror[0m] [0m[0m             ^[0m
-[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/main.scala:8:22: Unused import[0m
-[0m[[0m[33mwarn[0m] [0m[0mimport scala.testing.Benchmark[0m
-[0m[[0m[33mwarn[0m] [0m[0m                     ^[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/shonanking/lab/GPEG/src/main/scala/ParserContext.scala:9:27: private var folding in class ParserContext is never used[0m
+[0m[[0m[33mwarn[0m] [0m[0m        private[this] var folding: Boolean = false[0m
+[0m[[0m[33mwarn[0m] [0m[0m                          ^[0m
 [0m[[0m[33mwarn[0m] [0m[0mone warning found[0m
-[0m[[0m[31merror[0m] [0m[0mone error found[0m
