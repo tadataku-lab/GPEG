@@ -25,15 +25,15 @@ object PackratParser{
             }
         }
 
-        def union(p: ParserContext, lhs: PExp, rhs: PExp, pos: Int): BitSet = {
+        def union(p: ParserContext, lhs: PExp, rhs: PExp, pos: Int): ParserResult = {
             val prev_trees = p.result.trees.clone
             val lhs_result = parse(p.set_exp(lhs).set_result(p.make_result(pos, prev_trees.clone))).result
             val rhs_result = parse(p.set_exp(rhs).set_result(p.make_result(pos, prev_trees))).result
             (lhs_result.positions.nonEmpty, rhs_result.positions.nonEmpty) match{
-                case (true, false) => p.set_result(lhs_result).result.positions
-                case (false, true) => p.set_result(rhs_result).result.positions
-                case (true, true) => p.set_result(lhs_result.merge(rhs_result)).result.positions
-                case (false, false) => p.set_result(p.new_result(BitSet())).result.positions
+                case (true, false) => p.set_result(lhs_result).result
+                case (false, true) => p.set_result(rhs_result).result
+                case (true, true) => p.set_result(lhs_result.merge(rhs_result)).result
+                case (false, false) => p.set_result(p.new_result(BitSet())).result
             }
         }
 
@@ -52,8 +52,9 @@ object PackratParser{
                     if(!new_result.positions.nonEmpty) p.set_exp(PFail("")).set_result(p.new_result(BitSet())) else parse(p.set_exp(next).set_result(new_result))
                 }
                 case PUnion(lhs, rhs) => {
-                    p.result.positions = p.result.positions.flatMap(pos => union(p, lhs, rhs, pos))
-                    if(!p.result.positions.nonEmpty) p.set_exp(PFail("")) else p
+                    val new_result = p.new_result(BitSet())
+                    p.result.positions.foreach(pos => new_result.merge(union(p, lhs, rhs, pos)))
+                    if(!p.result.positions.nonEmpty) p.set_exp(PFail("")).set_result(p.new_result(BitSet())) else p.set_result(new_result)
                 }
                 /**
                 case PAny(next) => {
